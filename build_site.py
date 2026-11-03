@@ -116,6 +116,17 @@ def main() -> None:
     if not latest:
         raise SystemExit("The ranking CSV contains no ranking rows.")
 
+    latest_titles = {}
+    champions = json.loads((ROOT / "wta_champions.json").read_text(encoding="utf-8"))["champions"]
+    for title in champions:
+        champion_id = str(title["champion"]["id"])
+        prior_title = latest_titles.get(champion_id)
+        title_date = (title["end_date"], title["start_date"], str(title["tournament_id"]))
+        if prior_title is None or title_date > (
+            prior_title["end_date"], prior_title["start_date"], str(prior_title["tournament_id"])
+        ):
+            latest_titles[champion_id] = title
+
     players = []
     for player_id, row in latest.items():
         prior = previous.get(player_id)
@@ -127,6 +138,7 @@ def main() -> None:
             "rank": int(row["rank"]),
             "points": int(row["points"]),
             "previous_rank": int(prior["rank"]) if prior else None,
+            "latest_title": latest_titles.get(player_id),
             "best_rank": best_rank[player_id],
             "best_rank_year": int(best_rank_date[player_id][:4]),
         })

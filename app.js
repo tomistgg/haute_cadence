@@ -22,11 +22,7 @@ const tournamentStatus = document.getElementById("tournament-status");
 const formResults = document.getElementById("form-results");
 const tourTitleNumber = document.getElementById("tour-title-number");
 const tourTitleOrdinal = document.getElementById("tour-title-ordinal");
-const lastTitleInput = document.getElementById("last-title-search");
-const lastTitleOptions = document.getElementById("last-title-options");
-const lastTitleStatus = document.getElementById("last-title-status");
-let visibleLastTitles = [];
-let lastTitleActiveIndex = -1;
+const lastTitleValue = document.getElementById("last-title-value");
 // shortcut: Manual form edits are kept in this tab; add persistent storage if saving cards is needed.
 const manualForms = new Map();
 let selectedTournamentId = "";
@@ -59,7 +55,7 @@ const photoByName = new Map([
 
 function playerForm(player) {
   if (!manualForms.has(player.id)) {
-    manualForms.set(player.id, { results: Array(10).fill(""), lastTitleId: "", tourTitleNumber: "" });
+    manualForms.set(player.id, { results: Array(10).fill(""), tourTitleNumber: "" });
   }
   return manualForms.get(player.id);
 }
@@ -95,73 +91,22 @@ const formButtons = Array.from({ length: 10 }, (_, index) => {
 });
 
 function lastTitleLabel(item) {
-  return (item.category + " " + tournamentName(item) + " " + (item.year || item.startDate.slice(0, 4))).toLocaleUpperCase();
-}
-
-function closeLastTitleOptions() {
-  lastTitleOptions.classList.remove("open");
-  lastTitleInput.setAttribute("aria-expanded", "false");
-  lastTitleInput.removeAttribute("aria-activedescendant");
-}
-
-function selectLastTitle(item) {
-  if (!selectedPlayer) return;
-  playerForm(selectedPlayer).lastTitleId = item ? item.id : "";
-  renderPlayerForm(selectedPlayer);
-}
-
-function showLastTitleOptions(query) {
-  const needle = normalize(query.trim());
-  visibleLastTitles = tournaments.filter(item => normalize(
-    [lastTitleLabel(item), item.name, item.city, item.country, item.startDate].join(" ")
-  ).includes(needle)).sort((a, b) => tournamentName(a).localeCompare(tournamentName(b)) || a.startDate.localeCompare(b.startDate));
-  if (!needle) visibleLastTitles.unshift(null);
-  lastTitleActiveIndex = -1;
-  lastTitleInput.removeAttribute("aria-activedescendant");
-  lastTitleOptions.replaceChildren();
-  visibleLastTitles.forEach((item, index) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "suggestion tournament-suggestion";
-    button.id = "last-title-option-" + index;
-    button.setAttribute("role", "option");
-    button.setAttribute("aria-selected", "false");
-    const name = document.createElement("span");
-    name.textContent = item ? lastTitleLabel(item) : "No title";
-    button.append(name);
-    if (item) {
-      const detail = document.createElement("span");
-      detail.className = "tournament-meta";
-      detail.textContent = item.startDate + " - " + item.country;
-      button.append(detail);
-    }
-    button.addEventListener("mousedown", event => event.preventDefault());
-    button.addEventListener("click", () => selectLastTitle(item));
-    lastTitleOptions.append(button);
-  });
-  if (!visibleLastTitles.length) {
-    const empty = document.createElement("div");
-    empty.className = "tournament-empty";
-    empty.textContent = "No matching tournaments.";
-    lastTitleOptions.append(empty);
-  }
-  lastTitleOptions.classList.add("open");
-  lastTitleInput.setAttribute("aria-expanded", "true");
-  lastTitleStatus.textContent = visibleLastTitles.filter(Boolean).length + " matching tournaments.";
+  const category = { "125K": "WTA 125", "Finals": "WTA Finals" }[item.category] || item.category;
+  return (category + " " + tournamentName(item) + " " + item.year).toLocaleUpperCase();
 }
 
 function fitLastTitleText() {
-  const available = lastTitleInput.parentElement.clientWidth;
+  const available = lastTitleValue.parentElement.clientWidth;
   if (!available) return;
   const measure = document.createElement("canvas").getContext("2d");
-  measure.font = getComputedStyle(lastTitleInput).font;
-  const text = lastTitleInput.value || lastTitleInput.placeholder;
+  measure.font = getComputedStyle(lastTitleValue).font;
+  const text = lastTitleValue.textContent;
   const width = Math.max(available, measure.measureText(text).width + 2);
-  lastTitleInput.style.width = width + "px";
-  lastTitleInput.style.transform = width > available ? "scaleX(" + available / width + ")" : "none";
+  lastTitleValue.style.width = width + "px";
+  lastTitleValue.style.transform = width > available ? "scaleX(" + available / width + ")" : "none";
 }
 
-new ResizeObserver(fitLastTitleText).observe(lastTitleInput.parentElement);
+new ResizeObserver(fitLastTitleText).observe(lastTitleValue.parentElement);
 document.fonts.ready.then(fitLastTitleText);
 
 function renderPlayerForm(player) {
@@ -170,53 +115,14 @@ function renderPlayerForm(player) {
     const result = form.results[index];
     const label = result === "win" ? "win" : result === "loss" ? "loss" : "not set";
     button.dataset.result = result;
-    button.textContent = result === "win" ? "\u2713" : result === "loss" ? "\u2715" : "\u00b7";
+    button.textContent = result === "win" ? "V" : result === "loss" ? "d" : "\u00b7";
     button.setAttribute("aria-label", "Match " + (index + 1) + ": " + label + ". Click to cycle blank, win, loss.");
     button.title = "Match " + (index + 1) + ": " + label + " (click: blank > win > loss)";
   });
-  const title = tournaments.find(item => item.id === form.lastTitleId);
-  lastTitleInput.value = title ? lastTitleLabel(title) : "";
-  lastTitleInput.disabled = !tournaments.length;
-  lastTitleInput.placeholder = calendarFailed ? "Calendar unavailable" : tournaments.length ? "Search tournaments" : "Loading tournaments...";
-  lastTitleInput.title = title ? lastTitleLabel(title) : "Choose the latest tournament won";
+  lastTitleValue.textContent = player.latest_title ? lastTitleLabel(player.latest_title) : "W/O";
   fitLastTitleText();
-  closeLastTitleOptions();
 }
 
-lastTitleInput.addEventListener("focus", () => {
-  lastTitleInput.select();
-  showLastTitleOptions("");
-});
-lastTitleInput.addEventListener("click", () => {
-  if (!lastTitleOptions.classList.contains("open")) showLastTitleOptions("");
-});
-lastTitleInput.addEventListener("input", () => showLastTitleOptions(lastTitleInput.value));
-lastTitleInput.addEventListener("blur", () => {
-  closeLastTitleOptions();
-  if (selectedPlayer) renderPlayerForm(selectedPlayer);
-});
-lastTitleInput.addEventListener("keydown", event => {
-  if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-    event.preventDefault();
-    if (!lastTitleOptions.classList.contains("open")) showLastTitleOptions(lastTitleInput.value);
-    if (!visibleLastTitles.length) return;
-    const direction = event.key === "ArrowDown" ? 1 : -1;
-    lastTitleActiveIndex = lastTitleActiveIndex < 0
-      ? direction > 0 ? 0 : visibleLastTitles.length - 1
-      : (lastTitleActiveIndex + direction + visibleLastTitles.length) % visibleLastTitles.length;
-    [...lastTitleOptions.querySelectorAll("[role=option]")].forEach((option, index) => {
-      option.setAttribute("aria-selected", String(index === lastTitleActiveIndex));
-      if (index === lastTitleActiveIndex) option.scrollIntoView({ block: "nearest" });
-    });
-    lastTitleInput.setAttribute("aria-activedescendant", "last-title-option-" + lastTitleActiveIndex);
-  } else if (event.key === "Enter" && lastTitleOptions.classList.contains("open") && visibleLastTitles.length) {
-    event.preventDefault();
-    selectLastTitle(visibleLastTitles[Math.max(0, lastTitleActiveIndex)]);
-  } else if (event.key === "Escape") {
-    event.preventDefault();
-    if (selectedPlayer) renderPlayerForm(selectedPlayer);
-  }
-});
 
 function normalize(value) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
@@ -357,7 +263,6 @@ function showTournamentOptions(query) {
 
 function updateTournamentSearch() {
   tournaments = calendar ? yearTournaments(calendar) : [];
-  lastTitleInput.disabled = !selectedPlayer || !tournaments.length;
   tournamentWrap.hidden = cardType.value === "form";
   if (tournamentWrap.hidden) {
     closeTournamentOptions();

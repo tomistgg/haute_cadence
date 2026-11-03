@@ -45,10 +45,7 @@ async function renderCardExport() {
       text.style.display = "flex";
       text.style.alignItems = "center";
       text.style.textDecoration = "none";
-      if (source === lastTitleInput) {
-        const title = tournaments.find(item => item.id === playerForm(selectedPlayer).lastTitleId);
-        text.textContent = title ? lastTitleLabel(title) : "\u2014";
-      } else text.textContent = source.value || "\u2014";
+      text.textContent = source.value || "\u2014";
       input.replaceWith(text);
     });
     document.body.append(copy);

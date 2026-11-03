@@ -8,8 +8,8 @@ from unittest.mock import patch
 import build_site
 
 
-class CareerBestYearTest(unittest.TestCase):
-    def test_uses_last_year_at_career_best_across_ranking_files(self):
+class SiteBuildTest(unittest.TestCase):
+    def test_builds_latest_rankings_with_last_career_best_year_and_latest_titles(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             dist = root / "dist"
@@ -18,6 +18,19 @@ class CareerBestYearTest(unittest.TestCase):
                 (root / name).write_text("", encoding="utf-8")
             calendar = root / "calendar_snapshot.json"
             calendar.write_text("{}", encoding="utf-8")
+            titles = [
+                {"champion": {"id": 1, "name": "Different spelling"}, "end_date": "2026-10-25",
+                 "start_date": "2026-10-19", "tournament_id": "100", "year": 2026,
+                 "category": "WTA 500", "name": "Latest Open", "city": "Tokyo"},
+                {"champion": {"id": "1"}, "end_date": "2025-11-02", "start_date": "2025-10-27",
+                 "tournament_id": "101", "year": 2025, "category": "WTA 250", "name": "Older Open"},
+                {"champion": {"id": "2"}, "end_date": "2024-10-20", "start_date": "2024-10-14",
+                 "tournament_id": "102", "year": 2024, "category": "WTA 125", "name": "Past Season Open"},
+                {"champion": {"id": "99", "name": "Player 3"}, "end_date": "2026-11-01",
+                 "start_date": "2026-10-26", "tournament_id": "103", "year": 2026,
+                 "category": "WTA 125", "name": "Same Name Different Player"},
+            ]
+            (root / "wta_champions.json").write_text(json.dumps({"champions": titles}), encoding="utf-8")
             history = [
                 ("2010-01-04", "1", 5), ("2019-01-07", "1", 5),
                 ("2016-01-04", "2", 20), ("2018-01-01", "2", 20),
@@ -46,6 +59,10 @@ class CareerBestYearTest(unittest.TestCase):
                 "1": (5, 2019), "2": (20, 2025), "3": (1, 2025),
             })
             self.assertEqual({key: row["previous_rank"] for key, row in players.items()}, {"1": 15, "2": 20, "3": 1})
+            self.assertEqual(players["1"]["latest_title"], titles[0])
+            self.assertEqual(players["2"]["latest_title"], titles[2])
+            self.assertIsNone(players["3"]["latest_title"])
+
 
 
 if __name__ == "__main__":
