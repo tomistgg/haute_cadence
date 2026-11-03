@@ -30,3 +30,9 @@ Form cards use locally bundled circular country flags, with the CSV's three-lett
 The 2026 calendar was completed from the official WTA tournaments API for January 1 through December 31 (both API pages), with cancelled tournaments excluded. Search uses each event's season year, so December warm-up events for the following season do not appear in the wrong year. Qualifying rows are not listed as separate title events.
 
 Tournament display-name overrides apply to both search results and card headings: United Cup, Australian Open, Roland Garros, Wimbledon, and US Open. Searches also match the original city and tournament name. Overrides are scoped by category, so the WTA 125 in Paris keeps its city label.
+
+## GitHub Pages
+
+GitHub Pages must publish the generated `dist/` directory. The repository-root HTML is the source template and refers to files that exist only in the build output.
+
+The `Deploy GitHub Pages` workflow runs `python build_site.py` and deploys `dist/` after pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is **GitHub Actions**.
