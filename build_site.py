@@ -10,6 +10,12 @@ SOURCE = ROOT / "wta_rankings_20_29.csv"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "assets/players/alina-charaeva.jpg": ROOT / "assets" / "Alina Charaeva.jpg",
+    "assets/title-court.svg": ROOT / "assets" / "title-court.svg",
+    "assets/tour-court.svg": ROOT / "assets" / "tour-court.svg",
+    "assets/fonts/tt-bluescreens-extra-bold.ttf": (
+        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold.ttf"
+    ),
     "assets/haute-cadence-logo.png": ROOT / "assets" / "Design sans titre (2).png",
     "assets/players/leylah-fernandez.png": ROOT / "assets" / "Fernandez (1).png",
     "assets/players/elsa-jacquemot.png": ROOT / "assets" / "Jacquemot.png",
@@ -19,9 +25,13 @@ ASSETS = {
     "assets/top_20_details.png": ROOT / "assets" / "top_20_details.png",
     "assets/top_100_card.png": ROOT / "assets" / "top_100_card.png",
     "assets/top_100_details.png": ROOT / "assets" / "top_100_details.png",
-    "assets/fonts/tt-condensed-regular.ttf": ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf",
+    "assets/fonts/tt-condensed-regular.ttf": (
+        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf"
+    ),
     "assets/fonts/tt-bluescreens-italic.ttf": ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf",
-    "assets/fonts/tt-bluescreens-extra-bold-italic.ttf": ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold Italic.ttf",
+    "assets/fonts/tt-bluescreens-extra-bold-italic.ttf": (
+        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold Italic.ttf"
+    ),
 }
 
 
@@ -80,10 +90,13 @@ def main() -> None:
 
     shutil.copy2(ROOT / "index.html", DIST / "index.html")
     shutil.copy2(ROOT / "app.js", DIST / "app.js")
+    shutil.copy2(ROOT / "cards.css", DIST / "cards.css")
     data_dir = DIST / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     payload = {"snapshot_date": latest_date, "players": players}
-    (data_dir / "players.json").write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (data_dir / "players.json").write_text(
+        json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
     print(f"Prepared {len(players):,} WTA singles players from {latest_date} in {DIST}")
 
 

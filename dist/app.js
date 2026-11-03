@@ -4,14 +4,15 @@ const searchInput = document.getElementById("player-search");
 const options = document.getElementById("player-options");
 const status = document.getElementById("search-status");
 const card = document.getElementById("player-card");
-const loading = document.getElementById("loading");
-const cardNote = document.getElementById("card-note");
+const cardType = document.getElementById("card-type");
+let selectedPlayer = null;
 let players = [];
 let snapshotDate = "";
 let activeIndex = -1;
 let visiblePlayers = [];
 
 const photoByName = new Map([
+  ["alina charaeva", "assets/players/alina-charaeva.jpg"],
   ["leylah fernandez", "assets/players/leylah-fernandez.png"],
   ["elsa jacquemot", "assets/players/elsa-jacquemot.png"],
   ["diana shnaider", "assets/players/diana-shnaider.png"]
@@ -19,10 +20,6 @@ const photoByName = new Map([
 
 function normalize(value) {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
-}
-
-function formatDate(iso) {
-  return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(iso + "T00:00:00Z")).toUpperCase();
 }
 
 function getAge(dob, asOf) {
@@ -45,14 +42,9 @@ function badgeFor(rank) {
 function showOptions(query) {
   const needle = normalize(query.trim());
   activeIndex = -1;
-  if (!needle) {
-    options.classList.remove("open");
-    options.replaceChildren();
-    searchInput.setAttribute("aria-expanded", "false");
-    status.textContent = "Type a name to search the full ranking.";
-    return;
-  }
-  const matches = players.filter(player => normalize(player.name).includes(needle));
+  const matches = needle
+    ? players.filter(player => normalize(player.name).includes(needle))
+    : players;
   visiblePlayers = matches.slice(0, 8);
   options.replaceChildren();
   visiblePlayers.forEach((player, index) => {
@@ -62,9 +54,8 @@ function showOptions(query) {
     button.id = "player-option-" + index;
     button.setAttribute("role", "option");
     button.setAttribute("aria-selected", "false");
-    button.innerHTML = '<span class="suggestion-name"></span><span class="suggestion-meta"></span>';
+    button.innerHTML = '<span class="suggestion-name"></span>';
     button.querySelector(".suggestion-name").textContent = player.name;
-    button.querySelector(".suggestion-meta").textContent = "#" + player.rank + " · " + player.country;
     button.addEventListener("click", () => selectPlayer(player));
     options.append(button);
   });
@@ -74,6 +65,7 @@ function showOptions(query) {
 }
 
 function selectPlayer(player) {
+  selectedPlayer = player;
   searchInput.value = player.name;
   options.classList.remove("open");
   searchInput.setAttribute("aria-expanded", "false");
@@ -84,15 +76,24 @@ function selectPlayer(player) {
 
 function renderCard(player) {
   const name = player.name.toLocaleUpperCase();
+  const type = cardType.value;
+  // shortcut: Tournament names, title counts, and form stay blank until results data is supplied.
+  card.dataset.type = type;
+  document.getElementById("card-event-category").textContent = type === "wta-125" ? "WTA 125" : "WTA TOUR";
+  document.getElementById("card-age").textContent = getAge(player.dob, snapshotDate) + " ANS";
+  document.getElementById("card-country").textContent = player.country;
+  document.getElementById("card-name").style.fontSize = Math.min(9.2, 126 / name.length) + "cqw";
+  document.getElementById("card-rank").parentElement.style.fontSize = String(player.rank).length > 3 ? "9cqw" : "12cqw";
+  document.getElementById("card-rank-ordinal").textContent = player.rank === 1 ? "er" : "\u00e8me";
   const isTop20 = player.rank <= 20;
   const tier = isTop20 ? "top_20" : "top_100";
   document.getElementById("card-base").src = "assets/" + tier + "_card.png";
   document.getElementById("card-details").src = "assets/" + tier + "_details.png";
   document.getElementById("card-name").textContent = name;
   document.getElementById("card-rank").textContent = String(player.rank);
-  document.getElementById("card-previous").textContent = player.previous_rank == null
-    ? "NEW \u00b7 " + snapshotDate.slice(0, 4)
-    : "#" + player.previous_rank + " LAST WEEK";
+  document.getElementById("card-previous").textContent = type === "form"
+    ? "MEILLEUR : #" + player.best_rank
+    : player.rank + "e EN " + snapshotDate.slice(0, 4);
 
   const image = document.getElementById("card-photo");
   const initials = document.getElementById("card-initials");
@@ -109,11 +110,9 @@ function renderCard(player) {
     initials.textContent = player.name.split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
     initials.style.display = "flex";
   }
-  document.getElementById("svg-title").textContent = name + " \u00b7 WTA #" + player.rank;
+  document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + player.rank;
   document.getElementById("svg-description").textContent = name + ", WTA singles rank " + player.rank + ", " + player.country + ", " + getAge(player.dob, snapshotDate) + " years old.";
-  document.getElementById("selected-id-note").textContent = "WTA singles \u00b7 #" + player.rank;
   card.removeAttribute("hidden");
-  cardNote.hidden = false;
 }
 
 function moveActive(direction) {
@@ -123,7 +122,12 @@ function moveActive(direction) {
   searchInput.setAttribute("aria-activedescendant", "player-option-" + activeIndex);
 }
 
+cardType.addEventListener("change", () => {
+  if (selectedPlayer) renderCard(selectedPlayer);
+});
+
 searchInput.addEventListener("input", () => showOptions(searchInput.value));
+searchInput.addEventListener("focus", () => showOptions(searchInput.value));
 searchInput.addEventListener("keydown", event => {
   if (event.key === "ArrowDown") { event.preventDefault(); moveActive(1); }
   else if (event.key === "ArrowUp") { event.preventDefault(); moveActive(-1); }
@@ -139,14 +143,10 @@ fetch("data/players.json")
   .then(data => {
     players = data.players;
     snapshotDate = data.snapshot_date;
-    document.getElementById("snapshot-pill").textContent = "WTA · " + formatDate(snapshotDate);
-    document.getElementById("player-count").textContent = players.length.toLocaleString("en-US");
-    loading.hidden = true;
-    status.textContent = players.length.toLocaleString("en-US") + " ranked players · snapshot " + formatDate(snapshotDate);
+    status.textContent = "Player list loaded.";
     const example = players.find(player => normalize(player.name) === "alina charaeva");
     if (example) selectPlayer(example);
   })
   .catch(error => {
-    loading.textContent = "Could not load the ranking data. Run the local server from the project instructions.";
     status.textContent = error.message;
   });

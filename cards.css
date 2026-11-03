@@ -1,0 +1,32 @@
+.card-controls { display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex: 1; min-width: 0; }
+.card-controls .search-wrap { flex: 1; width: auto; max-width: 420px; min-width: 150px; }
+#card-type { max-width: 230px; min-width: 0; border: 1px solid #5cd5bf99; border-radius: 12px; padding: 16px 12px; color: #f5fbff; background: #051b31; font: inherit; cursor: pointer; }
+#card-type:focus-visible, .search-box:focus-within { outline: 2px solid #81da57; outline-offset: 3px; }
+.card-content { position: absolute; container-type: inline-size; inset: 0; }
+.card-name { top: 1.3%; height: 8.3%; font-size: 9.2cqw; }
+.card-rank { left: 4%; top: 3.6%; width: 22%; height: 9%; font-size: 12cqw; gap: .03em; }
+.card-rank sup { align-self: flex-start; padding-top: .1em; font-size: .43em; line-height: 1; }
+.card-previous { top: 13.6%; height: 3.5%; font-size: 2cqw; text-align: center; white-space: pre-line; }
+.card-form { left: 21%; top: 86.3%; width: 51%; font: 400 7cqw/1 "Barriecito", sans-serif; }
+.card-title-value { left: 30%; top: 93.6%; width: 47%; font-size: 4.3cqw; }
+.card-age { position: absolute; top: 83.5%; left: 76%; width: 19%; color: #440268; text-align: center; font: italic 800 6.7cqw/1 "TT Bluescreens", sans-serif; }
+.card-country { position: absolute; left: 80%; top: 90.2%; width: 9%; height: 7%; display: flex; align-items: center; justify-content: center; color: #fff; font: 800 3.2cqw/1 "TT Bluescreens Upright", sans-serif; }
+.title-event, .winner-banner, .tour-trophy, .tour-laurels { display: none; }
+.player-card[data-type="wta-125"], .player-card[data-type="wta-tour"] { background: url("assets/title-court.svg") center / cover; }
+.player-card[data-type="wta-tour"] { background-image: url("assets/tour-court.svg"); }
+.player-card[data-type="wta-125"] .card-content, .player-card[data-type="wta-tour"] .card-content { inset: 9.85% 6.3% 2.5%; }
+.player-card[data-type="wta-tour"] .card-content { transform: rotate(1.2deg); }
+.player-card[data-type="wta-125"] .title-event, .player-card[data-type="wta-tour"] .title-event { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; left: 34%; top: .85%; width: 32%; height: 7.9%; padding: .5%; border-radius: 1.1cqw; background: #7bd64e; color: #fff; box-shadow: 0 .4cqw 1.2cqw #142a3640; }
+.title-event strong { font: 800 5.8cqw/.95 "TT Bluescreens Upright", sans-serif; }
+.title-event span { margin-top: .2cqw; font: 800 1.9cqw/1.1 Georgia, serif; }
+.player-card[data-type="wta-tour"] .title-event { background: #739b91; }
+.player-card[data-type="wta-125"] .card-form, .player-card[data-type="wta-125"] .card-title-value, .player-card[data-type="wta-125"] .card-age, .player-card[data-type="wta-125"] .card-country,
+.player-card[data-type="wta-tour"] .card-form, .player-card[data-type="wta-tour"] .card-title-value, .player-card[data-type="wta-tour"] .card-age, .player-card[data-type="wta-tour"] .card-country { display: none; }
+.player-card[data-type="wta-125"] .winner-banner, .player-card[data-type="wta-tour"] .winner-banner { position: absolute; display: flex; align-items: center; justify-content: center; left: .8%; right: 1.8%; top: 84.3%; bottom: 1.3%; background: linear-gradient(100deg, #b8ed9c, #72b748 47%, #b3e69b); border-radius: 1.8cqw; clip-path: polygon(0 12%, 74% 12%, 79% 0, 100% 0, 100% 77%, 94% 100%, 0 100%); filter: drop-shadow(.7cqw 1cqw .5cqw #051b31aa); }
+.winner-banner span { padding-top: .06em; font: 800 22cqw/1 "TT Bluescreens Upright", Impact, sans-serif; color: white; -webkit-text-stroke: .35cqw #060606; paint-order: stroke fill; letter-spacing: -.01em; }
+.player-card[data-type="wta-tour"] .winner-banner { background: linear-gradient(100deg, #ae7718, #ffe27c 46%, #bf8d21); }
+.player-card[data-type="wta-tour"] .card-rank { display: none; }
+.player-card[data-type="wta-tour"] .tour-trophy { display: block; position: absolute; top: 2.3%; left: 3%; width: 24.5%; height: 12%; }
+.player-card[data-type="wta-tour"] .tour-laurels { display: block; position: absolute; inset: 0 -5%; width: 110%; height: 100%; pointer-events: none; }
+@media (max-width: 850px) { .masthead { flex-wrap: wrap; } .card-controls { flex-basis: 100%; justify-content: stretch; } .card-controls .search-wrap { max-width: none; } }
+@media (max-width: 480px) { .card-controls { flex-direction: column; align-items: stretch; gap: 10px; } #card-type { max-width: none; width: 100%; } }
