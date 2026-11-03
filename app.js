@@ -264,6 +264,14 @@ function tournamentLabel(item) {
   return tournamentName(item) + " (" + item.category + ")";
 }
 
+function titleTournaments() {
+  if (cardType.value === "wta-125") return tournaments.filter(item => item.category === "WTA 125");
+  if (cardType.value === "wta-tour") {
+    return tournaments.filter(item => ["WTA 250", "WTA 500", "WTA 1000", "WTA Finals", "Grand Slam"].includes(item.category));
+  }
+  return [];
+}
+
 function closeTournamentOptions() {
   tournamentOptions.classList.remove("open");
   tournamentOptions.replaceChildren();
@@ -274,6 +282,7 @@ function closeTournamentOptions() {
 }
 
 function selectTournament(item) {
+  if (!titleTournaments().some(tournament => tournament.id === item.id)) return;
   selectedTournamentId = item.id;
   tournamentInput.value = tournamentLabel(item);
   closeTournamentOptions();
@@ -284,7 +293,7 @@ function selectTournament(item) {
 function showTournamentOptions(query) {
   tournamentQuery = query;
   const needle = normalize(query.trim());
-  visibleTournaments = tournaments.filter(item => normalize(
+  visibleTournaments = titleTournaments().filter(item => normalize(
     [tournamentName(item), item.city, item.name, item.category, item.country, item.startDate].join(" ")
   ).includes(needle));
   tournamentActiveIndex = -1;
@@ -326,18 +335,19 @@ function updateTournamentSearch() {
     closeTournamentOptions();
     return;
   }
+  const available = titleTournaments();
   const open = tournamentOptions.classList.contains("open");
   const editing = document.activeElement === tournamentInput;
-  tournamentInput.disabled = !tournaments.length;
+  tournamentInput.disabled = !available.length;
   tournamentInput.placeholder = !calendar
     ? calendarFailed ? "Calendar unavailable" : "Loading tournaments..."
-    : tournaments.length ? "Search " + new Date().getFullYear() + " tournaments" : "No tournaments for this year";
-  if (!tournaments.some(item => item.id === selectedTournamentId)) selectedTournamentId = "";
+    : available.length ? "Search " + new Date().getFullYear() + " tournaments" : "No tournaments for this card type";
+  if (!available.some(item => item.id === selectedTournamentId)) selectedTournamentId = "";
   if (!editing) {
-    const selected = tournaments.find(item => item.id === selectedTournamentId);
+    const selected = available.find(item => item.id === selectedTournamentId);
     tournamentInput.value = selected ? tournamentLabel(selected) : "";
   }
-  if (open && editing && tournaments.length) showTournamentOptions(tournamentQuery);
+  if (open && editing && available.length) showTournamentOptions(tournamentQuery);
   else closeTournamentOptions();
 }
 
@@ -384,7 +394,7 @@ function renderCard(player) {
   titleDetails.hidden = type === "form";
   if (type === "form") titleDetails.removeAttribute("src");
   else titleDetails.src = "assets/" + (type === "wta-tour" ? "wtatour" : "wta125") + "_title_details.png";
-  const tournament = type === "form" ? null : tournaments.find(item => item.id === selectedTournamentId);
+  const tournament = titleTournaments().find(item => item.id === selectedTournamentId);
   const eventName = tournament ? tournamentName(tournament).toLocaleUpperCase() : "\u2014";
   const eventHeading = document.getElementById("card-event-name");
   eventHeading.textContent = eventName;
@@ -470,7 +480,7 @@ tournamentInput.addEventListener("focus", () => {
 tournamentInput.addEventListener("input", () => showTournamentOptions(tournamentInput.value));
 tournamentInput.addEventListener("blur", () => {
   closeTournamentOptions();
-  const selected = tournaments.find(item => item.id === selectedTournamentId);
+  const selected = titleTournaments().find(item => item.id === selectedTournamentId);
   tournamentInput.value = selected ? tournamentLabel(selected) : "";
 });
 tournamentInput.addEventListener("keydown", event => {
@@ -493,7 +503,7 @@ tournamentInput.addEventListener("keydown", event => {
   } else if (event.key === "Escape") {
     event.preventDefault();
     closeTournamentOptions();
-    const selected = tournaments.find(item => item.id === selectedTournamentId);
+    const selected = titleTournaments().find(item => item.id === selectedTournamentId);
     tournamentInput.value = selected ? tournamentLabel(selected) : "";
   }
 });

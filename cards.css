@@ -72,8 +72,11 @@
 #tour-title-number::placeholder { color: #050505; opacity: .7; }
 #tour-title-number:focus-visible { text-decoration: underline; text-underline-offset: .1em; }
 
-/* Right-click the combined image while left-clicks still reach the editing controls. */
-#card-save-image { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+/* Keep the combined PNG visible for native right-click and touch-and-hold image saving. */
+#card-save-image { position: absolute; inset: 0; width: 100%; height: 100%; -webkit-touch-callout: default; touch-action: auto; -webkit-user-select: none; user-select: none; }
 .player-card .card-art, .player-card .card-photo, .player-card .card-content, .player-card .title-event { pointer-events: none; }
 .player-card .form-result, .player-card .card-title-value, .player-card .tour-title-number { pointer-events: auto; }
 .card-export-copy .form-result { border-color: transparent; background: transparent; }
+
+.player-card .card-content, .player-card .title-event { -webkit-user-select: none; user-select: none; }
+.player-card input { -webkit-user-select: text; user-select: text; }
