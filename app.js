@@ -140,6 +140,20 @@ function showLastTitleOptions(query) {
   lastTitleStatus.textContent = visibleLastTitles.filter(Boolean).length + " matching tournaments.";
 }
 
+function fitLastTitleText() {
+  const available = lastTitleInput.parentElement.clientWidth;
+  if (!available) return;
+  const measure = document.createElement("canvas").getContext("2d");
+  measure.font = getComputedStyle(lastTitleInput).font;
+  const text = lastTitleInput.value || lastTitleInput.placeholder;
+  const width = Math.max(available, measure.measureText(text).width + 2);
+  lastTitleInput.style.width = width + "px";
+  lastTitleInput.style.transform = width > available ? "scaleX(" + available / width + ")" : "none";
+}
+
+new ResizeObserver(fitLastTitleText).observe(lastTitleInput.parentElement);
+document.fonts.ready.then(fitLastTitleText);
+
 function renderPlayerForm(player) {
   const form = playerForm(player);
   formButtons.forEach((button, index) => {
@@ -154,9 +168,8 @@ function renderPlayerForm(player) {
   lastTitleInput.value = title ? lastTitleLabel(title) : "";
   lastTitleInput.disabled = !tournaments.length;
   lastTitleInput.placeholder = calendarFailed ? "Calendar unavailable" : tournaments.length ? "Search tournaments" : "Loading tournaments...";
-  const text = title ? lastTitleLabel(title) : "Search tournaments";
-  lastTitleInput.style.fontSize = Math.min(4.3, 112 / text.length) + "cqw";
-  lastTitleInput.title = title ? text : "Choose the latest tournament won";
+  lastTitleInput.title = title ? lastTitleLabel(title) : "Choose the latest tournament won";
+  fitLastTitleText();
   closeLastTitleOptions();
 }
 
@@ -208,12 +221,17 @@ function getAge(dob, asOf) {
   return age;
 }
 
-function tierForRank(rank) {
+function tierForRank(rank, age) {
   if (rank === 1) return "top_1";
   if (rank <= 10) return "top_10";
+  if (Number.isFinite(age) && age >= 0 && age <= 19) return "prospect";
   if (rank <= 20) return "top_20";
   if (rank <= 100) return "top_100";
   if (rank <= 200) return "top_200";
+  if (rank <= 300) return "top_300";
+  if (rank <= 400) return "top_400";
+  if (rank <= 500) return "top_500";
+  if (rank <= 600) return "top_600";
   return "top_300";
 }
 
@@ -388,6 +406,7 @@ function selectPlayer(player) {
 
 function renderCard(player) {
   const name = player.name.toLocaleUpperCase();
+  const age = getAge(player.dob, snapshotDate);
   const type = cardType.value;
   card.dataset.type = type;
   const titleDetails = document.getElementById("card-title-details");
@@ -406,8 +425,8 @@ function renderCard(player) {
   document.getElementById("card-event-category").textContent = tournament
     ? tournament.category.toLocaleUpperCase()
     : type === "wta-125" ? "WTA 125" : "WTA TOUR";
-  document.getElementById("card-age").textContent = getAge(player.dob, snapshotDate) + " ANS";
-  document.getElementById("card-country").textContent = player.country;
+  document.getElementById("card-age").textContent = age + " ANS";
+  document.getElementById("card-country").textContent = player.country + ".";
   const flag = document.getElementById("card-flag");
   // Flag filenames use the three-letter country codes from the rankings CSV.
   flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
@@ -415,12 +434,13 @@ function renderCard(player) {
   document.getElementById("card-name").style.fontSize = Math.min(10.2, 140 / name.length) + "cqw";
   document.getElementById("card-rank").parentElement.style.fontSize = String(player.rank).length > 3 ? "9cqw" : "12cqw";
   document.getElementById("card-rank-ordinal").textContent = player.rank === 1 ? "er" : "\u00e8me";
-  const tier = tierForRank(player.rank);
+  const tier = tierForRank(player.rank, age);
   card.dataset.tier = tier;
   document.getElementById("card-base").src = "assets/" + tier + "_card.png";
-  document.getElementById("card-details").src = "assets/" + tier + "_details.png";
+  const detailsTier = ["top_400", "top_500", "top_600"].includes(tier) ? "top_200" : tier;
+  document.getElementById("card-details").src = "assets/" + detailsTier + "_details.png";
   const baseBadge = document.getElementById("card-base-badge");
-  if (tier === "top_10") baseBadge.src = "assets/top_10_card.png";
+  if (tier === "top_10" || tier === "prospect") baseBadge.src = "assets/" + tier + "_card.png";
   else baseBadge.removeAttribute("src");
   document.getElementById("card-name").textContent = name;
   document.getElementById("card-rank").textContent = String(player.rank);
@@ -450,7 +470,7 @@ function renderCard(player) {
     initials.style.display = "flex";
   }
   document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + player.rank;
-  document.getElementById("svg-description").textContent = name + ", WTA singles rank " + player.rank + ", " + player.country + ", " + getAge(player.dob, snapshotDate) + " years old.";
+  document.getElementById("svg-description").textContent = name + ", WTA singles rank " + player.rank + ", " + player.country + ", " + age + " years old.";
   renderPlayerForm(player);
   renderTourTitleNumber(player);
   card.removeAttribute("hidden");

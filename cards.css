@@ -1,3 +1,4 @@
+@font-face { font-family: "Chunk Five"; src: url("assets/fonts/chunk-five-regular.otf") format("opentype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Bebas Neue"; src: url("assets/fonts/bebas-neue-regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
 .card-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; flex: 1; min-width: 0; }
 .card-controls .search-wrap { flex: 0 1 240px; width: 240px; max-width: 240px; min-width: 150px; }
@@ -14,23 +15,23 @@
 .card-rank { left: 4%; top: 3.6%; width: 22%; height: 9%; font-size: 12cqw; gap: 1.2cqw; }
 .card-rank sup { align-self: flex-start; padding-top: .1em; transform: translateX(.35cqw); font-size: .43em; line-height: 1; }
 .card-previous { top: 13.6%; height: 3.5%; font-size: 3.6cqw; text-align: center; white-space: nowrap; }
-.career-best-label { display: block; white-space: pre-line; font: 800 2cqw/1.02 "TT Bluescreens Upright", sans-serif; }
+.career-best-label { display: block; max-width: 100%; padding: .2cqw .7cqw; white-space: pre; font: 800 1.8cqw/1.1 "TT Bluescreens Upright", sans-serif; }
 .best-rank-label { display: flex; align-items: center; justify-content: center; gap: .7cqw; color: #050505; }
-.best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.4cqw/1 "TT Bluescreens", sans-serif; }
+.best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.1cqw/1 "TT Bluescreens", sans-serif; }
 #best-rank-value { color: #fff; -webkit-text-stroke: .25cqw #000; paint-order: stroke fill; }
-#best-rank-year { color: #050505; font: 800 2.8cqw/1 "TT Bluescreens Upright", sans-serif; }
-.best-rank-label.long-rank .best-position { font-size: 3.6cqw; }
+#best-rank-year { transform: translateY(-1px); color: #050505; font: 800 2.8cqw/1 "TT Bluescreens Upright", sans-serif; }
+.best-rank-label.long-rank .best-position { font-size: 3.4cqw; }
 .best-rank-label.long-rank #best-rank-year { font-size: 2.5cqw; }
 .best-position sup { margin-top: .18cqw; font-size: .45em; color: #050505; }
-.card-form { left: 21%; top: 86.3%; width: 51%; height: 6.5cqw; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: .25cqw; }
+.card-form { left: 20%; top: 87.1%; width: 52%; height: 6.5cqw; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: .25cqw; }
 .form-result { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0; border: .08cqw solid #071e3640; border-radius: .35cqw; background: #ffffff18; color: #15564c; font: 900 5.8cqw/1 Arial, sans-serif; cursor: pointer; }
 .form-result[data-result="win"], .form-result[data-result="loss"] { border-color: transparent; background: transparent; -webkit-text-stroke: .14cqw #050505; paint-order: stroke fill; }
 .form-result[data-result="win"] { color: #00c87d; }
 .form-result[data-result="loss"] { color: #ff3131; }
 .form-result:hover { background: #ffffff35; }
 .form-result:focus-visible { outline: .2cqw solid #440268; outline-offset: .15cqw; }
-.card-title-value { left: 30%; top: 93.1%; width: 47%; height: 5.8cqw; min-width: 0; font-size: 4.3cqw; }
-#last-title-search { display: block; width: 100%; height: 100%; min-width: 0; border: 0; border-radius: 0; padding: .3cqw 0; background: transparent; outline: none; appearance: none; color: #440268; font: inherit; text-overflow: ellipsis; }
+.card-title-value { left: 30%; top: 93.1%; width: 47%; height: 5.8cqw; min-width: 0; font-size: 6cqw; }
+#last-title-search { display: block; width: 100%; height: 100%; min-width: 0; border: 0; border-radius: 0; padding: .3cqw 0; background: transparent; outline: none; appearance: none; transform-origin: left center; color: #440268; font: inherit; text-overflow: ellipsis; }
 #last-title-search::placeholder { color: #440268b3; }
 #last-title-search::-webkit-search-cancel-button { display: none; }
 #last-title-search:focus-visible { text-decoration: underline; text-underline-offset: .15em; }
@@ -51,7 +52,7 @@
 .player-card[data-type="wta-tour"] .card-content { transform: rotate(1.2deg); }
 .player-card[data-type="wta-125"] .title-event, .player-card[data-type="wta-tour"] .title-event { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; left: 50%; transform: translateX(-50%); top: .85%; width: 32%; height: 7.9%; padding: .4% .5%; border-radius: 1.1cqw; background: #7ed957; color: #fff; box-shadow: 0 .4cqw 1.2cqw #142a3640; }
 .title-event strong { display: block; flex: none; width: 100%; text-align: center; transform: translateY(.7cqw); font: 400 7.7cqw/.75 "Bebas Neue", sans-serif; white-space: nowrap; text-shadow: .1cqw .3cqw .5cqw #16392355; }
-.title-event span { display: block; flex: none; width: 100%; text-align: center; font: 400 2.4cqw/1 "Bebas Neue", sans-serif; }
+.title-event span { display: block; flex: none; width: 100%; text-align: center; font: 400 2.4cqw/1 "Chunk Five", serif; }
 .player-card[data-type="wta-tour"] .title-event { background: #699694; }
 .player-card[data-type="wta-125"] .card-form, .player-card[data-type="wta-125"] .card-title-value, .player-card[data-type="wta-125"] .card-age, .player-card[data-type="wta-125"] .card-nationality,
 .player-card[data-type="wta-tour"] .card-form, .player-card[data-type="wta-tour"] .card-title-value, .player-card[data-type="wta-tour"] .card-age, .player-card[data-type="wta-tour"] .card-nationality { display: none; }
@@ -60,9 +61,10 @@
 @media (max-width: 480px) { .card-controls { flex-direction: column; align-items: stretch; gap: 10px; } .card-controls .search-wrap { flex: none; width: 100%; max-width: none; } #card-type, .tournament-wrap { flex: none; max-width: none; width: 100%; } }
 
 .player-card[data-tier="top_1"] .card-rank, .player-card[data-tier="top_1"] .card-previous { display: none; }
-/* The top-10 badge is baked into the base and extends over the portrait. */
+/* These badges are baked into the base and extend over the portrait. */
 .card-base-badge { display: none; clip-path: polygon(85.42% 0, 100% 0, 100% 6.39%, 95.56% 18.06%, 94.58% 18.83%, 80.56% 18.83%, 79.24% 18.33%, 79.03% 17.39%); }
 .player-card[data-tier="top_10"] .card-base-badge { display: block; }
+.player-card[data-tier="prospect"] .card-base-badge { display: block; clip-path: polygon(82.5% 0, 100% 0, 100% 10.8%, 97.2% 10.8%, 90.7% 12.6%, 82.5% 5%); }
 .title-details { pointer-events: none; }
 
 .tour-title-number { display: none; position: absolute; left: 22.6%; top: 12.1%; height: 3.4%; color: #050505; font: 800 4.8cqw/1 "TT Bluescreens Upright", sans-serif; }

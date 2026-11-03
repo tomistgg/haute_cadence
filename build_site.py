@@ -7,12 +7,15 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-SOURCE = ROOT / "wta_rankings_20_29.csv"
+SOURCES = [ROOT / f"wta_rankings_{period}.csv" for period in ("83_99", "00_09", "10_19", "20_29")]
 CALENDAR = ROOT / "calendar_snapshot.json"
-CAREER_BESTS = ROOT / "career_bests.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "assets/prospect_card.png": ROOT / "assets" / "prospect_card.png",
+    "assets/prospect_details.png": ROOT / "assets" / "prospect_details.png",
+    "assets/fonts/chunk-five-regular.otf": ROOT / "assets" / "Chunk_Five" / "ChunkFive-Regular.otf",
+    "assets/fonts/chunk-five-OFL.markdown": ROOT / "assets" / "Chunk_Five" / "OFL.markdown",
     "export-card.js": ROOT / "export-card.js",
     "assets/vendor/html-to-image-1.11.13.js": ROOT / "assets" / "vendor" / "html-to-image-1.11.13.js",
     "assets/vendor/html-to-image-LICENSE": ROOT / "assets" / "vendor" / "html-to-image-LICENSE",
@@ -41,6 +44,9 @@ ASSETS = {
     "assets/top_200_card.png": ROOT / "assets" / "top_200_card.png",
     "assets/top_200_details.png": ROOT / "assets" / "top_200_details.png",
     "assets/top_300_card.png": ROOT / "assets" / "top_300_card.png",
+    "assets/top_400_card.png": ROOT / "assets" / "top_400_card.png",
+    "assets/top_500_card.png": ROOT / "assets" / "top_500_card.png",
+    "assets/top_600_card.png": ROOT / "assets" / "top_600_card.png",
     # shortcut: Use the approved beige overlay until top_300_details.png is supplied.
     "assets/top_300_details.png": (
         ROOT / "assets" / "top_300_details.png"
@@ -68,36 +74,41 @@ ASSETS.update({
 def main() -> None:
     if not CALENDAR.is_file():
         raise SystemExit(f"Missing calendar JSON: {CALENDAR}")
-    if not SOURCE.is_file():
-        raise SystemExit(f"Missing ranking CSV: {SOURCE}")
+    for source in SOURCES:
+        if not source.is_file():
+            raise SystemExit(f"Missing ranking CSV: {source}")
 
     latest_date = ""
     previous_date = ""
     latest: dict[str, dict[str, str]] = {}
     previous: dict[str, dict[str, str]] = {}
-    historical_bests = json.loads(CAREER_BESTS.read_text(encoding="utf-8"))["players"]
-    best_rank = {player_id: int(record["rank"]) for player_id, record in historical_bests.items()}
-    best_rank_date = {player_id: record["date"] for player_id, record in historical_bests.items()}
+    best_rank: dict[str, int] = {}
+    best_rank_date: dict[str, str] = {}
 
-    with SOURCE.open(encoding="utf-8-sig", newline="") as handle:
-        for row in csv.DictReader(handle):
-            player_id = row["id"]
-            week = row["week_date"]
-            rank = int(row["rank"])
-            if player_id not in best_rank or (rank, week) < (best_rank[player_id], best_rank_date[player_id]):
-                best_rank[player_id] = rank
-                best_rank_date[player_id] = week
+    for source in SOURCES:
+        with source.open(encoding="utf-8-sig", newline="") as handle:
+            for row in csv.DictReader(handle):
+                player_id = row["id"]
+                week = row["week_date"]
+                rank = int(row["rank"])
+                if (
+                    player_id not in best_rank
+                    or rank < best_rank[player_id]
+                    or (rank == best_rank[player_id] and week > best_rank_date[player_id])
+                ):
+                    best_rank[player_id] = rank
+                    best_rank_date[player_id] = week
 
-            if week > latest_date:
-                previous_date, previous = latest_date, latest
-                latest_date, latest = week, {}
-            elif latest_date and previous_date < week < latest_date:
-                previous_date, previous = week, {}
+                if week > latest_date:
+                    previous_date, previous = latest_date, latest
+                    latest_date, latest = week, {}
+                elif latest_date and previous_date < week < latest_date:
+                    previous_date, previous = week, {}
 
-            if week == latest_date:
-                latest[player_id] = row
-            elif week == previous_date:
-                previous[player_id] = row
+                if week == latest_date:
+                    latest[player_id] = row
+                elif week == previous_date:
+                    previous[player_id] = row
 
     if not latest:
         raise SystemExit("The ranking CSV contains no ranking rows.")
