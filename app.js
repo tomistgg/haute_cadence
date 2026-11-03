@@ -4,6 +4,16 @@ const searchInput = document.getElementById("player-search");
 const options = document.getElementById("player-options");
 const status = document.getElementById("search-status");
 const card = document.getElementById("player-card");
+const cardDesign = document.getElementById("card-design");
+
+function scaleCardDesign() {
+  const width = card.getBoundingClientRect().width;
+  if (!width) return;
+  const scale = String(width / cardDesign.offsetWidth);
+  if (card.style.getPropertyValue("--card-scale") !== scale) card.style.setProperty("--card-scale", scale);
+}
+
+new ResizeObserver(scaleCardDesign).observe(card);
 const cardType = document.getElementById("card-type");
 const tournamentWrap = document.getElementById("tournament-search-wrap");
 const tournamentInput = document.getElementById("tournament-search");
@@ -474,6 +484,7 @@ function renderCard(player) {
   renderPlayerForm(player);
   renderTourTitleNumber(player);
   card.removeAttribute("hidden");
+  scaleCardDesign();
 }
 
 function moveActive(direction) {

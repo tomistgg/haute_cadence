@@ -10,6 +10,9 @@
 .tournament-meta { color: #a9c5d2; font-size: .75rem; }
 .tournament-empty { padding: 14px; color: #a9c5d2; font-size: .85rem; }
 #tournament-search:disabled { color: #a9c5d2; cursor: default; }
+/* Lay out the artwork once, then scale the complete design to the preview width. */
+.card-design { position: absolute; left: 0; top: 0; width: 1440px; height: 1800px; container-type: inline-size; transform-origin: top left; transform: scale(var(--card-scale, 1)); pointer-events: none; }
+.player-card { -webkit-text-size-adjust: none; text-size-adjust: none; }
 .card-content { position: absolute; container-type: inline-size; inset: 0; }
 .card-name { top: .6%; height: 8.8%; font-size: 10.2cqw; }
 .card-rank { left: 4%; top: 3.6%; width: 22%; height: 9%; font-size: 12cqw; gap: 1.2cqw; }
@@ -19,7 +22,7 @@
 .best-rank-label { display: flex; align-items: center; justify-content: center; gap: .7cqw; color: #050505; }
 .best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.1cqw/1 "TT Bluescreens", sans-serif; }
 #best-rank-value { color: #fff; -webkit-text-stroke: .25cqw #000; paint-order: stroke fill; }
-#best-rank-year { transform: translateY(-1px); color: #050505; font: 800 2.8cqw/1 "TT Bluescreens Upright", sans-serif; }
+#best-rank-year { transform: translateY(-2.4px); color: #050505; font: 800 2.8cqw/1 "TT Bluescreens Upright", sans-serif; }
 .best-rank-label.long-rank .best-position { font-size: 3.4cqw; }
 .best-rank-label.long-rank #best-rank-year { font-size: 2.5cqw; }
 .best-position sup { margin-top: .18cqw; font-size: .45em; color: #050505; }
@@ -35,11 +38,11 @@
 #last-title-search::placeholder { color: #440268b3; }
 #last-title-search::-webkit-search-cancel-button { display: none; }
 #last-title-search:focus-visible { text-decoration: underline; text-underline-offset: .15em; }
-#last-title-options { top: auto; bottom: calc(100% + .8cqw); left: auto; right: 0; width: min(70cqw, 420px); max-height: 46cqw; overflow-y: auto; border-color: #44026866; border-radius: 1.4cqw; background: #edfff4ed; backdrop-filter: blur(12px); color: #440268; box-shadow: 0 .8cqw 2.4cqw #162e4555; }
-#last-title-options .suggestion { padding: 1.6cqw; color: #440268; border-color: #44026822; font: 500 clamp(12px, 2.2cqw, 15px)/1.25 Arial, sans-serif; }
+#last-title-options { top: auto; bottom: calc(100% + .8cqw); left: auto; right: 0; width: min(70cqw, calc(420px / var(--card-scale, 1))); max-height: 46cqw; overflow-y: auto; border-color: #44026866; border-radius: 1.4cqw; background: #edfff4ed; backdrop-filter: blur(12px); color: #440268; box-shadow: 0 .8cqw 2.4cqw #162e4555; }
+#last-title-options .suggestion { padding: 1.6cqw; color: #440268; border-color: #44026822; font: 500 clamp(calc(12px / var(--card-scale, 1)), 2.2cqw, calc(15px / var(--card-scale, 1)))/1.25 Arial, sans-serif; }
 #last-title-options .suggestion:hover, #last-title-options .suggestion[aria-selected="true"] { background: #44026818; }
 #last-title-options .tournament-meta { color: #5c4770; font-size: .8em; }
-#last-title-options .tournament-empty { color: #440268; font: 400 14px/1.3 Arial, sans-serif; }
+#last-title-options .tournament-empty { color: #440268; font: 400 calc(14px / var(--card-scale, 1))/1.3 Arial, sans-serif; }
 @media (min-width: 851px) { .player-card { width: min(100%, 600px); } }
 .card-age { position: absolute; top: 83.5%; left: 76%; width: 19%; color: #440268; text-align: center; font: italic 800 6.7cqw/1 "TT Bluescreens", sans-serif; }
 .card-nationality { position: absolute; left: 79.9%; top: 90.2%; display: flex; align-items: flex-start; gap: .4cqw; }
