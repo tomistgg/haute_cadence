@@ -22,6 +22,14 @@ let snapshotDate = "";
 let activeIndex = -1;
 let visiblePlayers = [];
 
+const TOURNAMENT_NAME_OVERRIDES = {
+  "WTA 500 Perth + Sydney": "United Cup",
+  "Grand Slam Melbourne": "Australian Open",
+  "Grand Slam Paris": "Roland Garros",
+  "Grand Slam Wimbledon": "Wimbledon",
+  "Grand Slam New York": "US Open"
+};
+
 const photoByName = new Map([
   ["alina charaeva", "assets/players/alina-charaeva.jpg"],
   ["leylah fernandez", "assets/players/leylah-fernandez.png"],
@@ -88,14 +96,14 @@ function yearTournaments(data, year = new Date().getFullYear()) {
   return [...found.values()].sort((a, b) => a.startDate.localeCompare(b.startDate) || a.name.localeCompare(b.name));
 }
 
-function eligibleTournaments() {
-  return tournaments.filter(item => cardType.value === "wta-125"
-    ? item.category === "WTA 125"
-    : item.category !== "WTA 125");
+function tournamentName(item) {
+  const lookup = normalize((item.category || item.level) + " " + (item.city || "")).replace(/\s/g, "");
+  const override = Object.entries(TOURNAMENT_NAME_OVERRIDES).find(([key]) => normalize(key).replace(/\s/g, "") === lookup);
+  return override ? override[1] : item.city || item.name.replace(/^WTA\s*125\s*/i, "");
 }
 
 function tournamentLabel(item) {
-  return (item.city || item.name) + " (" + item.category + ")";
+  return tournamentName(item) + " (" + item.category + ")";
 }
 
 function closeTournamentOptions() {
@@ -118,8 +126,8 @@ function selectTournament(item) {
 function showTournamentOptions(query) {
   tournamentQuery = query;
   const needle = normalize(query.trim());
-  visibleTournaments = eligibleTournaments().filter(item => normalize(
-    [item.city, item.name, item.category, item.country, item.startDate].join(" ")
+  visibleTournaments = tournaments.filter(item => normalize(
+    [tournamentName(item), item.city, item.name, item.category, item.country, item.startDate].join(" ")
   ).includes(needle));
   tournamentActiveIndex = -1;
   tournamentInput.removeAttribute("aria-activedescendant");
@@ -161,17 +169,16 @@ function updateTournamentSearch() {
   const open = tournamentOptions.classList.contains("open");
   const editing = document.activeElement === tournamentInput;
   tournaments = calendar ? yearTournaments(calendar) : [];
-  const eligible = eligibleTournaments();
-  tournamentInput.disabled = !eligible.length;
+  tournamentInput.disabled = !tournaments.length;
   tournamentInput.placeholder = !calendar
     ? calendarFailed ? "Calendar unavailable" : "Loading tournaments..."
-    : eligible.length ? "Search " + new Date().getFullYear() + " tournaments" : "No tournaments for this year";
-  if (!eligible.some(item => item.id === selectedTournamentId)) selectedTournamentId = "";
+    : tournaments.length ? "Search " + new Date().getFullYear() + " tournaments" : "No tournaments for this year";
+  if (!tournaments.some(item => item.id === selectedTournamentId)) selectedTournamentId = "";
   if (!editing) {
-    const selected = eligible.find(item => item.id === selectedTournamentId);
+    const selected = tournaments.find(item => item.id === selectedTournamentId);
     tournamentInput.value = selected ? tournamentLabel(selected) : "";
   }
-  if (open && editing && eligible.length) showTournamentOptions(tournamentQuery);
+  if (open && editing && tournaments.length) showTournamentOptions(tournamentQuery);
   else closeTournamentOptions();
 }
 
@@ -220,7 +227,7 @@ function renderCard(player) {
   if (type === "form") titleDetails.removeAttribute("src");
   else titleDetails.src = "assets/" + (type === "wta-tour" ? "wtatour" : "wta125") + "_title_details.png";
   const tournament = type === "form" ? null : tournaments.find(item => item.id === selectedTournamentId);
-  const eventName = tournament ? (tournament.city || tournament.name.replace(/^WTA\s*125\s*/i, "")).toLocaleUpperCase() : "\u2014";
+  const eventName = tournament ? tournamentName(tournament).toLocaleUpperCase() : "\u2014";
   const eventHeading = document.getElementById("card-event-name");
   eventHeading.textContent = eventName;
   eventHeading.style.fontSize = Math.min(7.7, 110 / eventName.length) + "cqw";
@@ -303,7 +310,7 @@ tournamentInput.addEventListener("focus", () => {
 tournamentInput.addEventListener("input", () => showTournamentOptions(tournamentInput.value));
 tournamentInput.addEventListener("blur", () => {
   closeTournamentOptions();
-  const selected = eligibleTournaments().find(item => item.id === selectedTournamentId);
+  const selected = tournaments.find(item => item.id === selectedTournamentId);
   tournamentInput.value = selected ? tournamentLabel(selected) : "";
 });
 tournamentInput.addEventListener("keydown", event => {
@@ -326,7 +333,7 @@ tournamentInput.addEventListener("keydown", event => {
   } else if (event.key === "Escape") {
     event.preventDefault();
     closeTournamentOptions();
-    const selected = eligibleTournaments().find(item => item.id === selectedTournamentId);
+    const selected = tournaments.find(item => item.id === selectedTournamentId);
     tournamentInput.value = selected ? tournamentLabel(selected) : "";
   }
 });

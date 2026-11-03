@@ -28,14 +28,14 @@
 .card-nationality { position: absolute; left: 79.9%; top: 90.2%; display: flex; align-items: flex-start; gap: .4cqw; }
 .card-flag { display: block; flex: none; width: 9cqw; height: 9cqw; border: .3cqw solid #050505; border-radius: 50%; object-fit: cover; background: #fff; }
 .card-country { display: block; padding-top: .35cqw; color: #050505; font: 800 4cqw/.95 "TT Bluescreens Upright", sans-serif; white-space: nowrap; }
-.title-event { display: none; }
+.title-event { display: none; gap: .8cqw; }
 .player-card[data-type="wta-125"], .player-card[data-type="wta-tour"] { background: url("assets/title-court.svg") center / cover; }
 .player-card[data-type="wta-tour"] { background-image: url("assets/tour-court.svg"); }
 .player-card[data-type="wta-125"] .card-content, .player-card[data-type="wta-tour"] .card-content { inset: 9.85% 6.3% 2.5%; }
 .player-card[data-type="wta-tour"] .card-content { transform: rotate(1.2deg); }
-.player-card[data-type="wta-125"] .title-event, .player-card[data-type="wta-tour"] .title-event { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; left: 50%; transform: translateX(-50%); top: .85%; width: 32%; height: 7.9%; padding: .5%; border-radius: 1.1cqw; background: #7ed957; color: #fff; box-shadow: 0 .4cqw 1.2cqw #142a3640; }
-.title-event strong { position: absolute; left: 3%; right: 3%; top: 8%; text-align: center; font: 400 7.7cqw/.9 "Bebas Neue", sans-serif; white-space: nowrap; text-shadow: .1cqw .3cqw .5cqw #16392355; }
-.title-event span { position: absolute; left: 0; right: 0; bottom: 8%; text-align: center; font: 400 2.8cqw/1.05 "Bebas Neue", sans-serif; }
+.player-card[data-type="wta-125"] .title-event, .player-card[data-type="wta-tour"] .title-event { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; left: 50%; transform: translateX(-50%); top: .85%; width: 32%; height: 7.9%; padding: .4% .5%; border-radius: 1.1cqw; background: #7ed957; color: #fff; box-shadow: 0 .4cqw 1.2cqw #142a3640; }
+.title-event strong { display: block; flex: none; width: 100%; text-align: center; transform: translateY(.7cqw); font: 400 7.7cqw/.75 "Bebas Neue", sans-serif; white-space: nowrap; text-shadow: .1cqw .3cqw .5cqw #16392355; }
+.title-event span { display: block; flex: none; width: 100%; text-align: center; font: 400 2.4cqw/1 "Bebas Neue", sans-serif; }
 .player-card[data-type="wta-tour"] .title-event { background: #699694; }
 .player-card[data-type="wta-125"] .card-form, .player-card[data-type="wta-125"] .card-title-value, .player-card[data-type="wta-125"] .card-age, .player-card[data-type="wta-125"] .card-nationality,
 .player-card[data-type="wta-tour"] .card-form, .player-card[data-type="wta-tour"] .card-title-value, .player-card[data-type="wta-tour"] .card-age, .player-card[data-type="wta-tour"] .card-nationality { display: none; }
