@@ -52,7 +52,7 @@
     @font-face { font-family: "TT Bluescreens Upright"; src: url("assets/fonts/tt-bluescreens-extra-bold.ttf") format("truetype"); font-style: normal; font-weight: 800; font-display: swap; }
   </style>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=50b7509b383f">
+  <link rel="stylesheet" href="cards.css?v=722dac8a97e1">
 </head>
 <body>
   <main class="page">
@@ -81,6 +81,7 @@
     </header>
     <section class="card-stage" aria-label="Selected player card">
       <div class="player-card" id="player-card" role="group" aria-labelledby="svg-title svg-description" data-type="form" hidden>
+        <img id="card-save-image" alt="Complete player card: right-click to save" hidden>
         <div class="title-event" aria-hidden="true"><strong id="card-event-name">&#8212;</strong><span id="card-event-category">WTA 125</span></div>
         <div class="card-content">
         <span class="sr-only" id="svg-title">Haute Cadence WTA player card</span>
@@ -110,9 +111,15 @@
 
         </div>
         <img class="card-art title-details" id="card-title-details" alt="" hidden>
+        <div class="tour-title-number">
+          <input id="tour-title-number" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" autocomplete="off" placeholder="&#8212;" aria-label="WTA Tour title number" title="Type the WTA Tour title number">
+          <span id="tour-title-ordinal" aria-hidden="true" hidden>E</span>
+        </div>
       </div>
     </section>
   </main>
-  <script src="app.js?v=014b1164b9f4" defer></script>
+  <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
+  <script src="app.js?v=184891db3db5" defer></script>
+  <script src="export-card.js?v=6c67fcf36039" defer></script>
 </body>
 </html>

@@ -1,0 +1,89 @@
+"use strict";
+
+const cardSaveImage = document.getElementById("card-save-image");
+let exportVersion = 0;
+let savedExportVersion = -1;
+let exportTimer;
+let exportRunning = false;
+const exportFontsReady = Promise.all([...document.fonts].map(font => font.load()));
+let exportFontCSS;
+
+function scheduleCardExport() {
+  exportVersion += 1;
+  clearTimeout(exportTimer);
+  exportTimer = setTimeout(renderCardExport, 150);
+}
+
+async function renderCardExport() {
+  if (card.hidden || exportRunning) return;
+  exportRunning = true;
+  const version = exportVersion;
+  let copy;
+  try {
+    await exportFontsReady;
+    await document.fonts.ready;
+    await Promise.all([...card.querySelectorAll("img")]
+      .filter(image => image !== cardSaveImage && image.getAttribute("src") && !image.hidden)
+      .map(image => image.decode()));
+    const width = card.offsetWidth;
+    const height = card.offsetHeight;
+    copy = card.cloneNode(true);
+    copy.removeAttribute("id");
+    copy.classList.add("card-export-copy");
+    copy.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;height:${height}px;box-shadow:none;margin:0;`;
+    copy.querySelectorAll("#card-save-image, .suggestions, .sr-only").forEach(node => node.remove());
+    copy.querySelectorAll("img").forEach(image => {
+      if (image.hidden || !image.getAttribute("src")) image.remove();
+    });
+    const originalInputs = [...card.querySelectorAll("input")];
+    copy.querySelectorAll("input").forEach((input, index) => {
+      const source = originalInputs[index];
+      const text = document.createElement("span");
+      const style = getComputedStyle(source);
+      for (const property of style) text.style.setProperty(property, style.getPropertyValue(property));
+      text.style.display = "flex";
+      text.style.alignItems = "center";
+      text.style.textDecoration = "none";
+      if (source === lastTitleInput) {
+        const title = tournaments.find(item => item.id === playerForm(selectedPlayer).lastTitleId);
+        text.textContent = title ? lastTitleLabel(title) : "\u2014";
+      } else text.textContent = source.value || "\u2014";
+      input.replaceWith(text);
+    });
+    document.body.append(copy);
+    if (!exportFontCSS) {
+      exportFontCSS = (await htmlToImage.getFontEmbedCSS(copy))
+        .replace(/font-display:\s*swap/g, "font-display: block");
+    }
+    const png = await htmlToImage.toPng(copy, {
+      width, height, canvasWidth: 1440, canvasHeight: 1800, pixelRatio: 1,
+      fontEmbedCSS: exportFontCSS,
+      style: { position: "relative", inset: "0 auto auto 0", insetInline: "0 auto", insetBlock: "0 auto" }
+    });
+    if (version === exportVersion) {
+      cardSaveImage.src = png;
+      await cardSaveImage.decode();
+      cardSaveImage.hidden = false;
+      savedExportVersion = version;
+    }
+  } catch (error) {
+    console.error("Could not prepare the complete card image", error);
+    status.textContent = "The complete card image could not be prepared. Please reload and try again.";
+  } finally {
+    if (copy) copy.remove();
+    exportRunning = false;
+    if (version !== exportVersion) exportTimer = setTimeout(renderCardExport, 150);
+  }
+}
+
+new MutationObserver(changes => {
+  if (changes.some(change => change.target !== cardSaveImage &&
+      !change.target.parentElement?.closest("#card-save-image, .suggestions") &&
+      !change.attributeName?.startsWith("aria-"))) scheduleCardExport();
+}).observe(card, { subtree: true, childList: true, characterData: true, attributes: true });
+new ResizeObserver(scheduleCardExport).observe(card);
+card.addEventListener("click", scheduleCardExport);
+card.addEventListener("input", event => {
+  if (event.target === tourTitleNumber) scheduleCardExport();
+});
+scheduleCardExport();

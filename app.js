@@ -10,6 +10,8 @@ const tournamentInput = document.getElementById("tournament-search");
 const tournamentOptions = document.getElementById("tournament-options");
 const tournamentStatus = document.getElementById("tournament-status");
 const formResults = document.getElementById("form-results");
+const tourTitleNumber = document.getElementById("tour-title-number");
+const tourTitleOrdinal = document.getElementById("tour-title-ordinal");
 const lastTitleInput = document.getElementById("last-title-search");
 const lastTitleOptions = document.getElementById("last-title-options");
 const lastTitleStatus = document.getElementById("last-title-status");
@@ -47,10 +49,25 @@ const photoByName = new Map([
 
 function playerForm(player) {
   if (!manualForms.has(player.id)) {
-    manualForms.set(player.id, { results: Array(10).fill(""), lastTitleId: "" });
+    manualForms.set(player.id, { results: Array(10).fill(""), lastTitleId: "", tourTitleNumber: "" });
   }
   return manualForms.get(player.id);
 }
+
+function renderTourTitleNumber(player) {
+  const number = playerForm(player).tourTitleNumber;
+  tourTitleNumber.value = number;
+  tourTitleNumber.style.width = Math.max(1, number.length) + "ch";
+  tourTitleNumber.parentElement.classList.toggle("wide", number.length > 2);
+  tourTitleOrdinal.hidden = !number;
+}
+
+tourTitleNumber.addEventListener("input", () => {
+  if (!selectedPlayer) return;
+  playerForm(selectedPlayer).tourTitleNumber = tourTitleNumber.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 3);
+  renderTourTitleNumber(selectedPlayer);
+});
+tourTitleNumber.addEventListener("focus", () => tourTitleNumber.select());
 
 const formButtons = Array.from({ length: 10 }, (_, index) => {
   const button = document.createElement("button");
@@ -362,7 +379,6 @@ function selectPlayer(player) {
 function renderCard(player) {
   const name = player.name.toLocaleUpperCase();
   const type = cardType.value;
-  // shortcut: Title counts stay blank until results data is supplied.
   card.dataset.type = type;
   const titleDetails = document.getElementById("card-title-details");
   titleDetails.hidden = type === "form";
@@ -426,6 +442,7 @@ function renderCard(player) {
   document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + player.rank;
   document.getElementById("svg-description").textContent = name + ", WTA singles rank " + player.rank + ", " + player.country + ", " + getAge(player.dob, snapshotDate) + " years old.";
   renderPlayerForm(player);
+  renderTourTitleNumber(player);
   card.removeAttribute("hidden");
 }
 

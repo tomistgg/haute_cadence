@@ -64,3 +64,16 @@
 .card-base-badge { display: none; clip-path: polygon(85.42% 0, 100% 0, 100% 6.39%, 95.56% 18.06%, 94.58% 18.83%, 80.56% 18.83%, 79.24% 18.33%, 79.03% 17.39%); }
 .player-card[data-tier="top_10"] .card-base-badge { display: block; }
 .title-details { pointer-events: none; }
+
+.tour-title-number { display: none; position: absolute; left: 22.6%; top: 12.1%; height: 3.4%; color: #050505; font: 800 4.8cqw/1 "TT Bluescreens Upright", sans-serif; }
+.player-card[data-type="wta-tour"] .tour-title-number { display: flex; align-items: center; gap: .1cqw; }
+.tour-title-number.wide { font-size: 4cqw; }
+#tour-title-number { box-sizing: content-box; width: 1ch; min-width: 1ch; padding: 0; border: 0; border-radius: 0; outline: none; appearance: none; background: transparent; color: inherit; font: inherit; line-height: 1; }
+#tour-title-number::placeholder { color: #050505; opacity: .7; }
+#tour-title-number:focus-visible { text-decoration: underline; text-underline-offset: .1em; }
+
+/* Right-click the combined image while left-clicks still reach the editing controls. */
+#card-save-image { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.player-card .card-art, .player-card .card-photo, .player-card .card-content, .player-card .title-event { pointer-events: none; }
+.player-card .form-result, .player-card .card-title-value, .player-card .tour-title-number { pointer-events: auto; }
+.card-export-copy .form-result { border-color: transparent; background: transparent; }

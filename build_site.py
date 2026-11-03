@@ -13,6 +13,9 @@ CAREER_BESTS = ROOT / "career_bests.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "export-card.js": ROOT / "export-card.js",
+    "assets/vendor/html-to-image-1.11.13.js": ROOT / "assets" / "vendor" / "html-to-image-1.11.13.js",
+    "assets/vendor/html-to-image-LICENSE": ROOT / "assets" / "vendor" / "html-to-image-LICENSE",
     "assets/flags/LICENSE": ROOT / "assets" / "flags" / "LICENSE",
     "assets/fonts/bebas-neue-regular.ttf": ROOT / "assets" / "Bebas_Neue" / "BebasNeue-Regular.ttf",
     "assets/fonts/bebas-neue-OFL.txt": ROOT / "assets" / "Bebas_Neue" / "OFL.txt",
@@ -123,7 +126,7 @@ def main() -> None:
         shutil.copy2(source, target)
 
     page = (ROOT / "index.html").read_text(encoding="utf-8")
-    for filename in ("app.js", "cards.css"):
+    for filename in ("app.js", "cards.css", "export-card.js"):
         version = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:12]
         page = page.replace(f'"{filename}"', f'"{filename}?v={version}"')
     (DIST / "index.html").write_text(page, encoding="utf-8")
