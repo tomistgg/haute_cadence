@@ -80,7 +80,7 @@
       </div>
     </header>
     <section class="card-stage" aria-label="Selected player card">
-      <div class="player-card" id="player-card" role="img" aria-labelledby="svg-title svg-description" data-type="form" hidden>
+      <div class="player-card" id="player-card" role="group" aria-labelledby="svg-title svg-description" data-type="form" hidden>
         <div class="title-event" aria-hidden="true"><strong id="card-event-name">&#8212;</strong><span id="card-event-category">WTA 125</span></div>
         <div class="card-content">
         <span class="sr-only" id="svg-title">Haute Cadence WTA player card</span>
@@ -96,8 +96,12 @@
           <span id="career-best-label" class="career-best-label" hidden></span>
           <span id="best-rank-label" class="best-rank-label"><span class="best-position"><span id="best-rank-value"></span><sup>e</sup></span><span id="best-rank-year"></span></span>
         </span>
-        <span class="card-form" aria-hidden="true">&#8212;</span>
-        <span class="card-title-value" aria-hidden="true">&#8212;</span>
+        <div class="card-form" id="form-results" role="group" aria-label="Last ten match results, oldest to newest"></div>
+        <div class="card-title-value" id="last-title-wrap">
+          <input id="last-title-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-label="Dernier titre: search tournaments" aria-autocomplete="list" aria-controls="last-title-options" aria-expanded="false" disabled>
+          <div class="suggestions" id="last-title-options" role="listbox" aria-label="Latest title tournaments"></div>
+          <span class="sr-only" id="last-title-status" aria-live="polite"></span>
+        </div>
         <span class="card-age" id="card-age"></span>
         <div class="card-nationality">
           <img class="card-flag" id="card-flag" alt="">

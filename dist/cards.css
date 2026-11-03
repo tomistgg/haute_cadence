@@ -22,8 +22,24 @@
 .best-rank-label.long-rank .best-position { font-size: 3.6cqw; }
 .best-rank-label.long-rank #best-rank-year { font-size: 2.5cqw; }
 .best-position sup { margin-top: .18cqw; font-size: .45em; color: #050505; }
-.card-form { left: 21%; top: 86.3%; width: 51%; font: 400 7cqw/1 "Barriecito", sans-serif; }
-.card-title-value { left: 30%; top: 93.6%; width: 47%; font-size: 4.3cqw; }
+.card-form { left: 21%; top: 86.3%; width: 51%; height: 6.5cqw; display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: .25cqw; }
+.form-result { display: flex; align-items: center; justify-content: center; min-width: 0; padding: 0; border: .08cqw solid #071e3640; border-radius: .35cqw; background: #ffffff18; color: #15564c; font: 900 5.8cqw/1 Arial, sans-serif; cursor: pointer; }
+.form-result[data-result="win"], .form-result[data-result="loss"] { border-color: transparent; background: transparent; -webkit-text-stroke: .14cqw #050505; paint-order: stroke fill; }
+.form-result[data-result="win"] { color: #00c87d; }
+.form-result[data-result="loss"] { color: #ff3131; }
+.form-result:hover { background: #ffffff35; }
+.form-result:focus-visible { outline: .2cqw solid #440268; outline-offset: .15cqw; }
+.card-title-value { left: 30%; top: 93.1%; width: 47%; height: 5.8cqw; min-width: 0; font-size: 4.3cqw; }
+#last-title-search { display: block; width: 100%; height: 100%; min-width: 0; border: 0; border-radius: 0; padding: .3cqw 0; background: transparent; outline: none; appearance: none; color: #440268; font: inherit; text-overflow: ellipsis; }
+#last-title-search::placeholder { color: #440268b3; }
+#last-title-search::-webkit-search-cancel-button { display: none; }
+#last-title-search:focus-visible { text-decoration: underline; text-underline-offset: .15em; }
+#last-title-options { top: auto; bottom: calc(100% + .8cqw); left: auto; right: 0; width: min(70cqw, 420px); max-height: 46cqw; overflow-y: auto; border-color: #44026866; border-radius: 1.4cqw; background: #edfff4ed; backdrop-filter: blur(12px); color: #440268; box-shadow: 0 .8cqw 2.4cqw #162e4555; }
+#last-title-options .suggestion { padding: 1.6cqw; color: #440268; border-color: #44026822; font: 500 clamp(12px, 2.2cqw, 15px)/1.25 Arial, sans-serif; }
+#last-title-options .suggestion:hover, #last-title-options .suggestion[aria-selected="true"] { background: #44026818; }
+#last-title-options .tournament-meta { color: #5c4770; font-size: .8em; }
+#last-title-options .tournament-empty { color: #440268; font: 400 14px/1.3 Arial, sans-serif; }
+@media (min-width: 851px) { .player-card { width: min(100%, 600px); } }
 .card-age { position: absolute; top: 83.5%; left: 76%; width: 19%; color: #440268; text-align: center; font: italic 800 6.7cqw/1 "TT Bluescreens", sans-serif; }
 .card-nationality { position: absolute; left: 79.9%; top: 90.2%; display: flex; align-items: flex-start; gap: .4cqw; }
 .card-flag { display: block; flex: none; width: 9cqw; height: 9cqw; border: .3cqw solid #050505; border-radius: 50%; object-fit: cover; background: #fff; }
