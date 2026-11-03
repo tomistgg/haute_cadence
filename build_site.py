@@ -36,7 +36,7 @@ ASSETS = {
     "assets/players/diana-shnaider.png": ROOT / "assets" / "Shnaider (2).png",
     "assets/fonts/barriecito-regular.ttf": ROOT / "assets" / "Barriecito" / "Barriecito-Regular.ttf",
     "assets/top_1_card.png": ROOT / "assets" / "top_1_card.png",
-    "assets/top_1_details.png": ROOT / "assets" / "top_1_details.png",
+    "assets/top_1_details.png": ROOT / "assets" / "top_1_details_blank_caption.png",
     "assets/top_10_card.png": ROOT / "assets" / "top_10_card.png",
     "assets/top_10_details.png": ROOT / "assets" / "top_10_details.png",
     "assets/top_20_card.png": ROOT / "assets" / "top_20_card.png",
@@ -59,6 +59,9 @@ ASSETS = {
         ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf"
     ),
     "assets/fonts/tt-bluescreens-italic.ttf": ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf",
+    "assets/fonts/tt-bluescreens-bold-italic.ttf": (
+        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Bold Italic.ttf"
+    ),
     "assets/fonts/tt-bluescreens-extra-bold-italic.ttf": (
         ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold Italic.ttf"
     ),
