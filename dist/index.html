@@ -25,8 +25,8 @@
     .search-wrap { position: relative; width: min(55%, 600px); }
     .search-label { display: block; margin-bottom: 8px; color: #9fe8d8; font: 400 .9rem "Barriecito", Georgia, serif; letter-spacing: .06em; text-transform: uppercase; }
     .search-box { display: flex; align-items: center; gap: 10px; border: 1px solid #5cd5bf99; border-radius: 12px; padding: 0 15px; background: #051b31e8; box-shadow: 0 12px 32px #03172b55; }
-    #player-search { width: 100%; min-width: 0; border: 0; outline: 0; padding: 16px 0; color: white; background: transparent; font-size: 1.05rem; }
-    #player-search::placeholder { color: #8daebd; }
+    #player-search, #tournament-search { width: 100%; min-width: 0; border: 0; outline: 0; padding: 16px 0; color: white; background: transparent; font-size: 1.05rem; }
+    #player-search::placeholder, #tournament-search::placeholder { color: #8daebd; }
     .suggestions { position: absolute; z-index: 5; top: calc(100% + 7px); right: 0; left: 0; display: none; overflow: hidden; border: 1px solid #4fc9bd88; border-radius: 12px; background: #071e36; box-shadow: 0 16px 36px #021326aa; }
     .suggestions.open { display: block; }
     .suggestion { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 16px; border: 0; border-bottom: 1px solid #ffffff12; padding: 11px 14px; color: #effaf8; background: transparent; text-align: left; cursor: pointer; }
@@ -51,14 +51,15 @@
     @media (max-width: 720px) { .page { width: min(100% - 22px, 560px); padding-top: 16px; } .masthead { align-items: stretch; flex-direction: column; gap: 16px; margin-bottom: 16px; } .brand img { width: 46px; height: 46px; } .brand-name { font-size: 1.2rem; } .brand-kicker { font-size: .68rem; } .search-wrap { width: 100%; } .card-stage { margin-top: 14px; } }
     @font-face { font-family: "TT Bluescreens Upright"; src: url("assets/fonts/tt-bluescreens-extra-bold.ttf") format("truetype"); font-style: normal; font-weight: 800; font-display: swap; }
   </style>
-  <link rel="stylesheet" href="cards.css">
+  <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="cards.css?v=69d0338d396e">
 </head>
 <body>
   <main class="page">
     <header class="masthead">
       <div class="brand"><img src="assets/haute-cadence-logo.png" alt=""><div><div class="brand-name">Haute Cadence</div><div class="brand-kicker">Tennis player cards</div></div></div>
       <div class="card-controls">
-      <div class="search-wrap">
+      <div class="search-wrap" id="player-search-wrap">
         <label class="search-label sr-only" for="player-search">Search players</label>
         <div class="search-box"><input id="player-search" type="search" autocomplete="off" placeholder="Type a player name" role="combobox" aria-label="Search players" aria-autocomplete="list" aria-controls="player-options" aria-expanded="false"></div>
         <div class="suggestions" id="player-options" role="listbox" aria-label="Matching players"></div>
@@ -70,47 +71,44 @@
           <option value="wta-125">WTA 125 Title Card</option>
           <option value="wta-tour">WTA Tour Title Card</option>
         </select>
+        <div class="tournament-wrap" id="tournament-search-wrap" hidden>
+          <label class="sr-only" for="tournament-search">Search tournaments</label>
+          <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
+          <div class="suggestions tournament-options" id="tournament-options" role="listbox" aria-label="Matching tournaments"></div>
+          <p class="sr-only" id="tournament-status" aria-live="polite"></p>
+        </div>
       </div>
     </header>
     <section class="card-stage" aria-label="Selected player card">
       <div class="player-card" id="player-card" role="img" aria-labelledby="svg-title svg-description" data-type="form" hidden>
-        <div class="title-event" aria-hidden="true"><strong>&#8212;</strong><span id="card-event-category">WTA 125</span></div>
+        <div class="title-event" aria-hidden="true"><strong id="card-event-name">&#8212;</strong><span id="card-event-category">WTA 125</span></div>
         <div class="card-content">
         <span class="sr-only" id="svg-title">Haute Cadence WTA player card</span>
         <span class="sr-only" id="svg-description">A player card showing the selected tennis player's name, WTA rank, and portrait.</span>
         <img class="card-art" id="card-base" src="assets/top_100_card.png" alt="">
         <img class="card-photo" id="card-photo" alt="">
         <span class="card-initials" id="card-initials" aria-hidden="true"></span>
+        <img class="card-art card-base-badge" id="card-base-badge" alt="">
         <img class="card-art card-details" id="card-details" src="assets/top_100_details.png" alt="">
         <span class="card-name" id="card-name"></span>
         <div class="card-rank"><span id="card-rank"></span><sup id="card-rank-ordinal"></sup></div>
-        <span class="card-previous" id="card-previous"></span>
+        <span class="card-previous" id="card-previous">
+          <span id="career-best-label" class="career-best-label" hidden></span>
+          <span id="best-rank-label" class="best-rank-label"><span class="best-position"><span id="best-rank-value"></span><sup>e</sup></span><span id="best-rank-year"></span></span>
+        </span>
         <span class="card-form" aria-hidden="true">&#8212;</span>
         <span class="card-title-value" aria-hidden="true">&#8212;</span>
         <span class="card-age" id="card-age"></span>
-        <span class="card-country" id="card-country"></span>
-        <svg class="tour-trophy" viewBox="0 0 360 220" aria-hidden="true">
-          <defs><linearGradient id="trophy-gold"><stop stop-color="#b58016"/><stop offset=".45" stop-color="#ffe38b"/><stop offset="1" stop-color="#bb891e"/></linearGradient></defs>
-          <path d="M65 6 H337 Q354 6 354 26 V170 Q354 188 334 188 H224 L198 215 H22 Q6 215 6 194 V80 Z" fill="url(#trophy-gold)" stroke="#111" stroke-width="4"/>
-          <g fill="none" stroke="#272117" stroke-width="3"><path d="M72 42 H159 L150 101 Q145 126 115 142 Q85 126 80 101 Z M106 140 V170 H84 V192 H147 V170 H124 V140"/><path d="M75 54 H45 Q51 106 91 111 M156 54 H184 Q178 106 140 111"/></g>
-          <text x="255" y="90" fill="#050505" font-family="TT Bluescreens Upright, sans-serif" font-size="58" font-weight="800" text-anchor="middle">&#8212;</text>
-          <text x="255" y="157" fill="#050505" font-family="TT Bluescreens Upright, sans-serif" font-size="53" font-weight="800" text-anchor="middle">TITRE</text>
-        </svg>
-        <svg class="tour-laurels" viewBox="0 0 1440 1800" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="laurel-gold"><stop stop-color="#bd8d27"/><stop offset=".5" stop-color="#fff2ad"/><stop offset="1" stop-color="#d3aa43"/></linearGradient>
-            <g id="laurel-left" fill="url(#laurel-gold)" stroke="#17180e" stroke-width="2.5" stroke-linejoin="round">
-              <path d="M485 1715 Q160 1320 217 600 Q189 1270 510 1715 Z"/>
-              <path d="M219 730 Q172 653 202 535 Q241 653 219 730 Z M215 785 Q229 649 310 553 Q285 706 215 785 Z M215 851 Q150 784 137 649 Q199 723 215 851 Z M219 921 Q248 772 350 703 Q300 848 219 921 Z M229 989 Q147 911 96 766 Q194 853 229 989 Z M242 1055 Q283 904 389 838 Q330 986 242 1055 Z M259 1125 Q153 1048 57 911 Q188 980 259 1125 Z M280 1197 Q332 1049 434 993 Q371 1138 280 1197 Z M303 1268 Q155 1199 34 1062 Q208 1131 303 1268 Z M330 1338 Q387 1193 488 1130 Q420 1287 330 1338 Z M360 1408 Q173 1345 44 1231 Q241 1275 360 1408 Z M389 1476 Q456 1342 547 1296 Q491 1430 389 1476 Z M421 1540 Q213 1490 79 1391 Q286 1424 421 1540 Z M451 1609 Q516 1499 607 1454 Q548 1579 451 1609 Z M486 1677 Q287 1647 130 1559 Q345 1571 486 1677 Z"/>
-            </g>
-          </defs>
-          <use href="#laurel-left"/><use href="#laurel-left" transform="translate(1440 0) scale(-1 1)"/>
-        </svg>
-        <div class="winner-banner" aria-hidden="true"><span>VAINQUEURE</span></div>
+        <div class="card-nationality">
+          <img class="card-flag" id="card-flag" alt="">
+          <span class="card-country" id="card-country"></span>
         </div>
+
+        </div>
+        <img class="card-art title-details" id="card-title-details" alt="" hidden>
       </div>
     </section>
   </main>
-  <script src="app.js" defer></script>
+  <script src="app.js?v=0cb8acf8d1fb" defer></script>
 </body>
 </html>
