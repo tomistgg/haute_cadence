@@ -16,18 +16,25 @@ const tourArtwork = {
   deux_sets: [3200, 1800, 414, 607, 2429, 476],
   trois_sets: [3200, 1800, 355, 577, 2307, 423],
 };
-const resultHeaderRight = { premier: 1279, deuxieme: 1279, troisieme: 1299, quartdefinale: 1298, demifinale: 1224, finale: 1188 };
-const resultHeaderText = {
-  premier: [395, "#0ab798", "#64d7c2"],
-  deuxieme: [395, "#09b797", "#64d6c1"],
-  troisieme: [375, "#09b697", "#67d7c2"],
-  quartdefinale: [375, "#09b697", "#67d7c3"],
-  demifinale: [455, "#0bb999", "#5ad5be"],
-  finale: [495, "#0bb99a", "#50d3bb"],
+const nonTourArtwork = {
+  "1": [1600, 900, 160, 327, 1178, 167],
+  "2": [1600, 900, 120, 304, 1228, 167],
+  "3": [1600, 900, 158, 341, 1223, 167],
+  "4": [1600, 900, 209, 366, 1060, 168],
+  "5": [1600, 900, 354, 342, 798, 167],
+  "6": [1600, 900, 90, 335, 1284, 167],
+  "7": [1600, 900, 98, 373, 1284, 168],
+  "8": [1600, 900, 135, 366, 1284, 168],
 };
+const nonTourRoundFiles = { premier: "1", deuxieme: "2", quartdefinale: "3", demifinale: "4", finale: "5",
+  qualifications1: "6", qualifications2: "7", qualifications3: "8" };
 const itfMatches = new Map();
 const itfRoundDialog = document.getElementById("itf-round-dialog");
 const resultCategoryDialog = document.getElementById("result-category-dialog");
+const itfTournamentDialog = document.getElementById("itf-tournament-dialog");
+const itfTournamentOptions = document.getElementById("itf-tournament-options");
+const itfTournamentStatus = document.getElementById("itf-tournament-status");
+let itfTournamentMatchId = "";
 let categoryPickerSelection = null;
 const itfPlayerDialog = document.getElementById("itf-player-dialog");
 const itfPlayerInput = document.getElementById("itf-player-search");
@@ -104,14 +111,14 @@ function makeResultEditable(node, manual, field, side = "", index = "") {
   node.dataset.itfSide = side;
   node.dataset.itfIndex = String(index);
   node.tabIndex = 0;
-  node.setAttribute("role", ["player", "category"].includes(field) ? "button" : "textbox");
+  node.setAttribute("role", ["player", "category", "tournament"].includes(field) ? "button" : "textbox");
   const playerLabel = side === "winner" ? "Player 1" : "Player 2";
-  node.setAttribute("aria-label", field === "player" ? "Select " + playerLabel : field === "category" ? "Select tournament category" : field === "score" ? playerLabel + ", set " + (index + 1) + " score" : "Edit tournament " + field);
-  if (field === "category") {
+  node.setAttribute("aria-label", field === "player" ? "Select " + playerLabel : field === "category" ? "Select tournament category" : field === "tournament" ? "Select this week's tournament" : field === "score" ? playerLabel + ", set " + (index + 1) + " score" : "Edit tournament " + field);
+  if (["category", "tournament"].includes(field)) {
     node.removeAttribute("contenteditable");
-    node.dataset.placeholder = "CATEGORY";
+    node.dataset.placeholder = field === "category" ? "CATEGORY" : "TOURNAMENT";
     node.setAttribute("aria-haspopup", "dialog");
-    node.setAttribute("aria-controls", "result-category-dialog");
+    node.setAttribute("aria-controls", field === "category" ? "result-category-dialog" : "itf-tournament-dialog");
   } else if (field !== "player") {
     node.contentEditable = "plaintext-only";
     node.spellcheck = false;
@@ -145,7 +152,15 @@ function updateResultOutcome(match) {
 }
 
 function resultPhoto(player) {
-  return uploadedResultPhotos.get(player.id) || photoByName.get(normalize(player.name));
+  return uploadedResultPhotos.get(player.id) || savedPlayerPhoto(player);
+}
+
+function resultPlayerName(player) {
+  const name = playerDisplayName(player);
+  const given = stripAccents(player.first_name || "");
+  const first = given && name.startsWith(given + " ") ? given : name.split(/\s+/)[0];
+  const last = name.slice(first.length).trim();
+  return last ? first + " " + last.toLocaleUpperCase() : name;
 }
 
 function resultRank(player) {
@@ -154,12 +169,8 @@ function resultRank(player) {
 }
 
 function fitResultNames() {
-  const measure = document.createElement("canvas").getContext("2d");
   resultContent.querySelectorAll(".result-score-name > span").forEach(name => {
-    measure.font = getComputedStyle(name).font;
-    const width = measure.measureText(name.textContent).width + 4;
-    name.style.width = width + "px";
-    name.style.transform = width > name.parentElement.clientWidth ? "scaleX(" + name.parentElement.clientWidth / width + ")" : "none";
+    fitPlayerName(name, name.parentElement.clientWidth);
   });
 }
 
@@ -174,21 +185,48 @@ function setResultPhoto(side, player) {
     image.alt = player.name;
   } else {
     image.removeAttribute("src");
-    initials.textContent = player.name.split(/\s+/).map(part => part[0]).slice(0, 2).join("");
+    initials.textContent = playerDisplayName(player).split(/\s+/).map(part => part[0]).slice(0, 2).join("");
   }
 }
 
-function setTourArtwork(id, artwork, height) {
-  const [width, imageHeight, x, y, cropWidth, cropHeight] = tourArtwork[artwork];
+function setTourArtwork(id, artwork, height, directory = "assets/wtatour_result", filename = artwork, artworkBounds = tourArtwork) {
+  const [width, imageHeight, x, y, cropWidth, cropHeight] = artworkBounds[artwork];
   const scale = height / cropHeight;
   const frame = document.getElementById(id);
   frame.hidden = false;
   frame.style.width = cropWidth * scale + "px";
   frame.style.height = height + "px";
   const image = frame.querySelector("img");
-  image.src = "assets/wtatour_result/" + artwork + ".png";
+  image.src = directory + "/" + filename + ".png";
   image.style.cssText = `width:${width * scale}px;height:${imageHeight * scale}px;left:${-x * scale}px;top:${-y * scale}px;`;
   return cropWidth * scale;
+}
+
+function nonTourHeader(match) {
+  const qualifying = match.round_heading === "QUALIFICATIONS";
+  const file = qualifying ? { premier: "6", deuxieme: "7", troisieme: "8" }[match.round_art]
+    : nonTourRoundFiles[match.round_art];
+  const label = file ? match.round_heading && !qualifying ? match.round_heading : ""
+    : match.round_heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : match.round);
+  return { file: file || "1", label: match.manual && match.round === "ITF MATCH" ? "ITF MATCH" : label };
+}
+
+function renderNonTourHeader(match) {
+  const { file, label } = nonTourHeader(match);
+  const width = setTourArtwork("non-tour-round-art", file, 178, "assets/match_types", file, nonTourArtwork);
+  const left = (1440 - width) / 2;
+  const eventLeft = left + width - 302;
+  document.getElementById("result-event").style.left = eventLeft + "px";
+  const heading = document.getElementById("result-round-heading");
+  const textLeft = left + 200 * 178 / nonTourArtwork[file][5];
+  heading.hidden = !match.manual && !label;
+  heading.textContent = label || match.round;
+  heading.classList.toggle("has-round-art", !label);
+  heading.classList.toggle("centered-itf-round", !!label);
+  heading.style.left = textLeft + "px";
+  heading.style.width = eventLeft - textLeft - 16 + "px";
+  heading.style.backgroundImage = label ? "linear-gradient(90deg, #20bca3, #a9e2d7)" : "";
+  heading.style.fontSize = label === "ITF MATCH" ? "110px" : "70px";
 }
 
 function renderTourResult(match) {
@@ -240,35 +278,27 @@ function renderResultCard() {
   document.getElementById("result-winner-upload-label").textContent = match.manual ? "Player 1 photo" : "Winner photo";
   document.getElementById("result-loser-upload-label").textContent = match.manual ? "Player 2 photo" : "Opponent photo";
   resultContent.dataset.sets = String(Math.max(2, match.sets.length));
-  document.getElementById("result-round-art").src = "assets/results/" + match.round_art + ".png";
+  document.getElementById("result-round-art").src = "assets/results/premier.png";
+  document.getElementById("non-tour-round-art").hidden = tour;
   document.getElementById("result-score-art").src = "assets/results/" + (match.sets.length === 3 ? "trois_sets" : "deux_sets") + ".png";
   const heading = document.getElementById("result-round-heading");
-  const centeredItf = match.manual && !tour;
   heading.hidden = !match.manual && !match.round_heading;
   heading.textContent = match.round_heading || match.round;
   heading.disabled = !match.manual;
   heading.classList.toggle("itf-editable", !!match.manual);
-  heading.classList.toggle("has-round-art", !match.round_heading && !centeredItf);
-  heading.classList.toggle("centered-itf-round", centeredItf);
+  heading.classList.toggle("has-round-art", !match.round_heading);
+  heading.classList.remove("centered-itf-round");
   heading.setAttribute("aria-label", "Select round. Current: " + (match.round_heading || match.round));
   heading.style.left = "395px";
   const event = document.getElementById("result-event");
-  event.style.left = (resultHeaderRight[match.round_art] - 302) + "px";
-  heading.style.width = "calc(" + event.style.left + " - 397px)";
   heading.style.backgroundImage = "";
   heading.style.fontSize = "";
-  if (centeredItf) {
-    const [left, start, end] = resultHeaderText[match.round_art];
-    heading.style.left = left + "px";
-    heading.style.width = (resultHeaderRight[match.round_art] - 302 - left - 2) + "px";
-    heading.style.backgroundImage = `linear-gradient(90deg, ${start}, #10c6a5 54%, ${end})`;
-    heading.style.fontSize = match.round_heading ? "70px" : "110px";
-  }
+  if (!tour) renderNonTourHeader(match);
   event.style.backgroundColor = tournamentStyle({ level: match.tournament.category, name: match.tournament.name })?.color || "#7ed957";
   const eventName = document.getElementById("result-event-name");
   eventName.textContent = match.manual ? match.tournament.name : tournamentName(match.tournament).toLocaleUpperCase();
   eventName.style.fontSize = "84px";
-  makeResultEditable(eventName, match.manual, "name");
+  makeResultEditable(eventName, match.manual, "tournament");
   const eventCategory = document.getElementById("result-event-category");
   eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS" : match.tournament.category.toLocaleUpperCase();
   eventCategory.style.fontSize = match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
@@ -292,7 +322,7 @@ function renderResultCard() {
     rank.style.fontSize = cardType.value === "tour-result"
       ? String(rank.textContent).length > 3 ? "28px" : "36px"
       : String(rank.textContent).length > 3 ? "62px" : "82px";
-    row.querySelector(".result-score-name > span").textContent = match.manual ? player.name : (player.first_name + " " + player.last_name.toLocaleUpperCase()).trim();
+    row.querySelector(".result-score-name > span").textContent = resultPlayerName(player);
     makeResultEditable(row.querySelector(".result-score-name"), match.manual, "player", side);
     const scores = row.querySelector(".result-score-sets");
     scores.replaceChildren();
@@ -394,7 +424,7 @@ function updateResultOptions() {
   renderResultCard();
 }
 
-async function refreshResults() {
+async function refreshResults(force = false) {
   if (resultsLoading) return;
   resultsLoading = true;
   lastResultsRefresh = Date.now();
@@ -402,7 +432,8 @@ async function refreshResults() {
   button.disabled = true;
   if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
   try {
-    const response = await fetch("data/recent_results.json", { cache: "no-store" });
+    const url = "data/recent_results.json" + (force ? "?refresh=1&t=" + Date.now() : "");
+    const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) throw new Error("Completed WTA matches are temporarily unavailable. Try Refresh again.");
     const data = await response.json();
     if (!Array.isArray(data.matches)) throw new Error("The completed-match feed is invalid.");
@@ -421,7 +452,7 @@ resultSelect.addEventListener("change", () => {
   selectedResultId = resultSelect.value;
   renderResultCard();
 });
-document.getElementById("refresh-results").addEventListener("click", refreshResults);
+document.getElementById("refresh-results").addEventListener("click", () => refreshResults(true));
 
 function setManualTourSets(count) {
   const match = selectedResultMatch();
@@ -458,6 +489,7 @@ document.getElementById("result-round-heading").addEventListener("click", () => 
   const match = selectedResultMatch();
   if (!match?.manual) return;
   itfRoundDialog.querySelectorAll("[data-round]").forEach(button => {
+    button.hidden = cardType.value === "tour-result" && button.dataset.nonTour === "true";
     button.setAttribute("aria-pressed", String(!match.round_heading && button.dataset.round === match.round_art));
   });
   itfRoundDialog.showModal();
@@ -465,7 +497,7 @@ document.getElementById("result-round-heading").addEventListener("click", () => 
 itfRoundDialog.addEventListener("click", event => {
   const button = event.target.closest("button[data-round]");
   const match = selectedResultMatch();
-  if (!button || !match?.manual) return;
+  if (!button || !match?.manual || (cardType.value === "tour-result" && button.dataset.nonTour === "true")) return;
   match.round = button.textContent;
   match.round_art = button.dataset.round;
   match.round_heading = "";
@@ -488,6 +520,79 @@ function openResultCategoryPicker() {
     renderResultCard();
   });
 }
+
+function currentWeekResultTournaments(data, tour, today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Madrid" }).format(new Date())) {
+  if (!data) return [];
+  const monday = new Date(today + "T00:00:00Z");
+  monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+  const sunday = new Date(monday);
+  sunday.setUTCDate(sunday.getUTCDate() + 6);
+  const start = monday.toISOString().slice(0, 10), end = sunday.toISOString().slice(0, 10);
+  const found = new Map();
+  const items = Object.values(data.weeks).flat().map(row =>
+    Object.fromEntries(data.fields.map((field, index) => [field, row[index]])));
+  const parents = new Map(items.map(item => [String(item.calendarKey), item]));
+  const tourCategories = ["Grand Slam", "WTA Finals", "WTA 1000", "WTA 500", "WTA 250"];
+  for (const item of items) {
+    const category = tour ? tournamentStyle(item)?.label : item.level;
+    if (tour ? !tourCategories.includes(category) : item.column !== "itf" || !/^W(100|75|50|35|15)$/.test(category)) continue;
+    const first = String(item.startDate || "").slice(0, 10), last = String(item.endDate || "").slice(0, 10);
+    if (!Number.isFinite(Date.parse(first)) || !Number.isFinite(Date.parse(last)) || first > last) continue;
+    const qualifying = String(item.calendarKey).includes("|qualifying");
+    if (first > end || last < start || (qualifying && (!tour || category !== "Grand Slam"))) continue;
+    const id = String(item.calendarKey || [item.level, item.name, first].join("|")).replace(/\|qualifying$/, "");
+    const parent = qualifying ? parents.get(id) : null;
+    const nameSource = parent || { ...item, name: item.name.replace(/\s+Qualifying\b/i, "") };
+    const city = tour ? tournamentName({ ...nameSource, category }) : item.city || item.name.replace(/^W\d+\s+/i, "");
+    if (!found.has(id) || !qualifying) found.set(id, { ...item, id, category, city, qualifying });
+  }
+  return [...found.values()].sort((a, b) => (tour
+    ? tourCategories.indexOf(a.category) - tourCategories.indexOf(b.category)
+    : Number(b.category.slice(1)) - Number(a.category.slice(1)))
+    || a.city.localeCompare(b.city) || a.startDate.localeCompare(b.startDate));
+}
+
+async function openResultTournamentPicker() {
+  const match = selectedResultMatch();
+  if (!match?.manual || !isManualResultId(match.id)) return;
+  const tour = cardType.value === "tour-result", circuit = tour ? "WTA" : "ITF";
+  itfTournamentMatchId = match.id;
+  itfTournamentOptions.replaceChildren();
+  document.getElementById("itf-tournament-heading").textContent = "This week's " + circuit + " tournaments";
+  itfTournamentOptions.setAttribute("aria-label", "Current-week " + circuit + " tournaments");
+  itfTournamentStatus.textContent = "Loading this week's " + circuit + " tournaments...";
+  itfTournamentDialog.showModal();
+  await refreshCalendar();
+  if (itfTournamentMatchId !== match.id || selectedResultMatch() !== match || !isManualResultId(match.id)) return;
+  if (!calendar) {
+    itfTournamentStatus.textContent = "The " + circuit + " calendar could not be loaded. Close and try again.";
+    return;
+  }
+  const choices = currentWeekResultTournaments(calendar, tour);
+  for (const item of choices) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "suggestion";
+    button.textContent = item.category + " " + item.city + (item.qualifying ? " · Qualifying" : "")
+      + (item.country ? " · " + item.country : "");
+    button.setAttribute("aria-pressed", String(match.tournament.id === item.id));
+    button.addEventListener("click", () => selectResultTournament(item));
+    itfTournamentOptions.append(button);
+  }
+  itfTournamentStatus.textContent = choices.length ? "" : "No " + circuit + " tournaments are listed for this week.";
+}
+
+function selectResultTournament(item) {
+  const match = selectedResultMatch();
+  if (!match?.manual || !isManualResultId(match.id) || match.id !== itfTournamentMatchId
+      || !currentWeekResultTournaments(calendar, cardType.value === "tour-result").some(event => event.id === item.id)) return;
+  match.tournament = { ...match.tournament, id: item.id, name: item.city, city: item.city,
+    category: item.category, surface: item.surface };
+  renderResultCard();
+  itfTournamentDialog.close();
+}
+itfTournamentDialog.addEventListener("close", () => { itfTournamentMatchId = ""; });
+
 resultCategoryDialog.addEventListener("click", event => {
   const button = event.target.closest("button[data-category]");
   if (!button || !categoryPickerSelection) return;
@@ -566,7 +671,7 @@ function openPlayerPicker(player, label, onSelect = null, onPortrait = null) {
   portrait.hidden = !onPortrait;
   portrait.onclick = onPortrait;
   document.getElementById("itf-player-label").textContent = label;
-  itfPlayerInput.value = player.placeholder ? "" : player.name;
+  itfPlayerInput.value = player.placeholder ? "" : playerDisplayName(player);
   document.getElementById("tour-player-details").hidden = false;
   document.getElementById("tour-player-rank").value = player.placeholder ? "" : String(resultRank(player));
   const country = document.getElementById("tour-player-country");
@@ -589,13 +694,15 @@ resultContent.addEventListener("click", event => {
   const field = event.target.closest("[data-itf-field]");
   if (field?.dataset.itfField === "player") openItfPlayerSearch(field.dataset.itfSide);
   else if (field?.dataset.itfField === "category") openResultCategoryPicker();
+  else if (field?.dataset.itfField === "tournament") openResultTournamentPicker();
 });
 resultContent.addEventListener("keydown", event => {
   const field = event.target.closest("[data-itf-field]");
   if (!field) return;
-  if (["player", "category"].includes(field.dataset.itfField) && ["Enter", " "].includes(event.key)) {
+  if (["player", "category", "tournament"].includes(field.dataset.itfField) && ["Enter", " "].includes(event.key)) {
     event.preventDefault();
     if (field.dataset.itfField === "category") openResultCategoryPicker();
+    else if (field.dataset.itfField === "tournament") openResultTournamentPicker();
     else openItfPlayerSearch(field.dataset.itfSide);
   } else if (["Enter", "Escape"].includes(event.key)) {
     event.preventDefault();
@@ -621,7 +728,8 @@ function chooseItfPlayer(player) {
     uploadedResultPhotos.set(player.id, photo);
     uploadedResultPhotos.delete(previous.id);
   }
-  match[itfPlayerSide] = { id: player.id, name: player.name, country: player.country };
+  match[itfPlayerSide] = { id: player.id, name: player.name, country: player.country,
+    display_name: player.display_name, aliases: player.aliases || [] };
   renderResultCard();
   itfPlayerDialog.close();
 }
@@ -634,6 +742,7 @@ document.getElementById("tour-player-apply").addEventListener("click", () => {
   if (!rank.reportValidity()) return;
   const player = {
     ...playerPickerPlayer, name, placeholder: false,
+    name_override: !!playerPickerPlayer.name_override || name !== playerDisplayName(playerPickerPlayer),
     rank: rank.value ? /^\d+$/.test(rank.value) ? Number(rank.value) : "NR" : "NR",
     country: document.getElementById("tour-player-country").value,
   };
@@ -649,7 +758,7 @@ function showItfPlayerOptions() {
   const match = selectedResultMatch();
   const otherId = playerPickerSelection ? null : match?.[itfPlayerSide === "winner" ? "loser" : "winner"]?.id;
   const query = normalize(itfPlayerInput.value.trim());
-  itfPlayerChoices = players.filter(player => player.id !== otherId && normalize(player.name).includes(query)).slice(0, 8);
+  itfPlayerChoices = players.filter(player => player.id !== otherId && playerMatchesSearch(player, query)).slice(0, 8);
   itfPlayerActiveIndex = -1;
   itfPlayerInput.removeAttribute("aria-activedescendant");
   itfPlayerInput.setAttribute("aria-expanded", "true");
@@ -662,7 +771,7 @@ function showItfPlayerOptions() {
     option.setAttribute("role", "option");
     option.setAttribute("aria-selected", "false");
     const name = document.createElement("span");
-    name.textContent = player.name;
+    name.textContent = playerDisplayName(player);
     const rank = document.createElement("span");
     rank.textContent = (player.rank == null ? "NR" : "#" + player.rank) + " · " + player.country;
     option.append(name, rank);

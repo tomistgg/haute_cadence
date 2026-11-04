@@ -8,8 +8,14 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from shared_data import calendar_tournaments as fetch_calendar
-from update_wta_champions import fetch_json, final_champion, merge_draw_champions, read_history, save_history
+from update_wta_champions import (
+    fetch_calendar,
+    fetch_json,
+    final_champion,
+    merge_draw_champions,
+    read_history,
+    save_history,
+)
 from update_wta_results import LEVELS, match_player
 
 ROOT = Path(__file__).resolve().parent

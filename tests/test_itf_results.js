@@ -13,10 +13,37 @@ const context = {
   setInterval() {},
 };
 vm.createContext(context);
+const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+vm.runInContext(appSource.slice(appSource.indexOf("function stripAccents("), appSource.indexOf("function getAge(")), context);
+context.playerNameIndex = { by_wta_id: { "1": "Lourdes Carl\u00e9", "2": "Maaya Rajeshwaran" }, by_name: {} };
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "result-card.js"), "utf8"), context);
+
+const carle = { id: "1", name: "Maria Lourdes Carle", display_name: "Lourdes Carl\u00e9", manual: true };
+const original = { ...carle };
+assert.equal(context.playerDisplayName(carle), "Lourdes Carle");
+assert.equal(context.resultPlayerName(carle), "Lourdes CARLE");
+assert.deepEqual(carle, original, "display formatting must not modify source player names");
+assert.equal(context.resultPlayerName({ id: "2", name: "Maaya Rajeshwaran Revathi" }), "Maaya RAJESHWARAN");
+assert.equal(context.resultPlayerName({ name: "Mar\u00eda Jos\u00e9 Mart\u00ednez S\u00e1nchez", first_name: "Mar\u00eda Jos\u00e9" }),
+  "Maria Jose MARTINEZ SANCHEZ");
+assert.equal(context.resultPlayerName({ id: "1", name: "Chlo\u00e9 Paquet", name_override: true }), "Chloe PAQUET");
+assert.equal(context.resultPlayerName({ name: "Carl\u0065\u0301", manual: true }), "Carle");
 
 const set = (winner, loser) => ({ winner, loser, tiebreak: "" });
 const manual = sets => ({ manual: true, sets });
+
+for (const [round, file] of Object.entries({ premier: "1", deuxieme: "2", quartdefinale: "3", demifinale: "4", finale: "5",
+  qualifications1: "6", qualifications2: "7", qualifications3: "8" })) {
+  assert.equal(context.nonTourHeader({ round_art: round, round }).file, file);
+  assert.equal(context.nonTourHeader({ round_art: round, round, manual: true }).label, "");
+}
+for (const [round, file] of Object.entries({ premier: "6", deuxieme: "7", troisieme: "8" })) {
+  const header = context.nonTourHeader({ round_art: round, round_heading: "QUALIFICATIONS" });
+  assert.equal(header.file, file);
+  assert.equal(header.label, "", "qualifying must use its supplied PNG text");
+}
+assert.equal(context.nonTourHeader({ round_art: "premier", round: "ITF MATCH", manual: true }).label, "ITF MATCH");
+assert.equal(context.nonTourHeader({ round_art: "troisieme", round: "3rd Round" }).label, "TROISIÈMES TOURS");
 
 assert.equal(context.resultWinningSide(manual([set("", ""), set("", "")])), "");
 assert.equal(context.resultWinningSide(manual([set(6, 4), set("", "")])), "");

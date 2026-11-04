@@ -39,6 +39,8 @@ jobs:
             /data/wta_rankings_*.csv
             /data/calendar_snapshot.json
             /data/wta_full_calendar_cache.json
+            /data/itf_calendar_cache.json
+            /data/player_aliases_wta_itf.json
       - name: Restore accumulated calendar and champions
         env:
           GH_TOKEN: ${{ github.token }}

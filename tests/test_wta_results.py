@@ -2,12 +2,14 @@ import unittest
 from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
+import update_wta_champions as champions
 import update_wta_results as results
 
 NOW = datetime(2026, 11, 4, 12, tzinfo=UTC)
 TOURNAMENT = {
     "year": 2026, "level": "WTA 125", "title": "Example Open", "city": "Example",
     "surface": "Clay", "tournamentGroup": {"id": 1180, "name": "EXAMPLE", "metadata": {}},
+    "startDate": "2026-10-26", "endDate": "2026-11-08",
 }
 
 
@@ -70,13 +72,18 @@ class ResultsTest(unittest.TestCase):
 
     def test_collection_excludes_itf_cancelled_events_and_deduplicates(self):
         cancelled = TOURNAMENT | {"tournamentGroup": {"id": 2, "metadata": {"cancelledSeasons": "2026"}}}
-        events = [TOURNAMENT, TOURNAMENT, TOURNAMENT | {"level": "ITF"}, cancelled]
-        with patch.object(results, "fetch_calendar", return_value=events), patch.object(
+        events = [TOURNAMENT, TOURNAMENT, TOURNAMENT | {"level": "ITF"}, cancelled,
+                  TOURNAMENT | {"endDate": "2026-10-29"}, TOURNAMENT | {"startDate": "2026-11-05"}]
+        calendar = {"pageInfo": {"page": 0, "numEntries": len(events)}, "content": events}
+        with patch.dict("os.environ", {"HAUTE_CADENCE_DATA_DIR": "nonexistent-shared-data"}), patch.object(
+            champions, "fetch_json", return_value=calendar
+        ) as discovery, patch.object(
             results, "fetch_json", return_value={"matches": [raw_match(), raw_match()]}
         ) as fetch:
             payload = results.collect_results(NOW)
         self.assertEqual(len(payload["matches"]), 1)
         fetch.assert_called_once_with("https://api.wtatennis.com/tennis/tournaments/1180/2026/matches?states=C")
+        self.assertIn("from=2026-10-05", discovery.call_args.args[0])
 
 
 if __name__ == "__main__":

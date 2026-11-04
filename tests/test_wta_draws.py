@@ -2,6 +2,7 @@ import unittest
 from datetime import UTC, datetime
 from unittest.mock import patch
 
+import update_wta_champions as champions
 import update_wta_draws as draws
 
 
@@ -41,12 +42,17 @@ class DrawTest(unittest.TestCase):
             "tournamentGroup": {"id": 1, "name": "City"}, "year": 2026, "level": "WTA 250",
             "startDate": "2026-11-02", "endDate": "2026-11-08", "city": "City",
         }
-        with patch.object(draws, "fetch_calendar", return_value=[
+        events = [
             tournament, tournament | {"level": "ITF"}, tournament | {"endDate": "2026-11-01"},
-        ]), patch.object(draws, "fetch_json", return_value={"matches": [match(2)]}) as fetch:
+        ]
+        calendar = {"pageInfo": {"page": 0, "numEntries": len(events)}, "content": events}
+        with patch.dict("os.environ", {"HAUTE_CADENCE_DATA_DIR": "nonexistent-shared-data"}), patch.object(
+            champions, "fetch_json", return_value=calendar
+        ) as discovery, patch.object(draws, "fetch_json", return_value={"matches": [match(2)]}) as fetch:
             result = draws.collect_draws(datetime(2026, 11, 4, tzinfo=UTC))
         self.assertEqual(len(result["tournaments"]), 1)
         self.assertNotIn("states=C", fetch.call_args.args[0])
+        self.assertIn("/tournaments/?", discovery.call_args.args[0])
         self.assertEqual(result["tournaments"][0]["rounds"]["S"][0]["players"][0]["id"], "4")
 
     def test_finished_tournament_final_updates_champions_without_appearing_as_an_active_draw(self):

@@ -7,10 +7,12 @@ const vm = require("node:vm");
 
 const elements = new Map();
 function element() {
-  return { textContent: "", addEventListener() {}, querySelector() { return this; }, append() {}, replaceChildren() {} };
+  return { textContent: "", listeners: {}, addEventListener(event, listener) { this.listeners[event] = listener; },
+    querySelector() { return this; }, append() {}, replaceChildren() {} };
 }
 let renders = 0;
 let requests = 0;
+let requestedUrl;
 let changeCard;
 let payload = { updated_at: new Date().toISOString(), matches: [] };
 const context = {
@@ -28,7 +30,7 @@ const context = {
   tournamentName: tournament => tournament.name,
   countRender: () => { renders += 1; },
   setInterval() {},
-  fetch: async () => { requests += 1; return { ok: true, json: async () => payload }; },
+  fetch: async url => { requestedUrl = url; requests += 1; return { ok: true, json: async () => payload }; },
 };
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "result-card.js"), "utf8"), context);
@@ -40,6 +42,11 @@ async function main() {
   assert.equal(elements.get("result-status").textContent, "");
   context.refreshResultsIfStale();
   assert.equal(requests, 1, "refocusing a recently refreshed page must not fetch again");
+  assert.equal(requestedUrl, "data/recent_results.json");
+  await elements.get("refresh-results").listeners.click();
+  assert.match(requestedUrl, /^data\/recent_results\.json\?refresh=1&t=\d+$/,
+    "the Refresh button must bypass the server's fresh cache");
+  assert.equal(renders, 1, "manual refresh must preserve an unchanged card");
 
   let finishFetch;
   context.fetch = () => new Promise(resolve => { finishFetch = resolve; });

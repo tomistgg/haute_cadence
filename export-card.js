@@ -6,7 +6,7 @@ let savedExportVersion = -1;
 let exportTimer;
 let exportRunning = false;
 const exportFontsReady = Promise.all([...document.fonts].map(font => font.load()));
-exportFontsReady.then(() => { fitLastTitleText(); fitTournamentHeadings(); fit125PlayerNames(); });
+exportFontsReady.then(() => { fitLastTitleText(); fitCardPlayerNames(); fitTournamentHeadings(); fit125PlayerNames(); });
 let exportFontCSS;
 let exportFontType;
 

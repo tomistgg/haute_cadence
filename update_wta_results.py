@@ -8,8 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from shared_data import calendar_tournaments as fetch_calendar
-from update_wta_champions import fetch_json, save_history
+from update_wta_champions import fetch_calendar, fetch_json, save_history
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "data" / "recent_results.json"
@@ -109,11 +108,14 @@ def parse_match(match, tournament, now):
 def collect_results(now=None):
     now = now or datetime.now(UTC)
     calendar = fetch_calendar(
-        (now - timedelta(days=2)).date().isoformat(), (now + timedelta(days=1)).date().isoformat()
+        (now - timedelta(days=30)).date().isoformat(), (now + timedelta(days=1)).date().isoformat()
     )
     tournaments = {}
     for tournament in calendar:
         if tournament.get("level") not in LEVELS:
+            continue
+        start, end = tournament["startDate"][:10], tournament["endDate"][:10]
+        if not start <= end or start > now.date().isoformat() or end < (now - timedelta(days=2)).date().isoformat():
             continue
         group = tournament.get("tournamentGroup") or {}
         cancelled = str((group.get("metadata") or {}).get("cancelledSeasons", ""))

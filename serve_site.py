@@ -8,7 +8,7 @@ import threading
 from datetime import UTC, datetime, timedelta
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 
 from build_site import main as build_site
 from shared_data import source_signature
@@ -21,10 +21,10 @@ _refresh_lock = threading.Lock()
 _site_signature = None
 
 
-def refresh_feed(output, collect):
+def refresh_feed(output, collect, force=False):
     payload = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
     updated = api_time(payload.get("updated_at"))
-    if updated is None or datetime.now(UTC) - updated > timedelta(minutes=5):
+    if force or updated is None or datetime.now(UTC) - updated > timedelta(minutes=5):
         try:
             fresh = collect()
             merge_draw_champions(fresh.get("champions", []))
@@ -48,7 +48,8 @@ def refresh_site_data():
 
 class CardHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        path = urlsplit(self.path).path
+        url = urlsplit(self.path)
+        path = url.path
         if path in {"/data/players.json", "/data/calendar_snapshot.json"}:
             try:
                 with _refresh_lock:
@@ -67,9 +68,7 @@ class CardHandler(SimpleHTTPRequestHandler):
         )
         try:
             with _refresh_lock:
-                payload = refresh_feed(output, collect)
-                if output == DRAW_OUTPUT:
-                    refresh_site_data()
+                payload = refresh_feed(output, collect, force=parse_qs(url.query).get("refresh") == ["1"])
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")

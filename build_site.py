@@ -7,7 +7,7 @@ import shutil
 from datetime import date
 from pathlib import Path
 
-from shared_data import merged_calendar, ranking_sources
+from shared_data import load_player_names, merged_calendar, ranking_sources
 from update_wta_champions import save_history
 
 ROOT = Path(__file__).resolve().parent
@@ -87,6 +87,17 @@ ASSETS.update({
 SURFACES = sorted((ROOT / "assets" / "surfaces").glob("*.png"))
 ASSETS.update({f"assets/surfaces/{surface.name}": surface for surface in SURFACES})
 ASSETS.update({
+    f"assets/match_types/{header.name}": header for header in (ROOT / "assets" / "match_types").glob("*.png")
+})
+ASSETS.update({
+    f"assets/draws/{name}.png": ROOT / "assets" / "draws" / f"{source}.png"
+    for name, source in {
+        "finale": "finale _ big match", "semifinals": "semifinals", "quarters": "quarters",
+        "vs-quarters": "VS quarters", "premier": "PREMIERS TOURS", "deuxieme": "DEUXIÈMES TOURS",
+        "quartdefinale": "QUARTS DE FINALE TITLE", "demifinale": "DEMI-FINALES TITLE", "finale-title": "FINALE TITLE",
+    }.items()
+})
+ASSETS.update({
     f"assets/wtatour_result/{name}.png": ROOT / "assets" / "wtatour_result" / f"{source}.png"
     for name, source in {
         "premier": "PREMIERS TOURS", "deuxieme": "DEUXIÈMES TOURS", "quartdefinale": "QUARTS DE FINALE TITLE",
@@ -105,6 +116,7 @@ ASSETS.update({
 
 def main() -> None:
     sources = ranking_sources()
+    names_by_id, player_names = load_player_names()
     calendar = merged_calendar(CALENDAR)
 
     latest_date = ""
@@ -175,6 +187,8 @@ def main() -> None:
         players.append({
             "id": player_id,
             "name": row["player"],
+            "display_name": names_by_id.get(player_id, {}).get("display_name", row["player"]),
+            "aliases": names_by_id.get(player_id, {}).get("aliases", []),
             "country": row["country"],
             "dob": row["dob"],
             "rank": int(row["rank"]) if player_id in latest else None,
@@ -217,7 +231,7 @@ def main() -> None:
         shutil.copy2(results, data_dir / "recent_results.json")
     else:
         (data_dir / "recent_results.json").write_text('{"updated_at":null,"matches":[]}', encoding="utf-8")
-    payload = {"snapshot_date": latest_date, "players": players}
+    payload = {"snapshot_date": latest_date, "players": players, "player_names": player_names}
     draws = ROOT / "data" / "current_draws.json"
     if draws.is_file():
         shutil.copy2(draws, data_dir / "current_draws.json")

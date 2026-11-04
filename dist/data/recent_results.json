@@ -1,7 +1,217 @@
 {
-  "updated_at": "2026-11-04T18:37:25.556507+00:00",
-  "window_start": "2026-11-03T18:37:25.556507+00:00",
+  "updated_at": "2026-11-04T22:38:24.102818+00:00",
+  "window_start": "2026-11-03T22:38:24.102818+00:00",
   "matches": [
+    {
+      "id": "1110:2026:LS015",
+      "completed_at": "2026-11-04T21:44:40.430000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "320716",
+        "first_name": "Renata",
+        "last_name": "Zarazua",
+        "name": "Renata Zarazua",
+        "country": "MEX"
+      },
+      "loser": {
+        "id": "316009",
+        "first_name": "Despina",
+        "last_name": "Papamichail",
+        "name": "Despina Papamichail",
+        "country": "GRE"
+      },
+      "sets": [
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "6"
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS013",
+      "completed_at": "2026-11-04T20:50:03.613000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "326891",
+        "first_name": "Leyre",
+        "last_name": "Romero Gormaz",
+        "name": "Leyre Romero Gormaz",
+        "country": "ESP"
+      },
+      "loser": {
+        "id": "329081",
+        "first_name": "Solana",
+        "last_name": "Sierra",
+        "name": "Solana Sierra",
+        "country": "ARG"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS014",
+      "completed_at": "2026-11-04T19:25:43.800000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "327287",
+        "first_name": "Julia",
+        "last_name": "Riera",
+        "name": "Julia Riera",
+        "country": "ARG"
+      },
+      "loser": {
+        "id": "320316",
+        "first_name": "Julia",
+        "last_name": "Grabher",
+        "name": "Julia Grabher",
+        "country": "AUT"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS009",
+      "completed_at": "2026-11-04T19:02:47.760000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "325406",
+        "first_name": "Alice",
+        "last_name": "Tubello",
+        "name": "Alice Tubello",
+        "country": "FRA"
+      },
+      "loser": {
+        "id": "324128",
+        "first_name": "Marina",
+        "last_name": "Bassols Ribera",
+        "name": "Marina Bassols Ribera",
+        "country": "ESP"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS012",
+      "completed_at": "2026-11-04T18:27:45.957000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "325991",
+        "first_name": "Carole",
+        "last_name": "Monnet",
+        "name": "Carole Monnet",
+        "country": "FRA"
+      },
+      "loser": {
+        "id": "333944",
+        "first_name": "Laura",
+        "last_name": "Samson",
+        "name": "Laura Samson",
+        "country": "CZE"
+      },
+      "sets": [
+        {
+          "winner": 3,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "4"
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1110:2026:LS010",
       "completed_at": "2026-11-04T17:17:49.167000+00:00",
@@ -796,226 +1006,6 @@
         {
           "winner": 6,
           "loser": 1,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS028",
-      "completed_at": "2026-11-03T22:23:49.773000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "320316",
-        "first_name": "Julia",
-        "last_name": "Grabher",
-        "name": "Julia Grabher",
-        "country": "AUT"
-      },
-      "loser": {
-        "id": "317155",
-        "first_name": "Laura",
-        "last_name": "Pigossi",
-        "name": "Laura Pigossi",
-        "country": "BRA"
-      },
-      "sets": [
-        {
-          "winner": 3,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS030",
-      "completed_at": "2026-11-03T21:20:40.640000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "316009",
-        "first_name": "Despina",
-        "last_name": "Papamichail",
-        "name": "Despina Papamichail",
-        "country": "GRE"
-      },
-      "loser": {
-        "id": "322638",
-        "first_name": "Maria Lourdes",
-        "last_name": "Carle",
-        "name": "Maria Lourdes Carle",
-        "country": "ARG"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        },
-        {
-          "winner": 5,
-          "loser": 7,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS030",
-      "completed_at": "2026-11-03T20:10:34.237000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "325771",
-        "first_name": "Simona",
-        "last_name": "Waltert",
-        "name": "Simona Waltert",
-        "country": "SUI"
-      },
-      "loser": {
-        "id": "331152",
-        "first_name": "Sahaja",
-        "last_name": "Yamalapalli",
-        "name": "Sahaja Yamalapalli",
-        "country": "IND"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        },
-        {
-          "winner": 3,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS023",
-      "completed_at": "2026-11-03T19:54:21.610000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "325088",
-        "first_name": "Bianca",
-        "last_name": "Andreescu",
-        "name": "Bianca Andreescu",
-        "country": "CAN"
-      },
-      "loser": {
-        "id": "323079",
-        "first_name": "Tamara",
-        "last_name": "Zidansek",
-        "name": "Tamara Zidansek",
-        "country": "SLO"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS018",
-      "completed_at": "2026-11-03T19:37:50.357000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "325406",
-        "first_name": "Alice",
-        "last_name": "Tubello",
-        "name": "Alice Tubello",
-        "country": "FRA"
-      },
-      "loser": {
-        "id": "322087",
-        "first_name": "Rebeka",
-        "last_name": "Masarova",
-        "name": "Rebeka Masarova",
-        "country": "SUI"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 0,
           "tiebreak": ""
         }
       ],

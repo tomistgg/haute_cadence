@@ -92,6 +92,7 @@ let calendarFailed = false;
 let tournaments = [];
 let selectedPlayer = null;
 let players = [];
+let playerNameIndex = { by_wta_id: {}, by_name: {} };
 let snapshotDate = "";
 let activeIndex = -1;
 let visiblePlayers = [];
@@ -149,6 +150,27 @@ function lastTitleLabel(item) {
 
 function fitLastTitleText() { fitLastTitleValue(lastTitleValue); }
 
+function fitPlayerName(name, available, maximumFontSize = "") {
+  name.style.fontSize = maximumFontSize;
+  name.style.transform = "none";
+  name.style.removeProperty("width");
+  if (available <= 0) return 0;
+  const style = getComputedStyle(name);
+  const measure = document.createElement("canvas").getContext("2d");
+  measure.font = style.font;
+  const width = measure.measureText(name.textContent).width;
+  const padding = Math.max(4, parseFloat(style.webkitTextStrokeWidth) || 0);
+  const scale = width ? Math.min(1, Math.max(0, available - padding) / width) : 1;
+  name.style.fontSize = parseFloat(style.fontSize) * scale + "px";
+  return Math.min(width + padding, available);
+}
+
+function fitCardPlayerNames(root = cardDesign) {
+  root.querySelectorAll(".card-name").forEach(name => {
+    fitPlayerName(name, name.clientWidth, Math.min(10.2, 140 / Math.max(1, name.textContent.length)) + "cqw");
+  });
+}
+
 function fitTournamentName(name, fontSize) {
   name.style.fontSize = fontSize;
   const boxStyle = getComputedStyle(name.parentElement);
@@ -162,7 +184,7 @@ function fitTournamentName(name, fontSize) {
 }
 
 function fitTournamentHeadings() {
-  document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong, .manual-draw-round-text strong, .draw-125-final-round-text strong").forEach(name => {
+  document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong, .manual-draw-round-text strong").forEach(name => {
     if (name.getClientRects().length) fitTournamentName(name, name.style.fontSize || getComputedStyle(name).fontSize);
   });
 }
@@ -179,7 +201,7 @@ function fitLastTitleValue(value) {
 }
 
 new ResizeObserver(fitLastTitleText).observe(lastTitleValue.parentElement);
-document.fonts.ready.then(fitLastTitleText);
+document.fonts.ready.then(() => { fitLastTitleText(); fitCardPlayerNames(); });
 
 function renderPlayerForm(player, root = cardDesign) {
   const form = playerForm(player);
@@ -197,8 +219,28 @@ function renderPlayerForm(player, root = cardDesign) {
 }
 
 
+function stripAccents(value) {
+  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 function normalize(value) {
-  return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
+  return stripAccents(value).toLocaleLowerCase();
+}
+
+function playerDisplayName(player) {
+  const name = player.name_override ? player.name
+    : playerNameIndex.by_wta_id[String(player.id)] || player.display_name
+      || playerNameIndex.by_name[normalize(player.name || "")] || player.name || "";
+  return stripAccents(name);
+}
+
+function playerMatchesSearch(player, query) {
+  return [player.name, playerDisplayName(player), ...(player.aliases || [])].some(name => normalize(name).includes(query));
+}
+
+function savedPlayerPhoto(player) {
+  return [player.name, playerDisplayName(player), ...(player.aliases || [])]
+    .map(name => photoByName.get(normalize(name))).find(Boolean);
 }
 
 function getAge(dob, asOf) {
@@ -362,7 +404,7 @@ function showOptions(query) {
   const needle = normalize(query.trim());
   activeIndex = -1;
   const matches = needle
-    ? players.filter(player => normalize(player.name).includes(needle))
+    ? players.filter(player => playerMatchesSearch(player, needle))
     : players;
   visiblePlayers = matches.slice(0, 8);
   options.replaceChildren();
@@ -374,7 +416,7 @@ function showOptions(query) {
     button.setAttribute("role", "option");
     button.setAttribute("aria-selected", "false");
     button.innerHTML = '<span class="suggestion-name"></span>';
-    button.querySelector(".suggestion-name").textContent = player.name;
+    button.querySelector(".suggestion-name").textContent = playerDisplayName(player);
     button.addEventListener("click", () => selectPlayer(player));
     options.append(button);
   });
@@ -385,7 +427,7 @@ function showOptions(query) {
 
 function selectPlayer(player) {
   selectedPlayer = player;
-  searchInput.value = player.name;
+  searchInput.value = playerDisplayName(player);
   options.classList.remove("open");
   searchInput.setAttribute("aria-expanded", "false");
   options.replaceChildren();
@@ -402,12 +444,13 @@ function renderCard(player) {
   renderPlayerArtwork(cardDesign, player, cardType.value);
   card.hidden = false;
   scaleCardDesign();
+  fitCardPlayerNames();
   fitTournamentHeadings();
 }
 
 function renderPlayerArtwork(root, player, type = "form") {
   const node = id => root.querySelector("#" + id);
-  const name = player.name.toLocaleUpperCase();
+  const name = playerDisplayName(player).toLocaleUpperCase();
   const age = getAge(player.dob, snapshotDate);
   const frame = root === cardDesign ? card : root;
   frame.dataset.type = type;
@@ -435,7 +478,6 @@ function renderPlayerArtwork(root, player, type = "form") {
   if (player.country) flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
   else flag.removeAttribute("src");
   flag.alt = player.country + " flag";
-  node("card-name").style.fontSize = Math.min(10.2, 140 / name.length) + "cqw";
   node("card-rank").parentElement.style.fontSize = String(player.rank).length > 3 ? "9cqw" : "12cqw";
   node("card-rank-ordinal").textContent = player.rank == null ? "" : player.rank === 1 ? "er" : "\u00e8me";
   node("card-rank-ordinal").hidden = player.rank == null;
@@ -445,7 +487,7 @@ function renderPlayerArtwork(root, player, type = "form") {
   const detailsTier = ["top_400", "top_500", "top_600"].includes(tier) ? "top_200" : tier;
   node("card-details").src = "assets/details/" + detailsTier + "_details.png";
   const baseBadge = node("card-base-badge");
-  if (tier === "top_10" || tier === "prospect") baseBadge.src = "assets/cards/" + tier + "_card.png";
+  if (tier === "top_10") baseBadge.src = "assets/cards/" + tier + "_card.png";
   else baseBadge.removeAttribute("src");
   node("card-name").textContent = name;
   node("card-rank").textContent = String(player.rank ?? "NR");
@@ -463,7 +505,7 @@ function renderPlayerArtwork(root, player, type = "form") {
 
   const image = node("card-photo");
   const initials = node("card-initials");
-  const photoPath = photoByName.get(normalize(player.name));
+  const photoPath = savedPlayerPhoto(player);
   if (photoPath) {
     image.src = photoPath;
     image.alt = name + " portrait";
@@ -473,7 +515,7 @@ function renderPlayerArtwork(root, player, type = "form") {
     image.removeAttribute("src");
     image.alt = "";
     image.style.display = "none";
-    initials.textContent = player.name.split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
+    initials.textContent = playerDisplayName(player).split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
     initials.style.display = "flex";
   }
   node("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + (player.rank ?? "NR");
@@ -556,8 +598,10 @@ fetch("data/players.json", { cache: "no-store" })
   .then(response => { if (!response.ok) throw new Error("Player data could not be loaded"); return response.json(); })
   .then(data => {
     players = data.players;
+    playerNameIndex = data.player_names || { by_wta_id: {}, by_name: {} };
     snapshotDate = data.snapshot_date;
     status.textContent = "Player list loaded.";
+    if (!card.hidden) renderCard(selectedPlayer);
   })
   .catch(error => {
     status.textContent = error.message;

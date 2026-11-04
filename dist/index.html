@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=8cd64d9b8f82">
+  <link rel="stylesheet" href="cards.css?v=7f72bf0c981a">
 </head>
 <body>
   <main class="page">
@@ -150,6 +150,7 @@
           <div id="tour-round-art" class="tour-cropped-art" hidden><img alt=""></div>
           <div id="tour-score-art" class="tour-cropped-art" hidden><img alt=""></div>
           <img id="result-round-art" class="result-layer" alt="">
+          <div id="non-tour-round-art" class="tour-cropped-art" hidden><img alt=""></div>
           <div class="result-winner-portrait"><img id="result-winner-photo" alt="" hidden><span id="result-winner-initials"></span></div>
           <img class="result-layer" src="assets/results/opponent.png" alt="">
           <div class="result-opponent-portrait"><img id="result-loser-photo" alt="" hidden><span id="result-loser-initials"></span></div>
@@ -161,8 +162,8 @@
           <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
         </div>
         <div id="draw-card-content" class="draw-content" hidden>
-          <div class="draw-frame" aria-hidden="true"></div>
-          <div class="draw-125-final-heading"><img src="assets/haute-cadence-logo.png" alt=""><div class="draw-125-final-round-text"><strong id="draw-125-final-round"></strong></div></div>
+          <img id="draw-layout-art" class="draw-layout-art" alt="">
+          <img id="draw-versus-art" class="draw-versus-art" alt="" hidden>
           <div id="draw-round-art" class="tour-cropped-art"><img alt=""><img id="manual-draw-logo" class="manual-draw-logo" src="assets/haute-cadence-logo.png" alt="" hidden><div id="manual-draw-round-text" class="manual-draw-round-text" hidden><strong id="manual-draw-round-label"></strong></div></div>
           <div class="draw-event"><strong id="draw-event-name"></strong><span id="draw-event-category"></span></div>
           <div id="draw-matches"></div>
@@ -192,7 +193,15 @@
       <button type="button" class="suggestion" data-round="quartdefinale">QUART DE FINALE</button>
       <button type="button" class="suggestion" data-round="demifinale">DEMI-FINALE</button>
       <button type="button" class="suggestion" data-round="finale">FINALE</button>
+      <button type="button" class="suggestion" data-round="qualifications1" data-non-tour="true">QUALIFICATIONS - T1</button>
+      <button type="button" class="suggestion" data-round="qualifications2" data-non-tour="true">QUALIFICATIONS - T2</button>
+      <button type="button" class="suggestion" data-round="qualifications3" data-non-tour="true">QUALIFICATIONS - T3</button>
     </div>
+  </dialog>
+  <dialog id="itf-tournament-dialog" class="itf-player-dialog" aria-labelledby="itf-tournament-heading">
+    <form method="dialog" class="itf-player-dialog-heading"><strong id="itf-tournament-heading">This week's ITF tournaments</strong><button type="submit">Close</button></form>
+    <div id="itf-tournament-options" class="itf-player-options" aria-label="Current-week ITF tournaments"></div>
+    <p id="itf-tournament-status" role="status"></p>
   </dialog>
   <dialog id="result-category-dialog" class="itf-player-dialog" aria-labelledby="result-category-heading">
     <form method="dialog" class="itf-player-dialog-heading"><strong id="result-category-heading">Select tournament category</strong><button type="submit">Close</button></form>
@@ -224,9 +233,9 @@
     </form>
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
-  <script src="app.js?v=bcfcf348e590" defer></script>
-  <script src="result-card.js?v=393df5086852" defer></script>
-  <script src="draw-card.js?v=252d55696616" defer></script>
-  <script src="export-card.js?v=d4b2a680f6f9" defer></script>
+  <script src="app.js?v=61baaa9c1925" defer></script>
+  <script src="result-card.js?v=a4430ea85e9e" defer></script>
+  <script src="draw-card.js?v=11e2c7b88c8e" defer></script>
+  <script src="export-card.js?v=e9cfb2d5f230" defer></script>
 </body>
 </html>

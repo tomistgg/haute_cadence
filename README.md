@@ -15,10 +15,11 @@ Then open <http://127.0.0.1:8765/>. By default the build reads all four WTA rank
 `../tenis-fem-arg/data/`, uses their latest ranking week, and prepares `dist/data/players.json`.
 The source files are read only; Haute Cadence does not fetch or update rankings.
 For a different checkout location, set `$env:HAUTE_CADENCE_DATA_DIR = 'C:\path\to\tenis-fem-arg\data'` before running.
-The source directory must contain the four ranking CSVs, `calendar_snapshot.json`, and `wta_full_calendar_cache.json`.
+The source directory must contain the four ranking CSVs, `calendar_snapshot.json`, `wta_full_calendar_cache.json`,
+`itf_calendar_cache.json`, and `player_aliases_wta_itf.json`.
 Missing or invalid shared files produce an error instead of silently using Haute Cadence's old ranking copies.
 
-Tournament lists merge both shared calendar files. Current WTA dates, categories, cities, cancellations, and new events
+Tournament lists merge the shared calendar files. Current WTA dates, categories, cities, cancellations, and new events
 come from the shared cache. `data/calendar_snapshot.json` is an accumulated calendar archive: older tournaments remain
 searchable after they leave the other project's moving cache window. The build writes the merged calendar to `dist/data/`.
 The local server notices changed source files and rebuilds player/calendar data when requested; reload the page to load it.
@@ -27,16 +28,29 @@ All player searches include anyone ranked within two calendar years of the lates
 from the latest week show NR; their old ranking is retained only as `last_rank` / `last_rank_date` in the data.
 Current rank, career-best rank, and last recorded rank remain separate. Country flags cover the expanded list.
 
+All card images use WTARG's player display names from `player_aliases_wta_itf.json`, matched by WTA ID, including
+additional WTA IDs. For example, Maaya Rajeshwaran Revathi is shown as Maaya Rajeshwaran. Records with a separate
+`presentation_name` use that visible label instead of an internal disambiguation suffix. Both WTA and ITF names,
+display names, and aliases remain searchable. The original ranking and match names and IDs remain unchanged.
+The complete name index also covers live match players outside the two-year ranking list. Name-only fallback is
+used only for unambiguous aliases. Explicit custom names in manual cards take precedence over the shared label.
+Portrait uploads remain attached to player IDs, and saved portraits can still match the original name or aliases.
+The local server detects changes to the shared name file; reload to rebuild and load the updated labels.
+Long player names reduce their font size to fit their space while keeping the letters' natural proportions. This
+also applies to both Result Card layouts and WTA 125 draw names; shorter names retain their normal font size.
+
 Draw lists current WTA tournaments (including WTA 125) and FINALE, DEMI-FINALES, and QUARTS DE FINALE.
 Tour and Grand Slam draws use two, four, or eight Form cards. WTA 125 draws automatically use the separate portrait
-design: large photos, white names, round flags, VS panels, and final-ranking tags. Players fill automatically from the official
-singles bracket; unresolved slots show TBD. Click a portrait to upload its photo. Click the ten form results on a
+design: large photos, white names, round flags, VS panels, and final-ranking tags. Draw frames, brackets, placeholders,
+VS graphics, and round banners use the supplied PNGs in `assets/draws/`. Player panels follow the positions and angles
+of those placeholders; unresolved opponents retain the PNG's image placeholder. Players fill automatically from the official
+singles bracket. Click a portrait to upload its photo. Click the ten form results on a
 card, or use Player form for larger controls, to cycle blank, win, loss from oldest to newest. Form edits share the
-same per-player draft as the main Form card. The Tour final layout's H2H values are edited directly on the image.
+same per-player draft as the main Form card. Final H2H values are edited inside the supplied image's H2H frame.
 Photos, form, H2H, background choice, and selected round are included in the saved PNG. Uploads and edits reset
-on reload. Tour final/quarterfinal exports are 1600 × 900; semifinals are 1600 × 1350. WTA 125 final/quarterfinal
-exports are 1600 × 1360; semifinals are 1600 × 1680. The WTA 125 design omits the Form/history and H2H panels;
-those drafts remain available when switching back to the Tour design.
+on reload. Both designs export at the templates' native sizes: finals 1600 × 900, semifinals 1880 × 1576, and
+quarterfinals 3200 × 1800. WTA 125 keeps its photo/name/flag panels instead of the Tour Form cards; both styles use
+the same supplied layout artwork and editable final H2H frame.
 The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
 
 Choose Draw, then MANUAL at the bottom of its tournament selector to build a draw without the WTA feed. Choose FINALE (2 players),
@@ -53,7 +67,8 @@ positions even when the feed gives a scheduled match an unreliable round label. 
 only from confirmed winners of their direct child matches. Doubles, qualifying, and round-robin results never
 advance into the knockout bracket. The updater preserves the previous snapshot on failure. The local server and
 Draw refresh every five minutes while used; GitHub Pages updates draws on deployment and its 30-minute schedule.
-Tournament discovery uses the shared calendar, but match states and scores still come directly from WTA.
+Result Card and Draw tournament discovery, match states, and scores come directly from WTA, independently of WTARG.
+Clicking Refresh on the local server forces a new WTA request, bypassing the five-minute automatic refresh cache.
 Confirmed main-draw singles finals update `data/wta_champions.json` using the same draw response. Recently ended events
 without a saved champion are checked too; existing titles are merged by tournament ID and season, so refreshes do not
 increase title counts twice. Player title counts and DERNIER TITRE are regenerated on the next player-data request or build.
@@ -61,6 +76,8 @@ increase title counts twice. Player title counts and DERNIER TITRE are regenerat
 Non-Tour Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
 The supplied result layers in `assets/results cards/` are composed at 1440 × 1600, following `preview.png`.
+Non-Tour round headers use the supplied PNGs in `assets/match_types/`, including all three qualifying rounds.
+Their transparent padding is cropped in the browser; the original assets are copied unchanged.
 Winner names are yellow; opponent names are white; the higher score in each set is yellow.
 Result cards use #ffd400 for winner highlights, Chunk Five for names, Poppins Bold Italic for scores,
 and TT Bluescreens Italic for player rankings. Poppins is bundled from
@@ -75,30 +92,37 @@ WTA 1000, WTA 500, WTA 250, WTA 125, W100, W75, W50, W35, or W15. Click a player
 select from the two-year player list. Flags, current rankings, and saved portraits load with that selection.
 The player dialog also lets you override the name, ranking, and flag using Use these details, just like the Tour
 manual match. Ranking/flag edits keep the player's uploaded portrait.
-Click the ITF MATCH heading to choose the first, second, or third round, quarterfinals, semifinals, or final.
+Click the ITF MATCH heading to choose the first, second, or third round, quarterfinals, semifinals, final, or qualifying round.
 The heading uses that round's supplied artwork and stays clickable to change the round again.
 Each ITF option keeps a separate draft in the current tab. Player rows stay in place, and a player becomes yellow
 after winning two completed sets; incomplete or tied scores do not declare a winner. The winner's portrait moves
 to the large frame. The photo upload controls correspond to Player 1 and Player 2 in manual ITF mode.
 These drafts and uploaded photos clear on reload. ITF editing is available even if the live WTA feed is unavailable.
+For ITF MATCH 2 SETS and ITF MATCH 3 SETS, click the tournament name in the image to choose an ITF event from
+the current Monday–Sunday week (Europe/Madrid). The list uses WTARG's full ITF calendar, refreshed when opened;
+choosing an event fills its city and category automatically. The Tour Result Card's MANUAL MATCH uses the same
+picker for current-week WTA Tour events, Finals and senior Grand Slams, including their explicitly dated qualifying weeks.
+Grand Slams retain their standard tournament names when selected during qualifying; WTA 125 and ITF events are excluded.
 
 Tour Result Card uses a separate 1600 × 900 landscape layout and the supplied PNGs in `assets/wtatour_result/`.
 Its match list includes only WTA Tour categories (including Grand Slams and Finals) from the last 24 hours, excluding
 WTA 125. Upload a single Match photo to fill the background; each match keeps its own uploaded photo in this tab.
 The round badge sits at the top, tournament and category at the top right, and scoreboard at the bottom left.
 There is no surface-background picker or automatic player portrait in this layout.
-The final MANUAL MATCH option lets you choose a round and category, edit the tournament name, select players or enter their names,
+The final MANUAL MATCH option lets you choose a round, tournament and category, select players or enter their names,
 rankings and flags in the player dialog, and edit scores. A Sets selector switches between two and three sets;
 switching back restores a previously entered third set. The missing third-round badge uses the supplied first-round
 banner with a live third-round label. All manual edits and the uploaded match photo are included in PNG export.
 
-The local server refreshes `data/recent_results.json` from the official WTA completed-match endpoint at most once
-every five minutes. The page also refreshes while either result card is selected. The official match start timestamp plus
+The local server automatically refreshes `data/recent_results.json` from the official WTA completed-match endpoint
+every five minutes while used; clicking Refresh forces an immediate update. The page also refreshes while either
+result card is selected. The official match start timestamp plus
 duration defines the finish time; LastUpdated is the fallback when duration is unavailable. Walkovers are excluded;
 retirements/defaults with played sets are marked. Cached matches outside the last 24 hours never appear.
 If WTA is unavailable, the last successful feed is retained and the page reports the refresh failure.
 For a static build, run `python update_wta_results.py` and `python update_wta_draws.py` before `python build_site.py`.
 The Pages workflow refreshes the feed on each deployment and every 30 minutes once this workflow is published.
+On GitHub Pages, Refresh reloads the latest published feed; the static site cannot run the Python WTA updaters on demand.
 
 Use the selector next to player search to switch between Player Form Card, WTA 125 Title Card, and WTA Tour Title Card. The selected player is preserved when changing card types. The layouts follow the three references in `examples/` using supplied PNG layers and CSS. Title cards layer `assets/details/wta125_title_details.png` or `assets/details/wtatour_title_details.png` over the complete card; the Tour overlay includes its trophy and laurels. No AI image generation is used.
 
@@ -136,7 +160,8 @@ Tournament display-name overrides apply to both search results and card headings
 GitHub Pages must publish the generated `dist/` directory. The repository-root HTML is the source template and refers to files that exist only in the build output.
 
 The `Deploy GitHub Pages` workflow runs `python build_site.py` and deploys `dist/` after pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is **GitHub Actions**.
-It checks out only the required shared files from `tomistgg/tenis-fem-arg`'s validated `data-state` branch and keeps the
+It checks out only the required rankings, calendar, and player-name files from `tomistgg/tenis-fem-arg`'s validated
+`data-state` branch and keeps the
 existing 30-minute WTA results/draw refresh. The generated calendar archive and champion history are retained on a
 separate `card-data` branch, so later deployments preserve past tournaments and newly won titles. This requires the
 workflow's contents-write permission. No workflow or data in `tenis-fem-arg` is changed.
