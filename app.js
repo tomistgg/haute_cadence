@@ -357,7 +357,9 @@ function renderCard(player) {
   careerLabel.textContent = "MEILLEUR CLASSEMENT\nEN CARRI\u00c8RE";
   const bestRankLabel = document.getElementById("best-rank-label");
   bestRankLabel.hidden = atCareerBest;
-  bestRankLabel.classList.toggle("long-rank", String(player.best_rank).length > 2);
+  const bestRankDigits = String(player.best_rank).length;
+  bestRankLabel.classList.toggle("long-rank", bestRankDigits > 2);
+  bestRankLabel.classList.toggle("three-digit-rank", bestRankDigits === 3);
   document.getElementById("best-rank-value").textContent = player.best_rank;
   document.getElementById("best-rank-year").textContent = "EN " + player.best_rank_year;
 

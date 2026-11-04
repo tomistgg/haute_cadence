@@ -26,6 +26,7 @@
 #best-rank-year { color: #050505; font: 400 3.2cqw/1 "Bebas Neue", sans-serif; }
 .best-rank-label.long-rank .best-position { font-size: 3.4cqw; }
 .best-rank-label.long-rank #best-rank-year { font-size: 2.8cqw; }
+.best-rank-label.three-digit-rank #best-rank-year { transform: translateY(.2cqw); }
 .best-position sup { margin-top: .18cqw; font-size: .45em; color: #050505; }
 .card-form { left: 21.111111%; top: 86.2%; width: 52%; height: 6.944444cqw; display: flex; gap: .763889cqw; }
 .form-result { display: flex; flex: none; align-items: center; justify-content: center; width: 3.819444cqw; min-width: 0; padding: 0; border: .08cqw solid #071e3640; border-radius: .35cqw; background: #ffffff18; color: #15564c; font: 400 6.944444cqw/1 "Barriecito", sans-serif; cursor: pointer; }
