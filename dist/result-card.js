@@ -432,10 +432,16 @@ async function refreshResults(force = false) {
   button.disabled = true;
   if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
   try {
-    const url = "data/recent_results.json" + (force ? "?refresh=1&t=" + Date.now() : "");
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error("Completed WTA matches are temporarily unavailable. Try Refresh again.");
-    const data = await response.json();
+    let data;
+    if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
+      const url = "data/recent_results.json" + (force ? "?refresh=1&t=" + Date.now() : "");
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error("Completed WTA matches are temporarily unavailable. Try Refresh again.");
+      data = await response.json();
+    } else {
+      const live = await import("./wta-live.mjs");
+      data = await live.collectResults();
+    }
     if (!Array.isArray(data.matches)) throw new Error("The completed-match feed is invalid.");
     resultFeed = data;
     updateResultOptions();

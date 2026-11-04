@@ -405,10 +405,16 @@ async function refreshDraws(force = false) {
   document.getElementById("refresh-draws").disabled = true;
   if (!drawFeed) drawStatus.textContent = "Loading current WTA draws...";
   try {
-    const url = "data/current_draws.json" + (force ? "?refresh=1&t=" + Date.now() : "");
-    const response = await fetch(url, { cache: "no-store" });
-    if (!response.ok) throw new Error("Current WTA draws could not be loaded. Try Refresh again.");
-    const data = await response.json();
+    let data;
+    if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
+      const url = "data/current_draws.json" + (force ? "?refresh=1&t=" + Date.now() : "");
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) throw new Error("Current WTA draws could not be loaded. Try Refresh again.");
+      data = await response.json();
+    } else {
+      const live = await import("./wta-live.mjs");
+      data = await live.collectDraws();
+    }
     if (!Array.isArray(data.tournaments)) throw new Error("The WTA draw feed is invalid.");
     const changed = JSON.stringify(drawFeed?.tournaments) !== JSON.stringify(data.tournaments);
     drawFeed = data;

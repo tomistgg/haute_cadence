@@ -22,7 +22,7 @@ const context = {
     createElement: element,
     fonts: { ready: { then() {} } },
   },
-  window: { addEventListener() {} },
+  window: { location: { hostname: "localhost" }, addEventListener() {} },
   cardType: { value: "draw", addEventListener() {} },
   isDrawCard: () => context.cardType.value === "draw",
   tournamentName: tournament => tournament.name,

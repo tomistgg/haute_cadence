@@ -24,7 +24,7 @@ const context = {
     createElement: element,
     fonts: { ready: { then() {} } },
   },
-  window: { addEventListener() {} },
+  window: { location: { hostname: "localhost" }, addEventListener() {} },
   cardType: { value: "result", addEventListener(event, listener) { changeCard = listener; } },
   isResultCard: () => ["result", "tour-result"].includes(context.cardType.value),
   tournamentName: tournament => tournament.name,

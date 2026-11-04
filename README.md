@@ -66,7 +66,7 @@ The matches endpoint is requested without a completed-only filter, and `LS` matc
 positions even when the feed gives a scheduled match an unreliable round label. Missing parent slots are filled
 only from confirmed winners of their direct child matches. Doubles, qualifying, and round-robin results never
 advance into the knockout bracket. The updater preserves the previous snapshot on failure. The local server and
-Draw refresh every five minutes while used; GitHub Pages updates draws on deployment and its 30-minute schedule.
+Draw refresh every five minutes while used. On GitHub Pages, draw refreshes fetch WTA directly through the shared relay.
 Result Card and Draw tournament discovery, match states, and scores come directly from WTA, independently of WTARG.
 Clicking Refresh on the local server forces a new WTA request, bypassing the five-minute automatic refresh cache.
 Confirmed main-draw singles finals update `data/wta_champions.json` using the same draw response. Recently ended events
@@ -122,7 +122,12 @@ retirements/defaults with played sets are marked. Cached matches outside the las
 If WTA is unavailable, the last successful feed is retained and the page reports the refresh failure.
 For a static build, run `python update_wta_results.py` and `python update_wta_draws.py` before `python build_site.py`.
 The Pages workflow refreshes the feed on each deployment and every 30 minutes once this workflow is published.
-On GitHub Pages, Refresh reloads the latest published feed; the static site cannot run the Python WTA updaters on demand.
+On GitHub Pages, Result Card and Draw refreshes use `wta-live.mjs` and the shared endpoint at
+`https://tennis-wta-api.schiter-tomas.workers.dev`. Clicking Refresh fetches a fresh WTA calendar and match responses;
+the browser transforms them into the same singles-result/bracket format without writing repository data files.
+Automatic five-minute refreshes use this live path too. A failed or incomplete response retains the current card/feed
+and shows an error. Rankings and player display names still use the shared WTARG files. The scheduled Python updaters
+continue maintaining the saved feeds and champion history; browser refreshes do not write to that history.
 
 Use the selector next to player search to switch between Player Form Card, WTA 125 Title Card, and WTA Tour Title Card. The selected player is preserved when changing card types. The layouts follow the three references in `examples/` using supplied PNG layers and CSS. Title cards layer `assets/details/wta125_title_details.png` or `assets/details/wtatour_title_details.png` over the complete card; the Tour overlay includes its trophy and laurels. No AI image generation is used.
 

@@ -56,8 +56,11 @@ class SiteBuildTest(unittest.TestCase):
                     for week, player_id, rank in rows:
                         writer.writerow((week, player_id, rank, 100, f"Player {player_id}", "ARM", "2000-01-01"))
                 sources.append(source)
-            with patch.multiple(
-                build_site, ROOT=root, DIST=dist, CALENDAR=calendar, CHAMPIONS=champions, SOURCES=sources, ASSETS={}
+            with (
+                patch.multiple(build_site, ROOT=root, DIST=dist, CALENDAR=calendar, CHAMPIONS=champions, ASSETS={}),
+                patch.object(build_site, "ranking_sources", return_value=sources),
+                patch.object(build_site, "load_player_names", return_value=({}, {})),
+                patch.object(build_site, "merged_calendar", return_value={}),
             ):
                 build_site.main()
             data = json.loads((dist / "data" / "players.json").read_text(encoding="utf-8"))

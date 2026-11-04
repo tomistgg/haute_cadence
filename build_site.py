@@ -17,6 +17,7 @@ CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "wta-live.mjs": ROOT / "wta-live.mjs",
     "draw-card.js": ROOT / "draw-card.js",
     "result-card.js": ROOT / "result-card.js",
     "assets/result-court.svg": ROOT / "assets" / "result-court.svg",
