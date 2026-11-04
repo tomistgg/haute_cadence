@@ -1,7 +1,222 @@
 {
-  "updated_at": "2026-11-04T11:45:09.698775+00:00",
-  "window_start": "2026-11-03T11:45:09.698775+00:00",
+  "updated_at": "2026-11-04T14:11:49.812215+00:00",
+  "window_start": "2026-11-03T14:11:49.812215+00:00",
   "matches": [
+    {
+      "id": "1176:2026:LS011",
+      "completed_at": "2026-11-04T13:36:47.820000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "331290",
+        "first_name": "Gina",
+        "last_name": "Feistel",
+        "name": "Gina Feistel",
+        "country": "POL"
+      },
+      "loser": {
+        "id": "316588",
+        "first_name": "Isabella",
+        "last_name": "Shinikova",
+        "name": "Isabella Shinikova",
+        "country": "BUL"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1176:2026:LS013",
+      "completed_at": "2026-11-04T12:57:58.423000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "328907",
+        "first_name": "Martyna",
+        "last_name": "Kubka",
+        "name": "Martyna Kubka",
+        "country": "POL"
+      },
+      "loser": {
+        "id": "325231",
+        "first_name": "Franziska",
+        "last_name": "Sziedat",
+        "name": "Franziska Sziedat",
+        "country": "GER"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1074:2026:LS013",
+      "completed_at": "2026-11-04T12:53:15.087000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1074",
+        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
+        "city": "HONG KONG",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "318312",
+        "first_name": "Maria",
+        "last_name": "Sakkari",
+        "name": "Maria Sakkari",
+        "country": "GRE"
+      },
+      "loser": {
+        "id": "330544",
+        "first_name": "Maya",
+        "last_name": "Joint",
+        "name": "Maya Joint",
+        "country": "AUS"
+      },
+      "sets": [
+        {
+          "winner": 4,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1148:2026:LS010",
+      "completed_at": "2026-11-04T12:24:13.670000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1148",
+        "name": "Chennai Open - Chennai, IND",
+        "city": "CHENNAI",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "329408",
+        "first_name": "Robin",
+        "last_name": "Montgomery",
+        "name": "Robin Montgomery",
+        "country": "USA"
+      },
+      "loser": {
+        "id": "331852",
+        "first_name": "Jeline",
+        "last_name": "Vandromme",
+        "name": "Jeline Vandromme",
+        "country": "BEL"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        },
+        {
+          "winner": 3,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1176:2026:LS020",
+      "completed_at": "2026-11-04T12:00:48.267000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "335375",
+        "first_name": "Kristina",
+        "last_name": "Kroitor",
+        "name": "Kristina Kroitor",
+        "country": "RUS"
+      },
+      "loser": {
+        "id": "324898",
+        "first_name": "Suzan",
+        "last_name": "Lamens",
+        "name": "Suzan Lamens",
+        "country": "NED"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1074:2026:LS012",
       "completed_at": "2026-11-04T11:27:10.533000+00:00",
@@ -1185,405 +1400,6 @@
         {
           "winner": 6,
           "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS029",
-      "completed_at": "2026-11-03T14:10:01.197000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "333018",
-        "first_name": "Vaishnavi",
-        "last_name": "Adkar",
-        "name": "Vaishnavi Adkar",
-        "country": "IND"
-      },
-      "loser": {
-        "id": "323802",
-        "first_name": "Jodie",
-        "last_name": "Burrage",
-        "name": "Jodie Burrage",
-        "country": "GBR"
-      },
-      "sets": [
-        {
-          "winner": 3,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        },
-        {
-          "winner": 7,
-          "loser": 5,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS023",
-      "completed_at": "2026-11-03T13:56:09.873000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "331290",
-        "first_name": "Gina",
-        "last_name": "Feistel",
-        "name": "Gina Feistel",
-        "country": "POL"
-      },
-      "loser": {
-        "id": "329061",
-        "first_name": "Linda",
-        "last_name": "Klimovicova",
-        "name": "Linda Klimovicova",
-        "country": "POL"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 6,
-          "tiebreak": "2"
-        },
-        {
-          "winner": 5,
-          "loser": 7,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS030",
-      "completed_at": "2026-11-03T13:41:50.600000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "333108",
-        "first_name": "Madhurima",
-        "last_name": "Sawant",
-        "name": "Madhurima Sawant",
-        "country": "IND"
-      },
-      "loser": {
-        "id": "327340",
-        "first_name": "Laura",
-        "last_name": "Bohner",
-        "name": "Laura Bohner",
-        "country": "GER"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 6,
-          "tiebreak": "4"
-        },
-        {
-          "winner": 4,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 0,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS026",
-      "completed_at": "2026-11-03T13:21:03.237000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "327241",
-        "first_name": "Moyuka",
-        "last_name": "Uchijima",
-        "name": "Moyuka Uchijima",
-        "country": "JPN"
-      },
-      "loser": {
-        "id": "320228",
-        "first_name": "Rebecca",
-        "last_name": "Sramkova",
-        "name": "Rebecca Sramkova",
-        "country": "SVK"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1074:2026:LS031",
-      "completed_at": "2026-11-03T12:56:15.097000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1074",
-        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-        "city": "HONG KONG",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "330332",
-        "first_name": "Alexandra",
-        "last_name": "Eala",
-        "name": "Alexandra Eala",
-        "country": "PHI"
-      },
-      "loser": {
-        "id": "333111",
-        "first_name": "Emerson",
-        "last_name": "Jones",
-        "name": "Emerson Jones",
-        "country": "AUS"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS026",
-      "completed_at": "2026-11-03T12:51:49.383000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "325231",
-        "first_name": "Franziska",
-        "last_name": "Sziedat",
-        "name": "Franziska Sziedat",
-        "country": "GER"
-      },
-      "loser": {
-        "id": "325614",
-        "first_name": "Sada",
-        "last_name": "Nahimana",
-        "name": "Sada Nahimana",
-        "country": "BDI"
-      },
-      "sets": [
-        {
-          "winner": 3,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS019",
-      "completed_at": "2026-11-03T12:31:31.067000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "328897",
-        "first_name": "Polina",
-        "last_name": "Kudermetova",
-        "name": "Polina Kudermetova",
-        "country": "UZB"
-      },
-      "loser": {
-        "id": "324465",
-        "first_name": "Viktoria",
-        "last_name": "Morvayova",
-        "name": "Viktoria Morvayova",
-        "country": "SVK"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        },
-        {
-          "winner": 4,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 1,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1074:2026:LS019",
-      "completed_at": "2026-11-03T12:27:02.897000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1074",
-        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-        "city": "HONG KONG",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "332168",
-        "first_name": "Alexandra",
-        "last_name": "Shubladze",
-        "name": "Alexandra Shubladze",
-        "country": "RUS"
-      },
-      "loser": {
-        "id": "322222",
-        "first_name": "Liudmila",
-        "last_name": "Samsonova",
-        "name": "Liudmila Samsonova",
-        "country": "RUS"
-      },
-      "sets": [
-        {
-          "winner": 5,
-          "loser": 7,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 1,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS016",
-      "completed_at": "2026-11-03T11:56:30.310000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "328818",
-        "first_name": "Janice",
-        "last_name": "Tjen",
-        "name": "Janice Tjen",
-        "country": "INA"
-      },
-      "loser": {
-        "id": "330053",
-        "first_name": "Katherine",
-        "last_name": "Hui",
-        "name": "Katherine Hui",
-        "country": "USA"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 1,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
           "tiebreak": ""
         }
       ],

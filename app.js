@@ -15,6 +15,62 @@ function scaleCardDesign() {
 
 new ResizeObserver(scaleCardDesign).observe(card);
 const cardType = document.getElementById("card-type");
+function isResultCard() {
+  return ["result", "tour-result"].includes(cardType.value);
+}
+const backgroundButton = document.getElementById("choose-background");
+const backgroundDialog = document.getElementById("background-dialog");
+const backgroundOptions = document.getElementById("background-options");
+const selectedBackgrounds = new Map();
+
+function updateBackgroundControls() {
+  const type = cardType.value;
+  document.getElementById("preview-controls").hidden = type === "form";
+  document.getElementById("result-match-picker").hidden = !isResultCard();
+  const selected = selectedBackgrounds.get(type) || "";
+  const original = isResultCard() ? "assets/result-court.svg"
+    : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
+  card.style.backgroundImage = type !== "form" && selected ? `url("${selected}")` : "";
+  document.getElementById("background-thumbnail").src = selected || original;
+  document.getElementById("default-background-thumbnail").src = original;
+  let label = "Original";
+  backgroundOptions.querySelectorAll("button").forEach(button => {
+    const active = button.dataset.background === selected;
+    button.setAttribute("aria-pressed", String(active));
+    if (active) label = button.textContent;
+  });
+  backgroundButton.setAttribute("aria-label", "Choose background. Current: " + label);
+  backgroundButton.title = "Background: " + label;
+}
+
+backgroundButton.addEventListener("click", () => backgroundDialog.showModal());
+backgroundOptions.addEventListener("click", event => {
+  const button = event.target.closest("button[data-background]");
+  if (!button) return;
+  selectedBackgrounds.set(cardType.value, button.dataset.background);
+  updateBackgroundControls();
+  backgroundDialog.close();
+});
+fetch("data/surfaces.json", { cache: "no-store" })
+  .then(response => { if (!response.ok) throw new Error("Backgrounds could not be loaded."); return response.json(); })
+  .then(surfaces => {
+    surfaces.forEach(surface => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.dataset.background = surface.src;
+      const image = document.createElement("img");
+      image.src = surface.src;
+      image.alt = "";
+      image.loading = "lazy";
+      const label = document.createElement("span");
+      label.textContent = surface.name;
+      button.append(image, label);
+      backgroundOptions.append(button);
+    });
+    document.getElementById("background-status").textContent = "";
+    updateBackgroundControls();
+  })
+  .catch(error => { document.getElementById("background-status").textContent = error.message; });
 const tournamentWrap = document.getElementById("tournament-search-wrap");
 const tournamentInput = document.getElementById("tournament-search");
 const tournamentOptions = document.getElementById("tournament-options");
@@ -312,7 +368,7 @@ function selectPlayer(player) {
 }
 
 function renderCard(player) {
-  if (cardType.value === "result") return renderResultCard();
+  if (isResultCard()) return renderResultCard();
   document.querySelector(".card-content").hidden = false;
   document.getElementById("result-card-content").hidden = true;
   const name = player.name.toLocaleUpperCase();
@@ -397,9 +453,13 @@ function moveActive(direction) {
 }
 
 cardType.addEventListener("change", () => {
-  document.getElementById("player-search-wrap").hidden = cardType.value === "result";
+  updateBackgroundControls();
+  const playerSearchWrap = document.getElementById("player-search-wrap");
+  playerSearchWrap.style.visibility = isResultCard() ? "hidden" : "";
+  playerSearchWrap.inert = isResultCard();
   updateTournamentSearch();
   if (selectedPlayer) renderCard(selectedPlayer);
+  else if (!isResultCard()) card.hidden = true;
   if (["wta-125", "wta-tour"].includes(cardType.value)) refreshCalendar();
 });
 
@@ -461,8 +521,6 @@ fetch("data/players.json", { cache: "no-store" })
     players = data.players;
     snapshotDate = data.snapshot_date;
     status.textContent = "Player list loaded.";
-    const example = players.find(player => normalize(player.name) === "alina charaeva");
-    if (example) selectPlayer(example);
   })
   .catch(error => {
     status.textContent = error.message;

@@ -6,6 +6,14 @@ const resultStatus = document.getElementById("result-status");
 const resultContent = document.getElementById("result-card-content");
 const uploadedResultPhotos = new Map();
 const resultHeaderRight = { premier: 1279, deuxieme: 1279, troisieme: 1299, quartdefinale: 1298, demifinale: 1224, finale: 1188 };
+const itfMatches = new Map();
+const itfPlayerDialog = document.getElementById("itf-player-dialog");
+const itfPlayerInput = document.getElementById("itf-player-search");
+const itfPlayerOptions = document.getElementById("itf-player-options");
+let itfPlayerSide = "winner";
+let itfPlayerMatchId = "";
+let itfPlayerChoices = [];
+let itfPlayerActiveIndex = -1;
 let resultFeed = null;
 let selectedResultId = "";
 let resultsLoading = false;
@@ -18,12 +26,92 @@ function currentResults() {
   });
 }
 
+function isManualResultId(id) {
+  return cardType.value === "result" && ["itf-2", "itf-3"].includes(id);
+}
+
+function selectedResultMatch() {
+  if (!isManualResultId(selectedResultId)) return currentResults().find(item => item.id === selectedResultId);
+  if (!itfMatches.has(selectedResultId)) {
+    const player = number => ({ id: selectedResultId + "-player-" + number, name: "PLAYER " + number, country: "", placeholder: true });
+    itfMatches.set(selectedResultId, {
+      id: selectedResultId, manual: true, round: "ITF MATCH", round_art: "premier", round_heading: "ITF MATCH",
+      tournament: { id: selectedResultId, name: "", city: "", category: "" },
+      winner: player(1), loser: player(2), status: "",
+      sets: Array.from({ length: Number(selectedResultId.at(-1)) }, () => ({ winner: "", loser: "", tiebreak: "" })),
+    });
+  }
+  return itfMatches.get(selectedResultId);
+}
+
+function resultSetWinner(set, index) {
+  if (!set || !Number.isInteger(set.winner) || !Number.isInteger(set.loser) || set.winner < 0 || set.loser < 0) return "";
+  const high = Math.max(set.winner, set.loser);
+  const low = Math.min(set.winner, set.loser);
+  const complete = (high === 6 && low <= 4) || (high === 7 && [5, 6].includes(low))
+    || (high >= 8 && high - low === 2) || (index === 2 && high >= 10 && high - low >= 2);
+  return complete ? set.winner > set.loser ? "winner" : "loser" : "";
+}
+
+function resultWinningSide(match) {
+  if (!match.manual) return "winner";
+  const wins = { winner: 0, loser: 0 };
+  match.sets.forEach((set, index) => {
+    const side = resultSetWinner(set, index);
+    if (side) wins[side] += 1;
+  });
+  return wins.winner >= 2 ? "winner" : wins.loser >= 2 ? "loser" : "";
+}
+
+function makeResultEditable(node, manual, field, side = "", index = "") {
+  node.classList.toggle("itf-editable", !!manual);
+  if (!manual) {
+    for (const attribute of ["contenteditable", "tabindex", "role", "aria-label", "data-itf-field", "data-itf-side", "data-itf-index", "data-placeholder"]) node.removeAttribute(attribute);
+    return;
+  }
+  node.dataset.itfField = field;
+  node.dataset.itfSide = side;
+  node.dataset.itfIndex = String(index);
+  node.tabIndex = 0;
+  node.setAttribute("role", field === "player" ? "button" : "textbox");
+  const playerLabel = side === "winner" ? "Player 1" : "Player 2";
+  node.setAttribute("aria-label", field === "player" ? "Select " + playerLabel : field === "score" ? playerLabel + ", set " + (index + 1) + " score" : "Edit tournament " + field);
+  if (field !== "player") {
+    node.contentEditable = "plaintext-only";
+    node.spellcheck = false;
+    node.inputMode = field === "score" ? "numeric" : "text";
+    node.dataset.placeholder = field === "name" ? "TOURNAMENT" : field === "category" ? "CATEGORY" : "—";
+  }
+}
+
+function updateResultOutcome(match) {
+  const winningSide = resultWinningSide(match);
+  const photoSide = winningSide || "winner";
+  setResultPhoto("winner", match[photoSide]);
+  setResultPhoto("loser", match[photoSide === "winner" ? "loser" : "winner"]);
+  for (const side of ["winner", "loser"]) {
+    const row = resultContent.querySelector('[data-side="' + side + '"]');
+    row.classList.toggle("is-match-winner", winningSide === side);
+    [...row.querySelector(".result-score-sets").children].forEach((score, index) => {
+      const set = match.sets[index];
+      const won = match.manual ? resultSetWinner(set, index) === side
+        : set && set[side] > set[side === "winner" ? "loser" : "winner"];
+      score.classList.toggle("set-won", !!won);
+    });
+  }
+  const description = winningSide
+    ? match[winningSide].name + " defeated " + match[winningSide === "winner" ? "loser" : "winner"].name
+    : match.winner.name + " vs " + match.loser.name;
+  document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent + " · " + description;
+  document.getElementById("svg-description").textContent = match.tournament.name + ", " + match.round + ", " + match.sets.map(set => set.winner + "-" + set.loser).join(" ");
+}
+
 function resultPhoto(player) {
   return uploadedResultPhotos.get(player.id) || photoByName.get(normalize(player.name));
 }
 
 function resultRank(player) {
-  return players.find(row => row.id === player.id)?.rank ?? "NR";
+  return player.placeholder ? "—" : players.find(row => row.id === player.id)?.rank ?? "NR";
 }
 
 function fitResultNames() {
@@ -49,21 +137,25 @@ function setResultPhoto(side, player) {
     image.removeAttribute("src");
     initials.textContent = player.name.split(/\s+/).map(part => part[0]).slice(0, 2).join("");
   }
-  document.getElementById("result-" + side + "-photo-status").textContent = player.name + (photo ? " · portrait ready" : " · upload a portrait");
 }
 
 function renderResultCard() {
-  if (cardType.value !== "result") return;
-  const match = currentResults().find(item => item.id === selectedResultId);
+  if (!isResultCard()) return;
+  const match = selectedResultMatch();
   if (!match) {
     card.hidden = true;
     return;
   }
-  card.dataset.type = "result";
+  document.getElementById("result-winner-upload").disabled = false;
+  document.getElementById("result-loser-upload").disabled = false;
+  card.dataset.type = cardType.value;
   card.removeAttribute("data-tier");
   document.querySelector(".card-content").hidden = true;
   document.getElementById("card-title-details").hidden = true;
   resultContent.hidden = false;
+  resultContent.dataset.manual = String(!!match.manual);
+  document.getElementById("result-winner-upload-label").textContent = match.manual ? "Player 1 photo" : "Winner photo";
+  document.getElementById("result-loser-upload-label").textContent = match.manual ? "Player 2 photo" : "Opponent photo";
   resultContent.dataset.sets = String(Math.max(2, match.sets.length));
   document.getElementById("result-round-art").src = "assets/results/" + match.round_art + ".png";
   document.getElementById("result-score-art").src = "assets/results/" + (match.sets.length === 3 ? "trois_sets" : "deux_sets") + ".png";
@@ -74,27 +166,32 @@ function renderResultCard() {
   event.style.left = (resultHeaderRight[match.round_art] - 302) + "px";
   event.style.backgroundColor = tournamentStyle({ level: match.tournament.category, name: match.tournament.name })?.color || "#7ed957";
   const eventName = document.getElementById("result-event-name");
-  eventName.textContent = tournamentName(match.tournament).toLocaleUpperCase();
-  eventName.style.fontSize = Math.min(72, 400 / Math.max(1, eventName.textContent.length) * 1.6) + "px";
-  document.getElementById("result-event-category").textContent = match.tournament.category === "Finals" ? "WTA FINALS" : match.tournament.category.toLocaleUpperCase();
+  eventName.textContent = match.manual ? match.tournament.name : tournamentName(match.tournament).toLocaleUpperCase();
+  eventName.style.fontSize = Math.min(72, 640 / Math.max(1, eventName.textContent.length || 10)) + "px";
+  makeResultEditable(eventName, match.manual, "name");
+  const eventCategory = document.getElementById("result-event-category");
+  eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS" : match.tournament.category.toLocaleUpperCase();
+  eventCategory.style.fontSize = match.manual ? Math.min(27, 400 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
+  makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
   document.getElementById("result-retired").textContent = match.status;
   for (const side of ["winner", "loser"]) {
     const player = match[side];
-    setResultPhoto(side, player);
     const row = resultContent.querySelector('[data-side="' + side + '"]');
     const flag = row.querySelector(".result-score-flag");
     const fallback = row.querySelector(".result-flag-fallback");
     fallback.textContent = player.country || "—";
-    fallback.hidden = true;
-    flag.hidden = false;
+    fallback.hidden = !!player.country;
+    flag.hidden = !player.country;
     flag.onerror = () => { flag.hidden = true; fallback.hidden = false; };
-    flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
+    if (player.country) flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
+    else flag.removeAttribute("src");
     flag.alt = player.country + " flag";
     const rank = row.querySelector(".result-score-rank");
     rank.textContent = resultRank(player);
-    rank.style.fontSize = String(rank.textContent).length > 3 ? "62px" : "80px";
-    row.querySelector(".result-score-name > span").textContent = (player.first_name + " " + player.last_name.toLocaleUpperCase()).trim();
+    rank.style.fontSize = String(rank.textContent).length > 3 ? "62px" : "82px";
+    row.querySelector(".result-score-name > span").textContent = match.manual ? player.name : (player.first_name + " " + player.last_name.toLocaleUpperCase()).trim();
+    makeResultEditable(row.querySelector(".result-score-name"), match.manual, "player", side);
     const scores = row.querySelector(".result-score-sets");
     scores.replaceChildren();
     for (let index = 0; index < Math.max(2, match.sets.length); index += 1) {
@@ -102,49 +199,85 @@ function renderResultCard() {
       const score = document.createElement("span");
       if (set) {
         score.textContent = set[side];
-        score.classList.toggle("set-won", set[side] > set[side === "winner" ? "loser" : "winner"]);
         if (set.tiebreak && set[side] < set[side === "winner" ? "loser" : "winner"]) {
           const tiebreak = document.createElement("sup");
           tiebreak.textContent = set.tiebreak;
           score.append(tiebreak);
         }
       }
+      score.classList.toggle("two-digit-score", String(score.textContent).length > 1 && !score.querySelector("sup"));
+      makeResultEditable(score, match.manual, "score", side, index);
       scores.append(score);
     }
   }
-  document.getElementById("svg-title").textContent = "Result Card · " + match.winner.name + " defeated " + match.loser.name;
-  document.getElementById("svg-description").textContent = match.tournament.name + ", " + match.round + ", " + match.sets.map(set => set.winner + "-" + set.loser).join(" ");
+  updateResultOutcome(match);
   card.hidden = false;
   scaleCardDesign();
   fitResultNames();
 }
 
+function resultRoundOrder(match) {
+  const rounds = ["PHASE DE GROUPES", "1st Round", "2nd Round", "3rd Round", "QUATRIÈME TOUR", "CINQUIÈME TOUR", "Quarterfinals", "Semifinals", "Final"];
+  const round = match.round.split(" · ").at(-1);
+  const order = rounds.indexOf(round);
+  return (match.round.startsWith("Qualifying") ? 0 : 100) + (order < 0 ? 99 : order);
+}
+
 function updateResultOptions() {
   const matches = currentResults();
-  if (!matches.some(match => match.id === selectedResultId)) selectedResultId = matches[0]?.id || "";
+  if (!matches.some(match => match.id === selectedResultId) && !isManualResultId(selectedResultId)) selectedResultId = matches[0]?.id || "";
   resultSelect.replaceChildren();
+  const categories = ["Grand Slam", "WTA Finals", "Finals", "WTA 1000", "WTA 500", "WTA 250", "WTA 125"];
+  const groups = new Map();
   for (const match of matches) {
-    const option = document.createElement("option");
-    option.value = match.id;
-    option.textContent = [match.tournament.city, match.round, match.winner.name + " d. " + match.loser.name,
-      match.sets.map(set => set.winner + "–" + set.loser).join(" "),
-      new Date(match.completed_at).toLocaleString([], { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })].join(" · ");
-    resultSelect.append(option);
+    const key = [match.tournament.category, match.tournament.id, match.tournament.city].join("|");
+    if (!groups.has(key)) groups.set(key, { tournament: match.tournament, matches: [] });
+    groups.get(key).matches.push(match);
   }
-  resultSelect.disabled = !matches.length;
-  document.getElementById("result-winner-upload").disabled = !matches.length;
-  document.getElementById("result-loser-upload").disabled = !matches.length;
+  const categoryOrder = category => categories.includes(category) ? categories.indexOf(category) : categories.length;
+  const orderedGroups = [...groups.values()].sort((a, b) =>
+    categoryOrder(a.tournament.category) - categoryOrder(b.tournament.category)
+    || tournamentName(a.tournament).localeCompare(tournamentName(b.tournament))
+  );
+  for (const group of orderedGroups) {
+    const optgroup = document.createElement("optgroup");
+    const category = group.tournament.category === "Finals" ? "WTA Finals" : group.tournament.category;
+    optgroup.label = category + " " + tournamentName(group.tournament);
+    group.matches.sort((a, b) => resultRoundOrder(a) - resultRoundOrder(b)
+      || Date.parse(a.completed_at) - Date.parse(b.completed_at) || a.id.localeCompare(b.id));
+    for (const match of group.matches) {
+      const option = document.createElement("option");
+      option.value = match.id;
+      option.textContent = match.round + " - " + match.winner.name + " vs " + match.loser.name;
+      optgroup.append(option);
+    }
+    resultSelect.append(optgroup);
+  }
   if (!matches.length) {
     const empty = document.createElement("option");
     empty.value = "";
     empty.textContent = "No completed singles matches in the last 24 hours";
     resultSelect.append(empty);
   }
+  if (cardType.value === "result") {
+    const manual = document.createElement("optgroup");
+    manual.label = "ITF";
+    for (const sets of [2, 3]) {
+      const option = document.createElement("option");
+      option.value = "itf-" + sets;
+      option.textContent = "ITF MATCH " + sets + " SETS";
+      manual.append(option);
+    }
+    resultSelect.append(manual);
+  }
+  resultSelect.disabled = !matches.length && cardType.value !== "result";
+  const hasMatch = !!selectedResultMatch();
+  document.getElementById("result-winner-upload").disabled = !hasMatch;
+  document.getElementById("result-loser-upload").disabled = !hasMatch;
   resultSelect.value = selectedResultId;
-  const updated = resultFeed?.updated_at ? " Updated " + new Date(resultFeed.updated_at).toLocaleString() + "." : "";
   const stale = resultFeed?.updated_at && Date.now() - Date.parse(resultFeed.updated_at) > 3600000
-    ? " The saved feed is more than an hour old; recent matches may be missing." : "";
-  resultStatus.textContent = (matches.length ? matches.length + " completed matches." : "No completed matches in this 24-hour window.") + updated + stale + (resultFeed?.refresh_error ? " " + resultFeed.refresh_error : "");
+    ? "The saved feed is more than an hour old; recent matches may be missing." : "";
+  resultStatus.textContent = [stale, resultFeed?.refresh_error].filter(Boolean).join(" ");
   renderResultCard();
 }
 
@@ -176,17 +309,171 @@ resultSelect.addEventListener("change", () => {
 });
 document.getElementById("refresh-results").addEventListener("click", refreshResults);
 cardType.addEventListener("change", () => {
-  resultControls.hidden = cardType.value !== "result";
-  if (cardType.value === "result") refreshResults();
+  resultControls.hidden = !isResultCard();
+  if (isResultCard()) {
+    updateResultOptions();
+    refreshResults();
+  }
 });
-window.addEventListener("focus", () => { if (cardType.value === "result") refreshResults(); });
-setInterval(() => { if (cardType.value === "result") refreshResults(); }, 300000);
+window.addEventListener("focus", () => { if (isResultCard()) refreshResults(); });
+setInterval(() => { if (isResultCard()) refreshResults(); }, 300000);
 document.fonts.ready.then(fitResultNames);
+
+resultContent.addEventListener("input", event => {
+  const field = event.target.closest("[data-itf-field]");
+  const match = selectedResultMatch();
+  if (!field || !match?.manual) return;
+  const kind = field.dataset.itfField;
+  if (kind === "score") {
+    const value = field.textContent.replace(/\D/g, "").slice(0, 2);
+    if (field.textContent !== value) {
+      field.textContent = value;
+      const range = document.createRange();
+      range.selectNodeContents(field);
+      range.collapse(false);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    match.sets[Number(field.dataset.itfIndex)][field.dataset.itfSide] = value === "" ? "" : Number(value);
+    field.classList.toggle("two-digit-score", value.length > 1);
+  } else if (kind === "name" || kind === "category") {
+    const value = field.textContent.replace(/[\r\n]/g, " ").slice(0, kind === "name" ? 80 : 30);
+    if (field.textContent !== value) field.textContent = value;
+    match.tournament[kind] = value;
+    if (kind === "name") {
+      match.tournament.city = value;
+      field.style.fontSize = Math.min(72, 640 / Math.max(1, value.length || 10)) + "px";
+    } else {
+      field.style.fontSize = Math.min(27, 400 / Math.max(1, value.length || 8)) + "px";
+    }
+  }
+  updateResultOutcome(match);
+});
+
+resultContent.addEventListener("focusin", event => {
+  const field = event.target.closest("[contenteditable]");
+  if (!field) return;
+  setTimeout(() => {
+    if (document.activeElement !== field) return;
+    const range = document.createRange();
+    range.selectNodeContents(field);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  }, 0);
+});
+
+function openItfPlayerSearch(side) {
+  const match = selectedResultMatch();
+  if (!match?.manual) return;
+  itfPlayerSide = side;
+  itfPlayerMatchId = match.id;
+  document.getElementById("itf-player-label").textContent = "Select Player " + (side === "winner" ? "1" : "2");
+  itfPlayerInput.value = match[side].placeholder ? "" : match[side].name;
+  itfPlayerDialog.showModal();
+  showItfPlayerOptions();
+  itfPlayerInput.focus();
+  itfPlayerInput.select();
+}
+
+resultContent.addEventListener("click", event => {
+  const field = event.target.closest('[data-itf-field="player"]');
+  if (field) openItfPlayerSearch(field.dataset.itfSide);
+});
+resultContent.addEventListener("keydown", event => {
+  const field = event.target.closest("[data-itf-field]");
+  if (!field) return;
+  if (field.dataset.itfField === "player" && ["Enter", " "].includes(event.key)) {
+    event.preventDefault();
+    openItfPlayerSearch(field.dataset.itfSide);
+  } else if (["Enter", "Escape"].includes(event.key)) {
+    event.preventDefault();
+    field.blur();
+  }
+});
+
+function chooseItfPlayer(player) {
+  const match = selectedResultMatch();
+  if (!match?.manual || match.id !== itfPlayerMatchId) return;
+  const other = match[itfPlayerSide === "winner" ? "loser" : "winner"];
+  if (other.id === player.id) return;
+  const previous = match[itfPlayerSide];
+  if (previous.placeholder && uploadedResultPhotos.has(previous.id)) {
+    const photo = uploadedResultPhotos.get(previous.id);
+    const existing = uploadedResultPhotos.get(player.id);
+    if (existing && existing !== photo) URL.revokeObjectURL(existing);
+    uploadedResultPhotos.set(player.id, photo);
+    uploadedResultPhotos.delete(previous.id);
+  }
+  match[itfPlayerSide] = { id: player.id, name: player.name, country: player.country };
+  renderResultCard();
+  itfPlayerDialog.close();
+}
+
+function showItfPlayerOptions() {
+  const match = selectedResultMatch();
+  const otherId = match?.[itfPlayerSide === "winner" ? "loser" : "winner"]?.id;
+  const query = normalize(itfPlayerInput.value.trim());
+  itfPlayerChoices = players.filter(player => player.id !== otherId && normalize(player.name).includes(query)).slice(0, 8);
+  itfPlayerActiveIndex = -1;
+  itfPlayerInput.removeAttribute("aria-activedescendant");
+  itfPlayerInput.setAttribute("aria-expanded", "true");
+  itfPlayerOptions.replaceChildren();
+  itfPlayerChoices.forEach((player, index) => {
+    const option = document.createElement("button");
+    option.type = "button";
+    option.className = "suggestion";
+    option.id = "itf-player-option-" + index;
+    option.setAttribute("role", "option");
+    option.setAttribute("aria-selected", "false");
+    const name = document.createElement("span");
+    name.textContent = player.name;
+    const rank = document.createElement("span");
+    rank.textContent = "#" + player.rank + " · " + player.country;
+    option.append(name, rank);
+    option.addEventListener("mousedown", event => event.preventDefault());
+    option.addEventListener("click", () => chooseItfPlayer(player));
+    itfPlayerOptions.append(option);
+  });
+  if (!itfPlayerChoices.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "No ranked players match that name.";
+    itfPlayerOptions.append(empty);
+  }
+  document.getElementById("itf-player-status").textContent = itfPlayerChoices.length + " matching players.";
+}
+
+itfPlayerInput.addEventListener("input", showItfPlayerOptions);
+itfPlayerInput.addEventListener("keydown", event => {
+  if (["ArrowDown", "ArrowUp"].includes(event.key) && itfPlayerChoices.length) {
+    event.preventDefault();
+    const direction = event.key === "ArrowDown" ? 1 : -1;
+    itfPlayerActiveIndex = itfPlayerActiveIndex < 0 ? direction > 0 ? 0 : itfPlayerChoices.length - 1
+      : (itfPlayerActiveIndex + direction + itfPlayerChoices.length) % itfPlayerChoices.length;
+    [...itfPlayerOptions.children].forEach((option, index) => option.setAttribute("aria-selected", String(index === itfPlayerActiveIndex)));
+    itfPlayerInput.setAttribute("aria-activedescendant", "itf-player-option-" + itfPlayerActiveIndex);
+    document.getElementById("itf-player-option-" + itfPlayerActiveIndex).scrollIntoView({ block: "nearest" });
+  } else if (event.key === "Enter") {
+    event.preventDefault();
+    const player = itfPlayerChoices[Math.max(0, itfPlayerActiveIndex)];
+    if (player) chooseItfPlayer(player);
+  }
+});
+itfPlayerDialog.querySelector("form").addEventListener("submit", event => {
+  event.preventDefault();
+  const player = itfPlayerChoices[Math.max(0, itfPlayerActiveIndex)];
+  if (player) chooseItfPlayer(player);
+});
+document.getElementById("itf-player-close").addEventListener("click", () => itfPlayerDialog.close());
+itfPlayerDialog.addEventListener("close", () => {
+  itfPlayerInput.setAttribute("aria-expanded", "false");
+});
 
 for (const side of ["winner", "loser"]) {
   const input = document.getElementById("result-" + side + "-upload");
   input.addEventListener("change", async () => {
-    const match = currentResults().find(item => item.id === selectedResultId);
+    const match = selectedResultMatch();
     const file = input.files[0];
     if (!match || !file) return;
     if (!file.type.startsWith("image/")) { resultStatus.textContent = "Choose an image file for the portrait."; return; }

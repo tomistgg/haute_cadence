@@ -13,16 +13,28 @@ python serve_site.py
 
 Then open <http://127.0.0.1:8765/>. The build reads all four copied WTA ranking CSVs and uses their latest ranking week and prepares the searchable player list in `dist/data/players.json`.
 
-Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
+Non-Tour Result Card and Tour Result Card currently share the same layout and behavior.
+Both list completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
 The supplied result layers in `assets/results cards/` are composed at 1440 × 1600, following `preview.png`.
 Winner names are yellow; opponent names are white; the higher score in each set is yellow.
+Result cards use #ffd400 for winner highlights, Chunk Five for names, Poppins Bold Italic for scores,
+and TT Bluescreens Italic for player rankings. Poppins is bundled from
+[Google Fonts](https://github.com/google/fonts/tree/main/ofl/poppins), with its OFL license in `assets/fonts/Poppins/`.
 Existing portraits are reused, and the winner/opponent upload controls let you supply missing photos.
 Uploads stay in the current tab, are remembered per player, and are included in the saved PNG. Reloading clears uploads.
 Players without a portrait show initials; players absent from the ranking snapshot show NR.
 
+Non-Tour Result Card also includes ITF MATCH 2 SETS and ITF MATCH 3 SETS at the bottom of the match selector.
+Click the tournament name, category, or a score on the card to edit it directly; click a player name to search and
+select from the current ranking list. Flags, rankings, and saved portraits load with that selection.
+Each ITF option keeps a separate draft in the current tab. Player rows stay in place, and a player becomes yellow
+after winning two completed sets; incomplete or tied scores do not declare a winner. The winner's portrait moves
+to the large frame. The photo upload controls correspond to Player 1 and Player 2 in manual ITF mode.
+These drafts and uploaded photos clear on reload. ITF editing is available even if the live WTA feed is unavailable.
+
 The local server refreshes `data/recent_results.json` from the official WTA completed-match endpoint at most once
-every five minutes. The page also refreshes while Result Card is selected. The official match start timestamp plus
+every five minutes. The page also refreshes while either result card is selected. The official match start timestamp plus
 duration defines the finish time; LastUpdated is the fallback when duration is unavailable. Walkovers are excluded;
 retirements/defaults with played sets are marked. Cached matches outside the last 24 hours never appear.
 If WTA is unavailable, the last successful feed is retained and the page reports the refresh failure.
@@ -34,6 +46,12 @@ Use the selector next to player search to switch between Player Form Card, WTA 1
 Rank, age, and country come from the latest CSV week. Rank 1 uses `top_1`, ranks 2-10 use `top_10`, ranks 11-20 use `top_20`, ranks 21-100 use `top_100`, ranks 101-200 use `top_200`, ranks 201-300 use `top_300`, ranks 301-400 use `top_400`, ranks 401-500 use `top_500`, and ranks 501-600 use `top_600`. Ranks above 600 use the existing `top_300` fallback. The `top_400`, `top_500`, and `top_600` tiers all use `top_200_details.png`. Players aged 19 or younger outside the top 10 use `prospect_card.png` and `prospect_details.png` instead of their rank tier. Ranks 1-10 retain their existing artwork at any age. Age is calculated on the ranking snapshot date, matching the age printed on the card. These tiers apply to all three card types. The `top_300` tier temporarily uses the beige `top_200_details.png` overlay; adding `assets/details/top_300_details.png` and rebuilding switches to that file automatically. Title cards show a text search for eligible tournaments in the current calendar year/season, using `data/calendar_snapshot.json`. Search matches city, tournament name, category, country, or start date. All matches appear in a scrollable list, with keyboard navigation and dates to distinguish repeat events in the same city. WTA 125 Title Cards list only WTA 125 events. WTA Tour Title Cards list WTA 250, 500, 1000, WTA Finals, and Grand Slams; BJKC and junior events are excluded. The WTA Tour Title Card displays each player's count of recorded WTA Tour singles titles, including Grand Slams and historical Tour categories, while excluding WTA 125 titles. Changing card type clears an incompatible tournament selection. The Form card's DERNIER TITRE is filled automatically from `data/wta_champions.json`, matching the player's WTA ID and preferring the latest WTA Tour, Grand Slam, or United Cup title over WTA 125; when there is no higher-level title, it uses the latest WTA 125 title. Selecting a result updates the tournament city, category, and heading color. Form cards have ten manual result buttons, ordered oldest to newest, that cycle blank -> win (green V) -> loss (red lowercase d). DERNIER TITRE displays the latest recorded title as category, tournament city/name, and season year, using the existing tournament-name overrides. Players with no recorded title show W/O. This field is automatic and is included in the saved card PNG. Desktop cards are capped at 600px wide. Manual form results are separate for each player and survive player/card-type changes in the same tab; reloading the page resets them. Selecting a title layout previews its design without asserting that the player won a tournament.
 
 Portraits are supplied for Leylah Fernandez, Elsa Jacquemot, and Diana Shnaider. Alina Charaeva's portrait is cropped from the provided form-card reference. Other players show initials.
+
+Every layout except Player Form Card has a Background button above the preview. Choose a thumbnail from
+`assets/surfaces/`, or Original to restore that layout's original background. Each layout remembers its selection
+until reload, and the selected background is included in the saved PNG. Rebuild after adding PNGs to that folder
+to include them in the picker. Tournament, match, photo, and background controls share the preview's width and
+stack on smaller screens.
 
 The supplied TT Bluescreens font is a trial font. Keep this site local/private for evaluation unless you obtain the appropriate license.
 

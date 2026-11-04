@@ -72,26 +72,31 @@
           <option value="form">Player Form Card</option>
           <option value="wta-125">WTA 125 Title Card</option>
           <option value="wta-tour">WTA Tour Title Card</option>
-          <option value="result">Result Card</option>
+          <option value="result">Non-Tour Result Card</option>
+          <option value="tour-result">Tour Result Card</option>
         </select>
-        <div class="tournament-wrap" id="tournament-search-wrap" hidden>
-          <label class="sr-only" for="tournament-search">Search tournaments</label>
-          <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
-          <div class="suggestions tournament-options" id="tournament-options" role="listbox" aria-label="Matching tournaments"></div>
-          <p class="sr-only" id="tournament-status" aria-live="polite"></p>
-        </div>
-        <div class="result-controls" id="result-controls" hidden>
-          <label for="result-match">Completed WTA singles · last 24 hours</label>
-          <div class="result-match-picker"><select id="result-match" disabled><option>Loading matches…</option></select><button id="refresh-results" type="button">Refresh</button></div>
-          <p id="result-status" role="status"></p>
-          <div class="result-photo-controls">
-            <label>Winner photo <input id="result-winner-upload" type="file" accept="image/*"><span id="result-winner-photo-status"></span></label>
-            <label>Opponent photo <input id="result-loser-upload" type="file" accept="image/*"><span id="result-loser-photo-status"></span></label>
-          </div>
-        </div>
       </div>
     </header>
     <section class="card-stage" aria-label="Selected player card">
+      <div class="preview-controls" id="preview-controls" hidden>
+        <div class="preview-toolbar">
+          <div class="tournament-wrap" id="tournament-search-wrap" hidden>
+            <label class="sr-only" for="tournament-search">Search tournaments</label>
+            <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
+            <div class="suggestions tournament-options" id="tournament-options" role="listbox" aria-label="Matching tournaments"></div>
+            <p class="sr-only" id="tournament-status" aria-live="polite"></p>
+          </div>
+          <div class="result-match-picker" id="result-match-picker" hidden><label class="sr-only" for="result-match">Select a completed match</label><select id="result-match" disabled><option>Loading matches&#8230;</option></select><button id="refresh-results" type="button">Refresh</button></div>
+          <button id="choose-background" type="button" aria-haspopup="dialog" aria-controls="background-dialog"><img id="background-thumbnail" src="assets/title-court.svg" alt=""><span>Background</span></button>
+        </div>
+        <div class="result-controls" id="result-controls" hidden>
+          <p id="result-status" role="status"></p>
+          <div class="result-photo-controls">
+            <label class="result-photo-upload"><span id="result-winner-upload-label">Winner photo</span><input class="sr-only" id="result-winner-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
+            <label class="result-photo-upload"><span id="result-loser-upload-label">Opponent photo</span><input class="sr-only" id="result-loser-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
+          </div>
+        </div>
+      </div>
       <div class="player-card" id="player-card" role="group" aria-labelledby="svg-title svg-description" data-type="form" hidden>
         <img id="card-save-image" alt="Complete player card: right-click or touch and hold to save" hidden>
         <div class="card-design" id="card-design">
@@ -142,6 +147,19 @@
       </div>
     </section>
   </main>
+  <dialog id="background-dialog" class="background-dialog" aria-labelledby="background-heading">
+    <form method="dialog" class="background-dialog-heading"><h2 id="background-heading">Choose a background</h2><button type="submit">Close</button></form>
+    <div id="background-options" class="background-options"><button type="button" data-background="" aria-pressed="true"><img id="default-background-thumbnail" src="assets/title-court.svg" alt=""><span>Original</span></button></div>
+    <p id="background-status" role="status">Loading backgrounds...</p>
+  </dialog>
+  <dialog id="itf-player-dialog" class="itf-player-dialog">
+    <form method="dialog">
+      <div class="itf-player-dialog-heading"><label id="itf-player-label" for="itf-player-search">Select a player</label><button type="button" id="itf-player-close">Close</button></div>
+      <input id="itf-player-search" type="search" placeholder="Search players" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="itf-player-options">
+      <div id="itf-player-options" class="itf-player-options" role="listbox" aria-label="Matching players"></div>
+      <p id="itf-player-status" class="sr-only" role="status"></p>
+    </form>
+  </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
   <script src="app.js" defer></script>
   <script src="result-card.js" defer></script>

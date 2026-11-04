@@ -26,6 +26,8 @@ ASSETS = {
     "assets/flags/LICENSE": ROOT / "assets" / "flags" / "LICENSE",
     "assets/fonts/bebas-neue-regular.ttf": ROOT / "assets" / "fonts" / "Bebas_Neue" / "BebasNeue-Regular.ttf",
     "assets/fonts/bebas-neue-OFL.txt": ROOT / "assets" / "fonts" / "Bebas_Neue" / "OFL.txt",
+    "assets/fonts/poppins-bold-italic.ttf": ROOT / "assets" / "fonts" / "Poppins" / "Poppins-BoldItalic.ttf",
+    "assets/fonts/poppins-OFL.txt": ROOT / "assets" / "fonts" / "Poppins" / "OFL.txt",
     "assets/details/wtatour_title_details.png": ROOT / "assets" / "details" / "wtatour_title_details.png",
     "assets/details/wta125_title_details.png": ROOT / "assets" / "details" / "wta125_title_details.png",
     "assets/players/alina-charaeva.jpg": ROOT / "assets" / "Alina Charaeva.jpg",
@@ -78,6 +80,8 @@ ASSETS.update({
     f"assets/flags/{flag.name}": flag
     for flag in sorted((ROOT / "assets" / "flags").glob("*.svg"))
 })
+SURFACES = sorted((ROOT / "assets" / "surfaces").glob("*.png"))
+ASSETS.update({f"assets/surfaces/{surface.name}": surface for surface in SURFACES})
 ASSETS.update({
     f"assets/results/{name}.png": ROOT / "assets" / "results cards" / f"{name}.png"
     for name in (
@@ -180,6 +184,10 @@ def main() -> None:
     shutil.copy2(ROOT / "cards.css", DIST / "cards.css")
     data_dir = DIST / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / "surfaces.json").write_text(json.dumps([
+        {"src": f"assets/surfaces/{surface.name}", "name": surface.stem.replace("_", " ").title()}
+        for surface in SURFACES
+    ]), encoding="utf-8")
     shutil.copy2(CALENDAR, data_dir / "calendar_snapshot.json")
     results = ROOT / "data" / "recent_results.json"
     if results.is_file():

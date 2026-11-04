@@ -1,6 +1,26 @@
 @font-face { font-family: "Chunk Five"; src: url("assets/fonts/chunk-five-regular.otf") format("opentype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Bebas Neue"; src: url("assets/fonts/bebas-neue-regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: "Poppins"; src: url("assets/fonts/poppins-bold-italic.ttf") format("truetype"); font-style: italic; font-weight: 700; font-display: swap; }
 .card-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; flex: 1; min-width: 0; }
+.preview-controls { width: min(100%, 710px); min-width: 0; margin-bottom: 16px; }
+.preview-toolbar { display: flex; align-items: stretch; gap: 10px; }
+.preview-toolbar .tournament-wrap { flex: 1; width: auto; max-width: none; }
+.preview-toolbar .result-match-picker { flex: 1; min-width: 0; }
+#choose-background { display: flex; align-items: center; justify-content: center; gap: 9px; flex: none; padding: 8px 12px; min-height: 48px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
+#background-thumbnail { width: 32px; height: 30px; border-radius: 5px; object-fit: cover; }
+.background-dialog { width: min(640px, calc(100% - 32px)); max-height: calc(100% - 32px); padding: 20px; border: 1px solid #5cd5bf99; border-radius: 16px; background: #071e36; color: #f5fbff; }
+.background-dialog::backdrop { background: #001123b3; }
+.background-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+.background-dialog-heading h2 { margin: 0; font-size: 1.15rem; }
+.background-dialog-heading button { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
+.background-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.background-options button { min-width: 0; overflow: hidden; padding: 0; border: 2px solid transparent; border-radius: 10px; color: #f5fbff; background: #123e58; text-align: left; cursor: pointer; }
+.background-options img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.background-options span { display: block; padding: 9px 10px; font-size: .88rem; }
+.background-options button[aria-pressed="true"] { border-color: #81da57; }
+#choose-background:focus-visible, .background-dialog button:focus-visible, #refresh-results:focus-visible, #result-match:focus-visible { outline: 2px solid #81da57; outline-offset: 3px; }
+#background-status { font-size: .85rem; color: #b9d7df; }
+#background-status:empty { display: none; }
 .card-controls .search-wrap { flex: 0 1 240px; width: 240px; max-width: 240px; min-width: 150px; }
 #card-type { max-width: 230px; min-width: 0; border: 1px solid #5cd5bf99; border-radius: 12px; padding: 16px 12px; color: #f5fbff; background: #051b31; font: inherit; cursor: pointer; }
 #card-type:focus-visible, .search-box:focus-within { outline: 2px solid #81da57; outline-offset: 3px; }
@@ -37,7 +57,7 @@
 .form-result:focus-visible { outline: .2cqw solid #440268; outline-offset: .15cqw; }
 .card-title-value { left: 30%; top: calc(93.1% - 1px); width: 47%; height: 5.8cqw; min-width: 0; font-size: 5.4167cqw; font-weight: 800; }
 #last-title-value { display: flex; align-items: center; width: 100%; height: 100%; min-width: 0; padding: .3cqw 0; transform-origin: left center; color: #440268; font: inherit; }
-@media (min-width: 851px) { .player-card { width: min(100%, 600px); } }
+@media (min-width: 851px) { .player-card, .preview-controls { width: min(100%, 600px); } .card-controls { align-self: flex-start; } }
 .card-age { position: absolute; top: 83.5%; left: 76%; width: 19%; color: #440268; text-align: center; font: italic 800 6.7cqw/1 "TT Bluescreens", sans-serif; }
 .card-nationality { position: absolute; left: 79.9%; top: 90.2%; display: flex; align-items: flex-start; gap: .4cqw; }
 .card-flag { display: block; flex: none; width: 9cqw; height: 9cqw; border: .3cqw solid #050505; border-radius: 50%; object-fit: cover; background: #fff; }
@@ -56,6 +76,7 @@
 .player-card[data-type="wta-tour"] .card-rank { display: none; }
 @media (max-width: 850px) { .masthead { flex-wrap: wrap; } .card-controls { flex-basis: 100%; justify-content: stretch; } .card-controls .search-wrap { flex-basis: 240px; } }
 @media (max-width: 480px) { .card-controls { flex-direction: column; align-items: stretch; gap: 10px; } .card-controls .search-wrap { flex: none; width: 100%; max-width: none; } #card-type, .tournament-wrap { flex: none; max-width: none; width: 100%; } }
+@media (max-width: 480px) { .preview-toolbar { flex-wrap: wrap; } .preview-toolbar .tournament-wrap, .preview-toolbar .result-match-picker, #choose-background { flex: 1 1 100%; } .background-dialog { padding: 16px; } .background-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
 
 .player-card[data-tier="top_1"] .card-rank { display: none; }
 .player-card[data-tier="top_1"] .card-previous { width: 13.7%; }
@@ -79,18 +100,17 @@
 .player-card .card-content, .player-card .title-event { -webkit-user-select: none; user-select: none; }
 .player-card input { -webkit-user-select: text; user-select: text; }
 
-.result-controls { flex: 1 1 100%; min-width: 0; }
-.result-controls > label { display: block; margin-bottom: 7px; color: #c8e4e6; font-size: .85rem; }
 .result-match-picker { display: flex; gap: 8px; }
 #result-match { flex: 1; width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; color: #f5fbff; background: #051b31; font: inherit; }
 #refresh-results { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
 #result-status { margin: 8px 0; color: #b9d7df; font-size: .8rem; }
-.result-photo-controls { display: flex; flex-wrap: wrap; gap: 12px; }
-.result-photo-controls label { flex: 1 1 220px; padding: 10px; border: 1px solid #ffffff25; border-radius: 10px; font-size: .85rem; }
-.result-photo-controls input, .result-photo-controls span { display: block; width: 100%; margin-top: 6px; font-size: .75rem; }
-.result-photo-controls span { color: #b9d7df; }
-.player-card[data-type="result"] { aspect-ratio: 9 / 10; background: url("assets/result-court.svg") center / cover; }
-.player-card[data-type="result"] .card-design { height: 1600px; }
+#result-status:empty { display: none; }
+.result-photo-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.result-photo-upload { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: 1 1 220px; padding: 10px; border: 1px solid #ffffff25; border-radius: 10px; font-size: .85rem; cursor: pointer; }
+.result-photo-button { padding: 8px 10px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #f5fbff; white-space: nowrap; }
+.result-photo-upload:focus-within { outline: 2px solid #81da57; outline-offset: 3px; }
+.player-card:is([data-type="result"], [data-type="tour-result"]) { aspect-ratio: 9 / 10; background: url("assets/result-court.svg") center / cover; }
+.player-card:is([data-type="result"], [data-type="tour-result"]) .card-design { height: 1600px; }
 .result-content, .result-layer { position: absolute; inset: 0; width: 1440px; height: 1600px; }
 .result-winner-portrait { position: absolute; left: 204px; top: 233px; width: 1033px; height: 1311px; overflow: hidden; background: #122b3e; }
 .result-winner-portrait img, .result-opponent-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
@@ -100,19 +120,36 @@
 .result-event { position: absolute; top: 49px; width: 278px; height: 124px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px; border-radius: 17px; color: #fff; }
 .result-event strong { width: 100%; text-align: center; white-space: nowrap; font: 400 72px/.95 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; }
 .result-event span { margin-top: 4px; font: 400 27px/1 "Chunk Five", serif; white-space: nowrap; }
-.result-round-heading { position: absolute; left: 395px; top: 53px; width: 580px; height: 122px; display: flex; align-items: center; padding: 0 10px; background: linear-gradient(90deg, #09b69d, #3bcaaf); font: 400 70px/1 "Bebas Neue", sans-serif; white-space: nowrap; }
+.result-round-heading { position: absolute; left: 395px; top: 53px; width: 580px; height: 122px; display: flex; align-items: center; padding: 0 10px; background: linear-gradient(90deg, #09b797, #65d7c2); font: 400 70px/1 "Bebas Neue", sans-serif; white-space: nowrap; }
 .result-retired { position: absolute; left: 1170px; top: 1270px; padding: 6px 14px; border-radius: 9px; background: #071e36; font: 400 38px/1 "Bebas Neue", sans-serif; }
 .result-score-row { --row-top: 1328px; position: absolute; inset: 0; }
 .result-score-row[data-side="loser"] { --row-top: 1446px; }
 .result-score-flag, .result-flag-fallback, .result-score-rank { position: absolute; left: 74px; top: var(--row-top); width: 108px; height: 110px; }
 .result-score-flag { object-fit: cover; }
 .result-flag-fallback { display: flex; align-items: center; justify-content: center; background: #123e58; font: 800 25px/1 Arial, sans-serif; }
-.result-score-rank { display: flex; align-items: center; justify-content: center; color: #fff; -webkit-text-stroke: 2px #000; paint-order: stroke fill; font: italic 800 80px/1 "TT Bluescreens", sans-serif; }
-.result-score-name { position: absolute; left: 210px; top: var(--row-top); width: 900px; height: 110px; display: flex; align-items: center; color: #ffde00; font: 400 86px/1 "Chunk Five", serif; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+.result-score-rank { display: flex; align-items: center; justify-content: center; transform: translateY(1px); color: #fff; -webkit-text-stroke: 4px #000; paint-order: stroke fill; font: italic 700 82px/1 "TT Bluescreens", sans-serif; }
+.result-score-name { position: absolute; left: 212px; top: var(--row-top); width: 898px; height: 110px; display: flex; align-items: center; color: #fff; font: 400 84.4px/1 "Chunk Five", serif; -webkit-text-stroke: 4.25px #000; paint-order: stroke fill; }
 .result-score-name > span { display: block; flex: none; white-space: nowrap; transform-origin: left center; }
-.result-score-row[data-side="loser"] .result-score-name { color: #fff; }
-.result-score-sets { position: absolute; left: 1149px; top: var(--row-top); width: 171px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); color: #fff; font: italic 800 104px/1 "TT Bluescreens", sans-serif; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
-.result-content[data-sets="3"] .result-score-sets { width: 247px; grid-template-columns: repeat(3, 1fr); }
+.result-score-row[data-side="loser"] .result-score-name { left: 220px; top: calc(var(--row-top) - 3px); width: 890px; }
+.result-score-row.is-match-winner .result-score-name { color: #ffd400; }
+.result-score-sets { position: absolute; left: 1149px; top: var(--row-top); width: 171px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 94px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
+.result-content[data-sets="3"] .result-score-sets { left: 1155px; width: 231px; grid-template-columns: repeat(3, 1fr); }
 .result-score-sets > span { position: relative; display: flex; align-items: center; justify-content: center; }
-.result-score-sets .set-won { color: #ffde00; }
-.result-score-sets sup { position: absolute; right: 1px; top: 6px; font-size: 32px; -webkit-text-stroke: 1px #000; }
+.result-score-sets .set-won { color: #ffd400; }
+.result-score-sets sup { align-self: flex-start; margin-top: 10px; font-size: 24px; -webkit-text-stroke: 3px #000; }
+.result-score-sets > .two-digit-score { font-size: 59px; }
+.result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
+.result-content[data-manual="true"] [data-itf-field="player"] { cursor: pointer; }
+.result-content[data-manual="true"] .itf-editable:focus { outline: 3px solid #ffd400; }
+.result-content[data-manual="true"] .itf-editable:empty::before { content: attr(data-placeholder); opacity: .65; pointer-events: none; }
+.result-content[data-manual="true"] .result-event { text-transform: uppercase; }
+.result-event .itf-editable { min-width: 50px; min-height: 27px; white-space: nowrap; }
+.card-export-copy .itf-editable { outline: none !important; }
+.itf-player-dialog { width: min(500px, calc(100% - 32px)); padding: 20px; border: 1px solid #5cd5bf99; border-radius: 14px; color: #f5fbff; background: #071e36; }
+.itf-player-dialog::backdrop { background: #001123b3; }
+.itf-player-dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.itf-player-dialog-heading button { padding: 6px 12px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
+#itf-player-search { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 10px; background: #051b31; color: #fff; font: inherit; }
+.itf-player-options { max-height: min(45vh, 350px); overflow-y: auto; margin-top: 12px; }
+.itf-player-options .suggestion { display: flex; justify-content: space-between; gap: 12px; text-align: left; }
+.itf-player-options .suggestion > span:last-child { flex: none; color: #b9d7df; font-size: .8rem; }
