@@ -55,7 +55,8 @@ Uploads stay in the current tab, are remembered per player, and are included in 
 Players without a portrait show initials; players absent from the ranking snapshot show NR.
 
 Non-Tour Result Card also includes ITF MATCH 2 SETS and ITF MATCH 3 SETS at the bottom of the match selector.
-Click the tournament name, category, or a score on the card to edit it directly; click a player name to search and
+Click the tournament name or a score on the card to edit it directly; click the category to select GRAND SLAM,
+WTA 1000, WTA 500, WTA 250, WTA 125, W100, W75, W50, W35, or W15. Click a player name to search and
 select from the two-year player list. Flags, current rankings, and saved portraits load with that selection.
 The player dialog also lets you override the name, ranking, and flag using Use these details, just like the Tour
 manual match. Ranking/flag edits keep the player's uploaded portrait.
@@ -71,7 +72,7 @@ Its match list includes only WTA Tour categories (including Grand Slams and Fina
 WTA 125. Upload a single Match photo to fill the background; each match keeps its own uploaded photo in this tab.
 The round badge sits at the top, tournament and category at the top right, and scoreboard at the bottom left.
 There is no surface-background picker or automatic player portrait in this layout.
-The final MANUAL MATCH option lets you choose a round, edit tournament/category, select players or enter their names,
+The final MANUAL MATCH option lets you choose a round and category, edit the tournament name, select players or enter their names,
 rankings and flags in the player dialog, and edit scores. A Sets selector switches between two and three sets;
 switching back restores a previously entered third set. The missing third-round badge uses the supplied first-round
 banner with a live third-round label. All manual edits and the uploaded match photo are included in PNG export.

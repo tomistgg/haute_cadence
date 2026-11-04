@@ -141,13 +141,13 @@
 .result-score-sets sup { align-self: flex-start; margin-top: 10px; font-size: 24px; -webkit-text-stroke: 3px #000; }
 .result-score-sets > .two-digit-score { font-size: 59px; }
 .result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
-.result-content[data-manual="true"] [data-itf-field="player"] { cursor: pointer; }
+.result-content[data-manual="true"] [data-itf-field="player"], .result-content[data-manual="true"] [data-itf-field="category"] { cursor: pointer; }
 .result-content[data-manual="true"] .result-round-heading { cursor: pointer; }
 .result-content[data-manual="true"] .itf-editable:focus { outline: 3px solid #ffd400; }
 .result-content[data-manual="true"] .result-round-heading:not(:focus-visible) { outline: none; }
 .result-content[data-manual="true"] .itf-editable:empty::before { content: attr(data-placeholder); opacity: .65; pointer-events: none; }
 .result-content[data-manual="true"] .result-event { text-transform: uppercase; }
-.result-event .itf-editable { min-width: 50px; min-height: 27px; white-space: nowrap; }
+.result-event .itf-editable { position: relative; min-width: 50px; min-height: 27px; white-space: nowrap; }
 .card-export-copy .itf-editable { outline: none !important; }
 .itf-player-dialog { width: min(500px, calc(100% - 32px)); padding: 20px; border: 1px solid #5cd5bf99; border-radius: 14px; color: #f5fbff; background: #071e36; }
 .itf-player-dialog::backdrop { background: #001123b3; }

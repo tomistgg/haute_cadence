@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=328b60cf907b">
+  <link rel="stylesheet" href="cards.css?v=88b31cc34ebb">
 </head>
 <body>
   <main class="page">
@@ -194,6 +194,21 @@
       <button type="button" class="suggestion" data-round="finale">FINALE</button>
     </div>
   </dialog>
+  <dialog id="result-category-dialog" class="itf-player-dialog" aria-labelledby="result-category-heading">
+    <form method="dialog" class="itf-player-dialog-heading"><strong id="result-category-heading">Select tournament category</strong><button type="submit">Close</button></form>
+    <div class="itf-round-options">
+      <button type="button" class="suggestion" data-category="Grand Slam">GRAND SLAM</button>
+      <button type="button" class="suggestion" data-category="WTA 1000">WTA 1000</button>
+      <button type="button" class="suggestion" data-category="WTA 500">WTA 500</button>
+      <button type="button" class="suggestion" data-category="WTA 250">WTA 250</button>
+      <button type="button" class="suggestion" data-category="WTA 125">WTA 125</button>
+      <button type="button" class="suggestion" data-category="W100">W100</button>
+      <button type="button" class="suggestion" data-category="W75">W75</button>
+      <button type="button" class="suggestion" data-category="W50">W50</button>
+      <button type="button" class="suggestion" data-category="W35">W35</button>
+      <button type="button" class="suggestion" data-category="W15">W15</button>
+    </div>
+  </dialog>
   <dialog id="itf-player-dialog" class="itf-player-dialog">
     <form method="dialog">
       <div class="itf-player-dialog-heading"><label id="itf-player-label" for="itf-player-search">Select a player</label><button type="button" id="itf-player-close">Close</button></div>
@@ -210,7 +225,7 @@
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
   <script src="app.js?v=bcfcf348e590" defer></script>
-  <script src="result-card.js?v=26ea2479c192" defer></script>
+  <script src="result-card.js?v=dcc7ae0da0dc" defer></script>
   <script src="draw-card.js?v=6a62a5d4676e" defer></script>
   <script src="export-card.js?v=d4b2a680f6f9" defer></script>
 </body>

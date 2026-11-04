@@ -1,7 +1,89 @@
 {
-  "updated_at": "2026-11-04T17:31:36.565412+00:00",
-  "window_start": "2026-11-03T17:31:36.565412+00:00",
+  "updated_at": "2026-11-04T18:18:30.607550+00:00",
+  "window_start": "2026-11-03T18:18:30.607550+00:00",
   "matches": [
+    {
+      "id": "1110:2026:LS010",
+      "completed_at": "2026-11-04T17:17:49.167000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "330746",
+        "first_name": "Luisina",
+        "last_name": "Giovannini",
+        "name": "Luisina Giovannini",
+        "country": "ARG"
+      },
+      "loser": {
+        "id": "321157",
+        "first_name": "Irene",
+        "last_name": "Burillo",
+        "name": "Irene Burillo",
+        "country": "ESP"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS008",
+      "completed_at": "2026-11-04T17:16:34.293000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "320313",
+        "first_name": "Leolia",
+        "last_name": "Jeanjean",
+        "name": "Leolia Jeanjean",
+        "country": "FRA"
+      },
+      "loser": {
+        "id": "319305",
+        "first_name": "Carolina",
+        "last_name": "Alves",
+        "name": "Carolina Alves",
+        "country": "BRA"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1176:2026:LS009",
       "completed_at": "2026-11-04T16:41:25.890000+00:00",
@@ -1016,134 +1098,6 @@
         {
           "winner": 6,
           "loser": 0,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS022",
-      "completed_at": "2026-11-03T17:59:18.150000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "327283",
-        "first_name": "Jazmin",
-        "last_name": "Ortenzi",
-        "name": "Jazmin Ortenzi",
-        "country": "ARG"
-      },
-      "loser": {
-        "id": "326379",
-        "first_name": "Elizabeth",
-        "last_name": "Mandlik",
-        "name": "Elizabeth Mandlik",
-        "country": "USA"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 5,
-          "tiebreak": ""
-        },
-        {
-          "winner": 1,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS020",
-      "completed_at": "2026-11-03T17:55:07.087000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "321157",
-        "first_name": "Irene",
-        "last_name": "Burillo",
-        "name": "Irene Burillo",
-        "country": "ESP"
-      },
-      "loser": {
-        "id": "327834",
-        "first_name": "Elvina",
-        "last_name": "Kalieva",
-        "name": "Elvina Kalieva",
-        "country": "USA"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 5,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS016",
-      "completed_at": "2026-11-03T17:38:14.423000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "324267",
-        "first_name": "Anna",
-        "last_name": "Blinkova",
-        "name": "Anna Blinkova",
-        "country": "FRA"
-      },
-      "loser": {
-        "id": "334650",
-        "first_name": "Farah",
-        "last_name": "Heddar",
-        "name": "Farah Heddar",
-        "country": "ALG"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 1,
           "tiebreak": ""
         }
       ],

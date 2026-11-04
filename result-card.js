@@ -27,6 +27,8 @@ const resultHeaderText = {
 };
 const itfMatches = new Map();
 const itfRoundDialog = document.getElementById("itf-round-dialog");
+const resultCategoryDialog = document.getElementById("result-category-dialog");
+let resultCategoryMatchId = "";
 const itfPlayerDialog = document.getElementById("itf-player-dialog");
 const itfPlayerInput = document.getElementById("itf-player-search");
 const itfPlayerOptions = document.getElementById("itf-player-options");
@@ -95,17 +97,22 @@ function resultWinningSide(match) {
 function makeResultEditable(node, manual, field, side = "", index = "") {
   node.classList.toggle("itf-editable", !!manual);
   if (!manual) {
-    for (const attribute of ["contenteditable", "tabindex", "role", "aria-label", "data-itf-field", "data-itf-side", "data-itf-index", "data-placeholder"]) node.removeAttribute(attribute);
+    for (const attribute of ["contenteditable", "tabindex", "role", "aria-label", "aria-haspopup", "aria-controls", "data-itf-field", "data-itf-side", "data-itf-index", "data-placeholder"]) node.removeAttribute(attribute);
     return;
   }
   node.dataset.itfField = field;
   node.dataset.itfSide = side;
   node.dataset.itfIndex = String(index);
   node.tabIndex = 0;
-  node.setAttribute("role", field === "player" ? "button" : "textbox");
+  node.setAttribute("role", ["player", "category"].includes(field) ? "button" : "textbox");
   const playerLabel = side === "winner" ? "Player 1" : "Player 2";
-  node.setAttribute("aria-label", field === "player" ? "Select " + playerLabel : field === "score" ? playerLabel + ", set " + (index + 1) + " score" : "Edit tournament " + field);
-  if (field !== "player") {
+  node.setAttribute("aria-label", field === "player" ? "Select " + playerLabel : field === "category" ? "Select tournament category" : field === "score" ? playerLabel + ", set " + (index + 1) + " score" : "Edit tournament " + field);
+  if (field === "category") {
+    node.removeAttribute("contenteditable");
+    node.dataset.placeholder = "CATEGORY";
+    node.setAttribute("aria-haspopup", "dialog");
+    node.setAttribute("aria-controls", "result-category-dialog");
+  } else if (field !== "player") {
     node.contentEditable = "plaintext-only";
     node.spellcheck = false;
     node.inputMode = field === "score" ? "numeric" : "text";
@@ -465,6 +472,23 @@ itfRoundDialog.addEventListener("click", event => {
   renderResultCard();
   itfRoundDialog.close();
 });
+function openResultCategoryPicker() {
+  const match = selectedResultMatch();
+  if (!isResultCard() || !match?.manual) return;
+  resultCategoryMatchId = match.id;
+  resultCategoryDialog.querySelectorAll("[data-category]").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.category === match.tournament.category));
+  });
+  resultCategoryDialog.showModal();
+}
+resultCategoryDialog.addEventListener("click", event => {
+  const button = event.target.closest("button[data-category]");
+  const match = selectedResultMatch();
+  if (!button || !isResultCard() || !match?.manual || match.id !== resultCategoryMatchId) return;
+  match.tournament.category = button.dataset.category;
+  renderResultCard();
+  resultCategoryDialog.close();
+});
 cardType.addEventListener("change", () => {
   resultOptionsSignature = "";
   resultControls.hidden = !isResultCard();
@@ -498,19 +522,12 @@ resultContent.addEventListener("input", event => {
     }
     match.sets[Number(field.dataset.itfIndex)][field.dataset.itfSide] = value === "" ? "" : Number(value);
     field.classList.toggle("two-digit-score", value.length > 1);
-  } else if (kind === "name" || kind === "category") {
-    const value = field.textContent.replace(/[\r\n]/g, " ").slice(0, kind === "name" ? 80 : 30);
+  } else if (kind === "name") {
+    const value = field.textContent.replace(/[\r\n]/g, " ").slice(0, 80);
     if (field.textContent !== value) field.textContent = value;
-    match.tournament[kind] = value;
-    if (kind === "name") {
-      match.tournament.city = value;
-      fitTournamentName(field, cardType.value === "tour-result" ? "78px" : "84px");
-    } else {
-      field.style.fontSize = Math.min(cardType.value === "tour-result" ? 20 : 22, 320 / Math.max(1, value.length || 8)) + "px";
-      document.getElementById("result-event").style.backgroundColor = tournamentStyle({
-        level: value, name: match.tournament.name,
-      })?.color || "#7ed957";
-    }
+    match.tournament.name = value;
+    match.tournament.city = value;
+    fitTournamentName(field, cardType.value === "tour-result" ? "78px" : "84px");
   }
   updateResultOutcome(match);
 });
@@ -563,15 +580,17 @@ function openPlayerPicker(player, label, onSelect = null, onPortrait = null) {
 }
 
 resultContent.addEventListener("click", event => {
-  const field = event.target.closest('[data-itf-field="player"]');
-  if (field) openItfPlayerSearch(field.dataset.itfSide);
+  const field = event.target.closest("[data-itf-field]");
+  if (field?.dataset.itfField === "player") openItfPlayerSearch(field.dataset.itfSide);
+  else if (field?.dataset.itfField === "category") openResultCategoryPicker();
 });
 resultContent.addEventListener("keydown", event => {
   const field = event.target.closest("[data-itf-field]");
   if (!field) return;
-  if (field.dataset.itfField === "player" && ["Enter", " "].includes(event.key)) {
+  if (["player", "category"].includes(field.dataset.itfField) && ["Enter", " "].includes(event.key)) {
     event.preventDefault();
-    openItfPlayerSearch(field.dataset.itfSide);
+    if (field.dataset.itfField === "category") openResultCategoryPicker();
+    else openItfPlayerSearch(field.dataset.itfSide);
   } else if (["Enter", "Escape"].includes(event.key)) {
     event.preventDefault();
     field.blur();
