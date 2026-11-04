@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-04T14:11:49.812215+00:00",
-  "window_start": "2026-11-03T14:11:49.812215+00:00",
+  "updated_at": "2026-11-04T14:36:16.990790+00:00",
+  "window_start": "2026-11-03T14:36:16.990790+00:00",
   "matches": [
     {
       "id": "1176:2026:LS011",
@@ -1277,129 +1277,6 @@
         {
           "winner": 6,
           "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1074:2026:LS018",
-      "completed_at": "2026-11-03T14:20:57.850000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1074",
-        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-        "city": "HONG KONG",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "330905",
-        "first_name": "Elena",
-        "last_name": "Pridankina",
-        "name": "Elena Pridankina",
-        "country": "RUS"
-      },
-      "loser": {
-        "id": "320124",
-        "first_name": "Paula",
-        "last_name": "Badosa",
-        "name": "Paula Badosa",
-        "country": "ESP"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 5,
-          "tiebreak": ""
-        },
-        {
-          "winner": 0,
-          "loser": 0,
-          "tiebreak": ""
-        }
-      ],
-      "status": "RET."
-    },
-    {
-      "id": "1148:2026:LS031",
-      "completed_at": "2026-11-03T14:14:28.647000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "323149",
-        "first_name": "Lucrezia",
-        "last_name": "Stefanini",
-        "name": "Lucrezia Stefanini",
-        "country": "ITA"
-      },
-      "loser": {
-        "id": "332888",
-        "first_name": "Rada",
-        "last_name": "Zolotareva",
-        "name": "Rada Zolotareva",
-        "country": "RUS"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS021",
-      "completed_at": "2026-11-03T14:13:23.390000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "331039",
-        "first_name": "Ksenia",
-        "last_name": "Zaytseva",
-        "name": "Ksenia Zaytseva",
-        "country": "RUS"
-      },
-      "loser": {
-        "id": "331224",
-        "first_name": "Jian",
-        "last_name": "Ibrahim",
-        "name": "Jian Ibrahim",
-        "country": "EGY"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 0,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
           "tiebreak": ""
         }
       ],

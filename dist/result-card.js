@@ -7,6 +7,7 @@ const resultContent = document.getElementById("result-card-content");
 const uploadedResultPhotos = new Map();
 const resultHeaderRight = { premier: 1279, deuxieme: 1279, troisieme: 1299, quartdefinale: 1298, demifinale: 1224, finale: 1188 };
 const itfMatches = new Map();
+const itfRoundDialog = document.getElementById("itf-round-dialog");
 const itfPlayerDialog = document.getElementById("itf-player-dialog");
 const itfPlayerInput = document.getElementById("itf-player-search");
 const itfPlayerOptions = document.getElementById("itf-player-options");
@@ -160,10 +161,15 @@ function renderResultCard() {
   document.getElementById("result-round-art").src = "assets/results/" + match.round_art + ".png";
   document.getElementById("result-score-art").src = "assets/results/" + (match.sets.length === 3 ? "trois_sets" : "deux_sets") + ".png";
   const heading = document.getElementById("result-round-heading");
-  heading.hidden = !match.round_heading;
-  heading.textContent = match.round_heading;
+  heading.hidden = !match.manual && !match.round_heading;
+  heading.textContent = match.round_heading || match.round;
+  heading.disabled = !match.manual;
+  heading.classList.toggle("itf-editable", !!match.manual);
+  heading.classList.toggle("has-round-art", !match.round_heading);
+  heading.setAttribute("aria-label", "Select round. Current: " + (match.round_heading || match.round));
   const event = document.getElementById("result-event");
   event.style.left = (resultHeaderRight[match.round_art] - 302) + "px";
+  heading.style.width = "calc(" + event.style.left + " - 397px)";
   event.style.backgroundColor = tournamentStyle({ level: match.tournament.category, name: match.tournament.name })?.color || "#7ed957";
   const eventName = document.getElementById("result-event-name");
   eventName.textContent = match.manual ? match.tournament.name : tournamentName(match.tournament).toLocaleUpperCase();
@@ -308,6 +314,24 @@ resultSelect.addEventListener("change", () => {
   renderResultCard();
 });
 document.getElementById("refresh-results").addEventListener("click", refreshResults);
+document.getElementById("result-round-heading").addEventListener("click", () => {
+  const match = selectedResultMatch();
+  if (!match?.manual) return;
+  itfRoundDialog.querySelectorAll("[data-round]").forEach(button => {
+    button.setAttribute("aria-pressed", String(!match.round_heading && button.dataset.round === match.round_art));
+  });
+  itfRoundDialog.showModal();
+});
+itfRoundDialog.addEventListener("click", event => {
+  const button = event.target.closest("button[data-round]");
+  const match = selectedResultMatch();
+  if (!button || !match?.manual) return;
+  match.round = button.textContent;
+  match.round_art = button.dataset.round;
+  match.round_heading = "";
+  renderResultCard();
+  itfRoundDialog.close();
+});
 cardType.addEventListener("change", () => {
   resultControls.hidden = !isResultCard();
   if (isResultCard()) {

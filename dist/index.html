@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=c8453b8acdc9">
+  <link rel="stylesheet" href="cards.css?v=d6f4e8ffe1a2">
 </head>
 <body>
   <main class="page">
@@ -136,7 +136,7 @@
           <div class="result-winner-portrait"><img id="result-winner-photo" alt="" hidden><span id="result-winner-initials"></span></div>
           <img class="result-layer" src="assets/results/opponent.png" alt="">
           <div class="result-opponent-portrait"><img id="result-loser-photo" alt="" hidden><span id="result-loser-initials"></span></div>
-          <div id="result-round-heading" class="result-round-heading" hidden></div>
+          <button type="button" id="result-round-heading" class="result-round-heading" aria-haspopup="dialog" aria-controls="itf-round-dialog" hidden></button>
           <div class="result-event" id="result-event"><strong id="result-event-name"></strong><span id="result-event-category"></span></div>
           <span id="result-retired" class="result-retired" hidden>RET.</span>
           <img id="result-score-art" class="result-layer" alt="">
@@ -152,6 +152,17 @@
     <div id="background-options" class="background-options"><button type="button" data-background="" aria-pressed="true"><img id="default-background-thumbnail" src="assets/title-court.svg" alt=""><span>Original</span></button></div>
     <p id="background-status" role="status">Loading backgrounds...</p>
   </dialog>
+  <dialog id="itf-round-dialog" class="itf-player-dialog" aria-labelledby="itf-round-heading">
+    <form method="dialog" class="itf-player-dialog-heading"><strong id="itf-round-heading">Select a round</strong><button type="submit">Close</button></form>
+    <div class="itf-round-options">
+      <button type="button" class="suggestion" data-round="premier">PREMIER TOUR</button>
+      <button type="button" class="suggestion" data-round="deuxieme">DEUXIÈME TOUR</button>
+      <button type="button" class="suggestion" data-round="troisieme">TROISIÈME TOUR</button>
+      <button type="button" class="suggestion" data-round="quartdefinale">QUART DE FINALE</button>
+      <button type="button" class="suggestion" data-round="demifinale">DEMI-FINALE</button>
+      <button type="button" class="suggestion" data-round="finale">FINALE</button>
+    </div>
+  </dialog>
   <dialog id="itf-player-dialog" class="itf-player-dialog">
     <form method="dialog">
       <div class="itf-player-dialog-heading"><label id="itf-player-label" for="itf-player-search">Select a player</label><button type="button" id="itf-player-close">Close</button></div>
@@ -162,7 +173,7 @@
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
   <script src="app.js?v=6849f94fc7eb" defer></script>
-  <script src="result-card.js?v=b6bf05da9b7a" defer></script>
+  <script src="result-card.js?v=34d755769d18" defer></script>
   <script src="export-card.js?v=ffc0e57db991" defer></script>
 </body>
 </html>

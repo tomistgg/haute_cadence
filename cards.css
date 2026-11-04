@@ -120,7 +120,8 @@
 .result-event { position: absolute; top: 49px; width: 278px; height: 124px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px; border-radius: 17px; color: #fff; }
 .result-event strong { width: 100%; text-align: center; white-space: nowrap; font: 400 72px/.95 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; }
 .result-event span { margin-top: 4px; font: 400 27px/1 "Chunk Five", serif; white-space: nowrap; }
-.result-round-heading { position: absolute; left: 395px; top: 53px; width: 580px; height: 122px; display: flex; align-items: center; padding: 0 10px; background: linear-gradient(90deg, #09b797, #65d7c2); font: 400 70px/1 "Bebas Neue", sans-serif; white-space: nowrap; }
+.result-round-heading { position: absolute; left: 395px; top: 53px; width: 580px; height: 122px; display: flex; align-items: center; padding: 0 10px; border: 0; color: inherit; text-align: left; background: linear-gradient(90deg, #09b797, #65d7c2); font: 400 70px/1 "Bebas Neue", sans-serif; white-space: nowrap; }
+.result-round-heading.has-round-art { color: transparent; background: transparent; }
 .result-retired { position: absolute; left: 1170px; top: 1270px; padding: 6px 14px; border-radius: 9px; background: #071e36; font: 400 38px/1 "Bebas Neue", sans-serif; }
 .result-score-row { --row-top: 1328px; position: absolute; inset: 0; }
 .result-score-row[data-side="loser"] { --row-top: 1446px; }
@@ -140,7 +141,9 @@
 .result-score-sets > .two-digit-score { font-size: 59px; }
 .result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
 .result-content[data-manual="true"] [data-itf-field="player"] { cursor: pointer; }
+.result-content[data-manual="true"] .result-round-heading { cursor: pointer; }
 .result-content[data-manual="true"] .itf-editable:focus { outline: 3px solid #ffd400; }
+.result-content[data-manual="true"] .result-round-heading:not(:focus-visible) { outline: none; }
 .result-content[data-manual="true"] .itf-editable:empty::before { content: attr(data-placeholder); opacity: .65; pointer-events: none; }
 .result-content[data-manual="true"] .result-event { text-transform: uppercase; }
 .result-event .itf-editable { min-width: 50px; min-height: 27px; white-space: nowrap; }
@@ -149,6 +152,9 @@
 .itf-player-dialog::backdrop { background: #001123b3; }
 .itf-player-dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
 .itf-player-dialog-heading button { padding: 6px 12px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
+.itf-round-options .suggestion { min-height: 44px; }
+.itf-round-options .suggestion[aria-pressed="true"] { color: #81da57; background: #123e58; }
+.itf-round-options .suggestion:focus-visible { outline: 2px solid #81da57; outline-offset: -2px; }
 #itf-player-search { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 10px; background: #051b31; color: #fff; font: inherit; }
 .itf-player-options { max-height: min(45vh, 350px); overflow-y: auto; margin-top: 12px; }
 .itf-player-options .suggestion { display: flex; justify-content: space-between; gap: 12px; text-align: left; }

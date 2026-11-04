@@ -136,7 +136,7 @@
           <div class="result-winner-portrait"><img id="result-winner-photo" alt="" hidden><span id="result-winner-initials"></span></div>
           <img class="result-layer" src="assets/results/opponent.png" alt="">
           <div class="result-opponent-portrait"><img id="result-loser-photo" alt="" hidden><span id="result-loser-initials"></span></div>
-          <div id="result-round-heading" class="result-round-heading" hidden></div>
+          <button type="button" id="result-round-heading" class="result-round-heading" aria-haspopup="dialog" aria-controls="itf-round-dialog" hidden></button>
           <div class="result-event" id="result-event"><strong id="result-event-name"></strong><span id="result-event-category"></span></div>
           <span id="result-retired" class="result-retired" hidden>RET.</span>
           <img id="result-score-art" class="result-layer" alt="">
@@ -151,6 +151,17 @@
     <form method="dialog" class="background-dialog-heading"><h2 id="background-heading">Choose a background</h2><button type="submit">Close</button></form>
     <div id="background-options" class="background-options"><button type="button" data-background="" aria-pressed="true"><img id="default-background-thumbnail" src="assets/title-court.svg" alt=""><span>Original</span></button></div>
     <p id="background-status" role="status">Loading backgrounds...</p>
+  </dialog>
+  <dialog id="itf-round-dialog" class="itf-player-dialog" aria-labelledby="itf-round-heading">
+    <form method="dialog" class="itf-player-dialog-heading"><strong id="itf-round-heading">Select a round</strong><button type="submit">Close</button></form>
+    <div class="itf-round-options">
+      <button type="button" class="suggestion" data-round="premier">PREMIER TOUR</button>
+      <button type="button" class="suggestion" data-round="deuxieme">DEUXIÈME TOUR</button>
+      <button type="button" class="suggestion" data-round="troisieme">TROISIÈME TOUR</button>
+      <button type="button" class="suggestion" data-round="quartdefinale">QUART DE FINALE</button>
+      <button type="button" class="suggestion" data-round="demifinale">DEMI-FINALE</button>
+      <button type="button" class="suggestion" data-round="finale">FINALE</button>
+    </div>
   </dialog>
   <dialog id="itf-player-dialog" class="itf-player-dialog">
     <form method="dialog">
