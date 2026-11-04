@@ -250,13 +250,22 @@ function renderDrawHeading(tournament) {
   category.dataset.placeholder = "CATEGORY";
   for (const [node, field] of [[nameNode, "name"], [category, "category"], [roundLabel, "header"], [finalRound, "header"]]) {
     if (manual) {
-      node.contentEditable = "plaintext-only";
-      node.spellcheck = false;
       node.dataset.drawField = field;
-      node.setAttribute("role", "textbox");
-      node.setAttribute("aria-label", { name: "Tournament name", category: "Tournament category", header: "Round header" }[field]);
+      if (field === "category") {
+        node.removeAttribute("contenteditable");
+        node.tabIndex = 0;
+        node.setAttribute("role", "button");
+        node.setAttribute("aria-label", "Select tournament category");
+        node.setAttribute("aria-haspopup", "dialog");
+        node.setAttribute("aria-controls", "result-category-dialog");
+      } else {
+        node.contentEditable = "plaintext-only";
+        node.spellcheck = false;
+        node.setAttribute("role", "textbox");
+        node.setAttribute("aria-label", field === "name" ? "Tournament name" : "Round header");
+      }
     } else {
-      for (const attribute of ["contenteditable", "data-draw-field", "role", "aria-label"]) node.removeAttribute(attribute);
+      for (const attribute of ["contenteditable", "data-draw-field", "tabindex", "role", "aria-label", "aria-haspopup", "aria-controls"]) node.removeAttribute(attribute);
     }
   }
   drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: tournament.category, name })?.color || (drawDesignFor(tournament) === "125" ? "#7ed957" : "#699694");
@@ -495,20 +504,35 @@ drawDesign.addEventListener("change", () => {
   manualDraw().design = drawDesign.value;
   renderDrawCard();
 });
+function openDrawCategoryPicker() {
+  if (!isManualDraw()) return;
+  const round = drawRound.value, draft = manualDraw();
+  openTournamentCategoryPicker(draft.category, category => {
+    if (!isManualDraw() || drawRound.value !== round) return;
+    draft.category = category;
+    renderDrawHeading(draft);
+  });
+}
+drawContent.addEventListener("click", event => {
+  if (event.target.closest('[data-draw-field="category"]')) openDrawCategoryPicker();
+});
+
 drawContent.addEventListener("input", event => {
   if (!isManualDraw()) return;
   const node = event.target;
   const field = node.dataset.drawField;
-  if (!["header", "name", "category"].includes(field)) return;
+  if (!["header", "name"].includes(field)) return;
   const draft = manualDraw();
-  draft[field] = node.textContent.replace(/[\r\n]/g, " ").slice(0, field === "category" ? 30 : 80);
+  draft[field] = node.textContent.replace(/[\r\n]/g, " ").slice(0, 80);
   if (node.textContent !== draft[field]) node.textContent = draft[field];
   if (field === "name") draft.city = draft.name;
-  if (field !== "category") fitTournamentName(node, node.id === "draw-event-name" ? "78px" : node.id === "draw-125-final-round" ? "110px" : "80px");
+  fitTournamentName(node, node.id === "draw-event-name" ? "78px" : node.id === "draw-125-final-round" ? "110px" : "80px");
   drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: draft.category, name: draft.name })?.color || (draft.design === "125" ? "#7ed957" : "#699694");
 });
 drawContent.addEventListener("keydown", event => {
-  if (event.target.matches("[data-draw-field]") && ["Enter", "Escape"].includes(event.key)) {
+  if (event.target.matches('[data-draw-field="category"]') && ["Enter", " "].includes(event.key)) {
+    event.preventDefault(); openDrawCategoryPicker();
+  } else if (event.target.matches("[data-draw-field]") && ["Enter", "Escape"].includes(event.key)) {
     event.preventDefault(); event.target.blur();
   }
 });

@@ -28,7 +28,7 @@ const resultHeaderText = {
 const itfMatches = new Map();
 const itfRoundDialog = document.getElementById("itf-round-dialog");
 const resultCategoryDialog = document.getElementById("result-category-dialog");
-let resultCategoryMatchId = "";
+let categoryPickerSelection = null;
 const itfPlayerDialog = document.getElementById("itf-player-dialog");
 const itfPlayerInput = document.getElementById("itf-player-search");
 const itfPlayerOptions = document.getElementById("itf-player-options");
@@ -472,23 +472,29 @@ itfRoundDialog.addEventListener("click", event => {
   renderResultCard();
   itfRoundDialog.close();
 });
-function openResultCategoryPicker() {
-  const match = selectedResultMatch();
-  if (!isResultCard() || !match?.manual) return;
-  resultCategoryMatchId = match.id;
+function openTournamentCategoryPicker(category, onSelect) {
+  categoryPickerSelection = onSelect;
   resultCategoryDialog.querySelectorAll("[data-category]").forEach(button => {
-    button.setAttribute("aria-pressed", String(button.dataset.category === match.tournament.category));
+    button.setAttribute("aria-pressed", String(button.dataset.category === category));
   });
   resultCategoryDialog.showModal();
 }
+function openResultCategoryPicker() {
+  const match = selectedResultMatch();
+  if (!isResultCard() || !match?.manual) return;
+  openTournamentCategoryPicker(match.tournament.category, category => {
+    if (!isResultCard() || selectedResultMatch()?.id !== match.id) return;
+    match.tournament.category = category;
+    renderResultCard();
+  });
+}
 resultCategoryDialog.addEventListener("click", event => {
   const button = event.target.closest("button[data-category]");
-  const match = selectedResultMatch();
-  if (!button || !isResultCard() || !match?.manual || match.id !== resultCategoryMatchId) return;
-  match.tournament.category = button.dataset.category;
-  renderResultCard();
+  if (!button || !categoryPickerSelection) return;
+  categoryPickerSelection(button.dataset.category);
   resultCategoryDialog.close();
 });
+resultCategoryDialog.addEventListener("close", () => { categoryPickerSelection = null; });
 cardType.addEventListener("change", () => {
   resultOptionsSignature = "";
   resultControls.hidden = !isResultCard();

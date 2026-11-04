@@ -218,6 +218,7 @@
 .draw-slot { position: absolute; transform-origin: center; filter: drop-shadow(0 8px 8px #00112370); }
 .draw-player-card.player-card { position: absolute; left: 0; top: 0; width: 1440px !important; height: 1800px; margin: 0; box-shadow: none; transform: scale(var(--draw-player-scale)); transform-origin: top left; }
 .draw-content [data-draw-field] { position: relative; pointer-events: auto; cursor: text; -webkit-user-select: text; user-select: text; text-transform: uppercase; }
+.draw-content [data-draw-field="category"] { cursor: pointer; }
 .draw-content [data-draw-field]:focus { outline: 2px dashed #fff9; outline-offset: 4px; }
 .draw-player-portrait { margin-top: 12px; padding: 10px 14px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
 .draw-select-player { position: absolute; left: 27%; top: .6%; width: 59%; height: 8.8%; padding: 0; border: 0; background: transparent; pointer-events: auto; cursor: pointer; }

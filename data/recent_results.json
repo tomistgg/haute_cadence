@@ -1,7 +1,53 @@
 {
-  "updated_at": "2026-11-04T18:37:25.556507+00:00",
-  "window_start": "2026-11-03T18:37:25.556507+00:00",
+  "updated_at": "2026-11-04T19:16:25.967884+00:00",
+  "window_start": "2026-11-03T19:16:25.967884+00:00",
   "matches": [
+    {
+      "id": "1110:2026:LS012",
+      "completed_at": "2026-11-04T18:27:45.957000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "325991",
+        "first_name": "Carole",
+        "last_name": "Monnet",
+        "name": "Carole Monnet",
+        "country": "FRA"
+      },
+      "loser": {
+        "id": "333944",
+        "first_name": "Laura",
+        "last_name": "Samson",
+        "name": "Laura Samson",
+        "country": "CZE"
+      },
+      "sets": [
+        {
+          "winner": 3,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "4"
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1110:2026:LS010",
       "completed_at": "2026-11-04T17:17:49.167000+00:00",

@@ -40,8 +40,9 @@ those drafts remain available when switching back to the Tour design.
 The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
 
 Choose Draw, then MANUAL at the bottom of its tournament selector to build a draw without the WTA feed. Choose FINALE (2 players),
-DEMI-FINALES (4), or QUARTS DE FINALE (8), then click the round header, tournament name and category on the image to type. Choose the
-WTA Tour / Grand Slam or WTA 125 design independently of the written category. Click an empty player space, portrait,
+DEMI-FINALES (4), or QUARTS DE FINALE (8), then click the round header or tournament name on the image to type.
+Click the category to choose from the same ten categories as manual Result Cards. Choose the
+WTA Tour / Grand Slam or WTA 125 design independently of the selected category. Click an empty player space, portrait,
 or player name to search the full two-year directory or use custom names, rankings and flags. For a selected player,
 click the portrait and choose Upload portrait in the dialog. The Player form editor, backgrounds, and final H2H editing
 work as in Draw. Each layout keeps its own manual draft until reload; automatic draw updates do not change it.
