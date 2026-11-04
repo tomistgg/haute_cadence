@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-04T17:14:24.569032+00:00",
+  "updated_at": "2026-11-04T18:02:09.237997+00:00",
   "date": "2026-11-04",
   "tournaments": [
     {
@@ -50,7 +50,13 @@
             "id": "LS004",
             "position": 0,
             "players": [
-              null,
+              {
+                "id": "320313",
+                "first_name": "Leolia",
+                "last_name": "Jeanjean",
+                "name": "Leolia Jeanjean",
+                "country": "FRA"
+              },
               null
             ],
             "state": "U"
@@ -59,7 +65,13 @@
             "id": "LS005",
             "position": 1,
             "players": [
-              null,
+              {
+                "id": "330746",
+                "first_name": "Luisina",
+                "last_name": "Giovannini",
+                "name": "Luisina Giovannini",
+                "country": "ARG"
+              },
               null
             ],
             "state": "U"

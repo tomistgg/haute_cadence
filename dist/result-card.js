@@ -34,6 +34,8 @@ let itfPlayerSide = "winner";
 let itfPlayerMatchId = "";
 let itfPlayerChoices = [];
 let itfPlayerActiveIndex = -1;
+let playerPickerSelection = null;
+let playerPickerPlayer = null;
 let resultFeed = null;
 let selectedResultId = "";
 let resultsLoading = false;
@@ -140,6 +142,7 @@ function resultPhoto(player) {
 }
 
 function resultRank(player) {
+  if (player.manual) return player.rank ?? "NR";
   return player.placeholder ? "—" : player.rank ?? players.find(row => row.id === player.id)?.rank ?? "NR";
 }
 
@@ -512,8 +515,8 @@ resultContent.addEventListener("input", event => {
   updateResultOutcome(match);
 });
 
-resultContent.addEventListener("focusin", event => {
-  const field = event.target.closest("[contenteditable]");
+document.getElementById("card-design").addEventListener("focusin", event => {
+  const field = event.target.closest("[data-itf-field][contenteditable], [data-draw-field][contenteditable]");
   if (!field) return;
   setTimeout(() => {
     if (document.activeElement !== field) return;
@@ -530,20 +533,29 @@ function openItfPlayerSearch(side) {
   if (!match?.manual) return;
   itfPlayerSide = side;
   itfPlayerMatchId = match.id;
-  document.getElementById("itf-player-label").textContent = "Select Player " + (side === "winner" ? "1" : "2");
-  itfPlayerInput.value = match[side].placeholder ? "" : match[side].name;
+  openPlayerPicker(match[side], "Select Player " + (side === "winner" ? "1" : "2"));
+}
+
+function openPlayerPicker(player, label, onSelect = null, onPortrait = null) {
+  playerPickerSelection = onSelect;
+  playerPickerPlayer = player;
+  const portrait = document.getElementById("draw-player-portrait");
+  portrait.hidden = !onPortrait;
+  portrait.onclick = onPortrait;
+  document.getElementById("itf-player-label").textContent = label;
+  itfPlayerInput.value = player.placeholder ? "" : player.name;
   document.getElementById("tour-player-details").hidden = false;
-  document.getElementById("tour-player-rank").value = match[side].placeholder ? "" : String(resultRank(match[side]));
+  document.getElementById("tour-player-rank").value = player.placeholder ? "" : String(resultRank(player));
   const country = document.getElementById("tour-player-country");
   country.replaceChildren();
-  const countries = [...new Set(["", ...players.map(player => player.country), match[side].country])].sort();
+  const countries = [...new Set(["", ...players.map(player => player.country), player.country])].sort();
   countries.forEach(code => {
     const option = document.createElement("option");
     option.value = code;
     option.textContent = code || "No flag";
     country.append(option);
   });
-  country.value = match[side].country;
+  country.value = player.country;
   itfPlayerDialog.showModal();
   showItfPlayerOptions();
   itfPlayerInput.focus();
@@ -567,6 +579,11 @@ resultContent.addEventListener("keydown", event => {
 });
 
 function chooseItfPlayer(player) {
+  if (playerPickerSelection) {
+    playerPickerSelection(player);
+    itfPlayerDialog.close();
+    return;
+  }
   const match = selectedResultMatch();
   if (!match?.manual || match.id !== itfPlayerMatchId) return;
   const other = match[itfPlayerSide === "winner" ? "loser" : "winner"];
@@ -588,20 +605,24 @@ document.getElementById("tour-player-apply").addEventListener("click", () => {
   const match = selectedResultMatch();
   const name = itfPlayerInput.value.trim().slice(0, 80);
   const rank = document.getElementById("tour-player-rank");
-  if (!match?.manual || match.id !== itfPlayerMatchId || !name) return;
+  if (!name || (!playerPickerSelection && (!match?.manual || match.id !== itfPlayerMatchId))) return;
   if (!rank.reportValidity()) return;
-  match[itfPlayerSide] = {
-    ...match[itfPlayerSide], name, placeholder: false,
+  const player = {
+    ...playerPickerPlayer, name, placeholder: false,
     rank: rank.value ? /^\d+$/.test(rank.value) ? Number(rank.value) : "NR" : "NR",
     country: document.getElementById("tour-player-country").value,
   };
-  renderResultCard();
+  if (playerPickerSelection) playerPickerSelection(player);
+  else {
+    match[itfPlayerSide] = player;
+    renderResultCard();
+  }
   itfPlayerDialog.close();
 });
 
 function showItfPlayerOptions() {
   const match = selectedResultMatch();
-  const otherId = match?.[itfPlayerSide === "winner" ? "loser" : "winner"]?.id;
+  const otherId = playerPickerSelection ? null : match?.[itfPlayerSide === "winner" ? "loser" : "winner"]?.id;
   const query = normalize(itfPlayerInput.value.trim());
   itfPlayerChoices = players.filter(player => player.id !== otherId && normalize(player.name).includes(query)).slice(0, 8);
   itfPlayerActiveIndex = -1;

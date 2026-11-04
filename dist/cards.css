@@ -217,6 +217,17 @@
 .draw-event > span { font: 400 20px/1 "Chunk Five", serif; white-space: nowrap; }
 .draw-slot { position: absolute; transform-origin: center; filter: drop-shadow(0 8px 8px #00112370); }
 .draw-player-card.player-card { position: absolute; left: 0; top: 0; width: 1440px !important; height: 1800px; margin: 0; box-shadow: none; transform: scale(var(--draw-player-scale)); transform-origin: top left; }
+.draw-content [data-draw-field] { position: relative; pointer-events: auto; cursor: text; -webkit-user-select: text; user-select: text; text-transform: uppercase; }
+.draw-content [data-draw-field]:focus { outline: 2px dashed #fff9; outline-offset: 4px; }
+.draw-player-portrait { margin-top: 12px; padding: 10px 14px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
+.draw-select-player { position: absolute; left: 27%; top: .6%; width: 59%; height: 8.8%; padding: 0; border: 0; background: transparent; pointer-events: auto; cursor: pointer; }
+.draw-player-choice { padding: 0; pointer-events: auto; cursor: pointer; }
+.draw-select-player:focus-visible, .draw-player-choice:focus-visible { outline: 5px solid #ffd400; outline-offset: -5px; }
+#draw-round-art[data-manual="true"]::before { content: ""; position: absolute; z-index: 1; inset: 4px; border-radius: 10px; background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
+#draw-round-art .manual-draw-logo { z-index: 2; left: 5px; top: 4px; width: 90px; height: 80px; object-fit: contain; }
+.manual-draw-round-text { position: absolute; z-index: 2; left: 105px; right: 7px; top: 5px; bottom: 5px; display: flex; align-items: center; justify-content: center; }
+.manual-draw-round-text strong { display: block; text-align: center; color: #fff; font: 400 80px/.82 "Bebas Neue", sans-serif; transform: scaleX(var(--tournament-name-scale, 1)); text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
+.manual-draw-round-text strong:empty::before, .draw-content[data-manual="true"] .draw-event [data-placeholder]:empty::before { content: attr(data-placeholder); opacity: .7; }
 .draw-photo-button { position: absolute; left: 5.42%; top: 18.5%; width: 89.17%; height: 62.6%; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
 .draw-photo-button:focus-visible { outline: 5px solid #ffd400; outline-offset: -5px; }
 .draw-tbd { display: flex; align-items: center; justify-content: center; border: 3px solid #ffffff80; background: linear-gradient(#c7edff 0%, #e7f9ff 65%, #a9ce46 65%, #789c13 100%); color: #0b5483; font: 800 90px/1 "TT Bluescreens Upright", sans-serif; }
@@ -240,3 +251,49 @@
 .player-card[data-draw-round="Q"] .draw-brace-right { right: 645px; transform: scaleX(-1); transform-origin: center; }
 .player-card[data-draw-round="Q"] .draw-center-logo { left: 800px; top: 486.5px; transform: translate(-50%, -50%); }
 @media (max-width: 480px) { .draw-tournament-picker { flex-basis: 100%; } .draw-options { flex-wrap: wrap; } #draw-round { flex: 1 1 100%; } #refresh-draws, #edit-draw-form { flex: 1; } }
+
+.draw-design-picker { display: flex; flex: 0 1 220px; min-width: 0; flex-direction: column; gap: 6px; color: #b9d7df; font-size: .8rem; }
+#draw-design { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #051b31; color: #fff; font-size: 1rem; }
+.draw-options:has(.draw-design-picker:not([hidden])) { align-items: flex-end; }
+.draw-options #draw-round { flex: 1; }
+.draw-125-final-heading { display: none; }
+.player-card[data-type="draw"][data-draw-style="125"] { aspect-ratio: 20 / 17; }
+.player-card[data-type="draw"][data-draw-style="125"] .card-design, .player-card[data-draw-style="125"] .draw-content { height: 1360px; }
+.player-card[data-type="draw"][data-draw-style="125"][data-draw-round="S"] { aspect-ratio: 20 / 21; }
+.player-card[data-type="draw"][data-draw-style="125"][data-draw-round="S"] .card-design, .player-card[data-draw-style="125"][data-draw-round="S"] .draw-content { height: 1680px; }
+.player-card[data-draw-style="125"] .draw-frame { inset: 50px; border-radius: 0; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-frame { inset: 44px; border-color: #00cba8; }
+.player-card[data-draw-style="125"][data-draw-round="F"] #draw-round-art { display: none; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-125-final-heading { position: absolute; z-index: 2; left: 50%; top: 14px; width: 860px; height: 166px; transform: translateX(-50%); display: flex; align-items: center; gap: 16px; padding: 12px 16px; border: 6px solid #fff; border-radius: 22px; background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
+.draw-125-final-heading > img { width: 150px; height: 140px; object-fit: contain; flex: none; }
+.draw-125-final-round-text { width: 220px; flex: none; }
+.draw-125-final-round-text strong { display: block; color: #fff; text-align: center; white-space: nowrap; font: 400 110px/1 "Bebas Neue", sans-serif; transform: scaleX(var(--tournament-name-scale, 1)); }
+.draw-125-final-round-text strong:empty::before { content: attr(data-placeholder); opacity: .7; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-event { left: 800px; right: auto; top: 38px; width: 400px; height: 116px; border-radius: 8px; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-event > span { font-size: 26px; }
+.draw-125-player { filter: none; }
+.draw-125-photo { position: absolute; inset: 0; overflow: hidden; border: 6px solid #00cba8; background: #132b3e; }
+.draw-125-photo > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.draw-125-photo > span { display: flex; align-items: center; justify-content: center; height: 100%; color: #d2f9f4; font: italic 800 160px/1 "TT Bluescreens", sans-serif; }
+.draw-125-photo .draw-photo-button { inset: 0; width: 100%; height: 100%; }
+.draw-125-name { position: absolute; left: 0; width: 100%; min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 0 6px; color: #fff; font: italic 800 100px/1 "TT Bluescreens", sans-serif; }
+.draw-125-name-text { flex: none; min-width: 0; }
+.draw-125-name-text > span { display: block; white-space: nowrap; transform-origin: left center; }
+.draw-125-flag { flex: none; width: 72px; height: 72px; border-radius: 50%; object-fit: cover; }
+.draw-125-name .draw-select-player { inset: 0; width: 100%; height: 100%; }
+.draw-125-rank { position: absolute; left: -10px; top: -10px; display: flex; align-items: center; justify-content: center; gap: 4px; width: 200px; height: 108px; border: 4px solid #006b69; border-radius: 10px; box-shadow: 0 8px 12px #0006; background: linear-gradient(120deg, #4cc6c0, #96dceb); color: #000; font: italic 800 88px/1 "TT Bluescreens", sans-serif; }
+.draw-125-rank sup { align-self: flex-start; margin-top: 9px; font-size: 38px; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-125-player:nth-child(2) .draw-125-rank { background: linear-gradient(120deg, #1bd5b6, #a2f3e6); }
+.player-card[data-draw-style="125"] .draw-vs { display: flex; align-items: center; justify-content: center; width: 140px; height: 140px; padding: 0; border: 6px solid #c4eee6; background: #00baa7; font-size: 130px; }
+.player-card[data-draw-style="125"][data-draw-round="F"] .draw-vs { width: 200px; height: 220px; font-size: 190px; }
+.player-card[data-draw-style="125"][data-draw-round="S"] .draw-125-name { min-height: 90px; font-size: 80px; }
+.player-card[data-draw-style="125"][data-draw-round="S"] .draw-125-flag { width: 64px; height: 64px; }
+.player-card[data-draw-style="125"]:not([data-draw-round="F"]) .draw-125-rank { display: none; }
+.player-card[data-draw-style="125"][data-draw-round="S"] .draw-brace { top: 450px; width: 110px; height: 800px; overflow: visible; }
+.player-card[data-draw-style="125"][data-draw-round="S"] .draw-brace-left { left: 600px; transform: none; }
+.player-card[data-draw-style="125"][data-draw-round="S"] .draw-brace-right { right: 600px; transform: scaleX(-1); transform-origin: center; }
+.player-card[data-draw-style="125"][data-draw-round="Q"] .draw-brace { top: 410px; height: 580px; }
+.player-card[data-draw-style="125"][data-draw-round="Q"] .draw-125-name { min-height: 80px; font-size: 56px; }
+.player-card[data-draw-style="125"][data-draw-round="Q"] .draw-125-flag { width: 48px; height: 48px; }
+.player-card[data-draw-style="125"][data-draw-round="Q"] .draw-125-photo > span { font-size: 100px; }
+@media (max-width: 480px) { .draw-design-picker { flex: 1 1 100%; } .draw-options #draw-round { flex-basis: 100%; } }

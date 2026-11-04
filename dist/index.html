@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=f7674e755f77">
+  <link rel="stylesheet" href="cards.css?v=328b60cf907b">
 </head>
 <body>
   <main class="page">
@@ -81,7 +81,7 @@
     <section class="card-stage" aria-label="Selected player card">
       <div class="preview-controls" id="preview-controls" hidden>
         <div class="preview-toolbar">
-          <div id="draw-tournament-picker" class="draw-tournament-picker" hidden><label class="sr-only" for="draw-tournament">Current WTA tournament</label><select id="draw-tournament"><option value="">Loading tournaments...</option></select></div>
+          <div id="draw-tournament-picker" class="draw-tournament-picker" hidden><label class="sr-only" for="draw-tournament">Tournament or manual draw</label><select id="draw-tournament"><option value="">Loading tournaments...</option><option value="manual">MANUAL</option></select></div>
           <div class="tournament-wrap" id="tournament-search-wrap" hidden>
             <label class="sr-only" for="tournament-search">Search tournaments</label>
             <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
@@ -92,6 +92,7 @@
           <button id="choose-background" type="button" aria-haspopup="dialog" aria-controls="background-dialog"><img id="background-thumbnail" src="assets/title-court.svg" alt=""><span>Background</span></button>
         </div>
         <div id="draw-options" class="draw-options" hidden>
+          <label id="draw-design-picker" class="draw-design-picker" hidden>Design<select id="draw-design"><option value="tour">WTA Tour / Grand Slam</option><option value="125">WTA 125</option></select></label>
           <label class="sr-only" for="draw-round">Draw round</label><select id="draw-round"><option value="F">FINALE</option><option value="S">DEMI-FINALES</option><option value="Q">QUARTS DE FINALE</option></select>
           <button id="edit-draw-form" type="button" aria-haspopup="dialog" aria-controls="draw-form-dialog">Player form</button>
           <button id="refresh-draws" type="button">Refresh</button>
@@ -161,7 +162,8 @@
         </div>
         <div id="draw-card-content" class="draw-content" hidden>
           <div class="draw-frame" aria-hidden="true"></div>
-          <div id="draw-round-art" class="tour-cropped-art"><img alt=""></div>
+          <div class="draw-125-final-heading"><img src="assets/haute-cadence-logo.png" alt=""><div class="draw-125-final-round-text"><strong id="draw-125-final-round"></strong></div></div>
+          <div id="draw-round-art" class="tour-cropped-art"><img alt=""><img id="manual-draw-logo" class="manual-draw-logo" src="assets/haute-cadence-logo.png" alt="" hidden><div id="manual-draw-round-text" class="manual-draw-round-text" hidden><strong id="manual-draw-round-label"></strong></div></div>
           <div class="draw-event"><strong id="draw-event-name"></strong><span id="draw-event-category"></span></div>
           <div id="draw-matches"></div>
         </div>
@@ -202,13 +204,14 @@
         <label>Flag <select id="tour-player-country" aria-label="Player country flag"></select></label>
         <button type="button" id="tour-player-apply">Use these details</button>
       </div>
+      <button type="button" id="draw-player-portrait" class="draw-player-portrait" hidden>Upload portrait</button>
       <p id="itf-player-status" class="sr-only" role="status"></p>
     </form>
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
-  <script src="app.js?v=709ec79bd97d" defer></script>
-  <script src="result-card.js?v=c0dd96b1e38a" defer></script>
-  <script src="draw-card.js?v=c0cde765fc5e" defer></script>
-  <script src="export-card.js?v=9007defe9775" defer></script>
+  <script src="app.js?v=bcfcf348e590" defer></script>
+  <script src="result-card.js?v=26ea2479c192" defer></script>
+  <script src="draw-card.js?v=6a62a5d4676e" defer></script>
+  <script src="export-card.js?v=d4b2a680f6f9" defer></script>
 </body>
 </html>

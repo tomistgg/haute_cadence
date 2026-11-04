@@ -18,13 +18,23 @@ from the latest week show NR; their old ranking is retained only as `last_rank` 
 Current rank, career-best rank, and last recorded rank remain separate. Country flags cover the expanded list.
 
 Draw lists current WTA tournaments (including WTA 125) and FINALE, DEMI-FINALES, and QUARTS DE FINALE.
-It follows the reference layouts with two, four, or eight Form cards. Players fill automatically from the official
+Tour and Grand Slam draws use two, four, or eight Form cards. WTA 125 draws automatically use the separate portrait
+design: large photos, white names, round flags, VS panels, and final-ranking tags. Players fill automatically from the official
 singles bracket; unresolved slots show TBD. Click a portrait to upload its photo. Click the ten form results on a
 card, or use Player form for larger controls, to cycle blank, win, loss from oldest to newest. Form edits share the
-same per-player draft as the main Form card. The final layout's H2H values are edited directly on the image.
+same per-player draft as the main Form card. The Tour final layout's H2H values are edited directly on the image.
 Photos, form, H2H, background choice, and selected round are included in the saved PNG. Uploads and edits reset
-on reload. Final/quarterfinal exports are 1600 × 900; semifinals are 1600 × 1350.
+on reload. Tour final/quarterfinal exports are 1600 × 900; semifinals are 1600 × 1350. WTA 125 final/quarterfinal
+exports are 1600 × 1360; semifinals are 1600 × 1680. The WTA 125 design omits the Form/history and H2H panels;
+those drafts remain available when switching back to the Tour design.
 The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
+
+Choose Draw, then MANUAL at the bottom of its tournament selector to build a draw without the WTA feed. Choose FINALE (2 players),
+DEMI-FINALES (4), or QUARTS DE FINALE (8), then click the round header, tournament name and category on the image to type. Choose the
+WTA Tour / Grand Slam or WTA 125 design independently of the written category. Click an empty player space, portrait,
+or player name to search the full two-year directory or use custom names, rankings and flags. For a selected player,
+click the portrait and choose Upload portrait in the dialog. The Player form editor, backgrounds, and final H2H editing
+work as in Draw. Each layout keeps its own manual draft until reload; automatic draw updates do not change it.
 
 `python update_wta_draws.py` saves current tournaments and their singles brackets to `data/current_draws.json`.
 The matches endpoint is requested without a completed-only filter, and `LS` match numbers preserve bracket

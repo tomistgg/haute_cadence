@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-04T17:04:58.941870+00:00",
-  "window_start": "2026-11-03T17:04:58.941870+00:00",
+  "updated_at": "2026-11-04T17:31:36.565412+00:00",
+  "window_start": "2026-11-03T17:31:36.565412+00:00",
   "matches": [
     {
       "id": "1176:2026:LS009",
@@ -1144,52 +1144,6 @@
         {
           "winner": 6,
           "loser": 1,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS027",
-      "completed_at": "2026-11-03T17:15:31.530000+00:00",
-      "round": "1st Round",
-      "round_art": "premier",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "315130",
-        "first_name": "Magda",
-        "last_name": "Linette",
-        "name": "Magda Linette",
-        "country": "POL"
-      },
-      "loser": {
-        "id": "329250",
-        "first_name": "Aliona",
-        "last_name": "Falei",
-        "name": "Aliona Falei",
-        "country": "BLR"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 6,
-          "tiebreak": "3"
-        },
-        {
-          "winner": 5,
-          "loser": 7,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 2,
           "tiebreak": ""
         }
       ],

@@ -18,6 +18,7 @@ const cardType = document.getElementById("card-type");
 function isResultCard() {
   return ["result", "tour-result"].includes(cardType.value);
 }
+function isDrawCard() { return cardType.value === "draw"; }
 const backgroundButton = document.getElementById("choose-background");
 const backgroundDialog = document.getElementById("background-dialog");
 const backgroundOptions = document.getElementById("background-options");
@@ -29,7 +30,7 @@ function updateBackgroundControls() {
   document.getElementById("result-match-picker").hidden = !isResultCard();
   backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
-  const original = type === "draw" ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
+  const original = isDrawCard() ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
   card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;
@@ -161,7 +162,7 @@ function fitTournamentName(name, fontSize) {
 }
 
 function fitTournamentHeadings() {
-  document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong").forEach(name => {
+  document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong, .manual-draw-round-text strong, .draw-125-final-round-text strong").forEach(name => {
     if (name.getClientRects().length) fitTournamentName(name, name.style.fontSize || getComputedStyle(name).fontSize);
   });
 }
@@ -393,7 +394,7 @@ function selectPlayer(player) {
 }
 
 function renderCard(player) {
-  if (cardType.value === "draw") return renderDrawCard();
+  if (isDrawCard()) return renderDrawCard();
   if (isResultCard()) return renderResultCard();
   document.querySelector(".card-content").hidden = false;
   document.getElementById("result-card-content").hidden = true;
@@ -491,8 +492,8 @@ function moveActive(direction) {
 cardType.addEventListener("change", () => {
   updateBackgroundControls();
   const playerSearchWrap = document.getElementById("player-search-wrap");
-  playerSearchWrap.style.visibility = isResultCard() || cardType.value === "draw" ? "hidden" : "";
-  playerSearchWrap.inert = isResultCard() || cardType.value === "draw";
+  playerSearchWrap.style.visibility = isResultCard() || isDrawCard() ? "hidden" : "";
+  playerSearchWrap.inert = isResultCard() || isDrawCard();
   updateTournamentSearch();
   if (selectedPlayer) renderCard(selectedPlayer);
   else if (!isResultCard()) card.hidden = true;
