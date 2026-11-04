@@ -13,8 +13,7 @@ python serve_site.py
 
 Then open <http://127.0.0.1:8765/>. The build reads all four copied WTA ranking CSVs and uses their latest ranking week and prepares the searchable player list in `dist/data/players.json`.
 
-Non-Tour Result Card and Tour Result Card currently share the same layout and behavior.
-Both list completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
+Non-Tour Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
 The supplied result layers in `assets/results cards/` are composed at 1440 × 1600, following `preview.png`.
 Winner names are yellow; opponent names are white; the higher score in each set is yellow.
@@ -35,6 +34,16 @@ after winning two completed sets; incomplete or tied scores do not declare a win
 to the large frame. The photo upload controls correspond to Player 1 and Player 2 in manual ITF mode.
 These drafts and uploaded photos clear on reload. ITF editing is available even if the live WTA feed is unavailable.
 
+Tour Result Card uses a separate 1600 × 900 landscape layout and the supplied PNGs in `assets/wtatour_result/`.
+Its match list includes only WTA Tour categories (including Grand Slams and Finals) from the last 24 hours, excluding
+WTA 125. Upload a single Match photo to fill the background; each match keeps its own uploaded photo in this tab.
+The round badge sits at the top, tournament and category at the top right, and scoreboard at the bottom left.
+There is no surface-background picker or automatic player portrait in this layout.
+The final MANUAL MATCH option lets you choose a round, edit tournament/category, select players or enter their names,
+rankings and flags in the player dialog, and edit scores. A Sets selector switches between two and three sets;
+switching back restores a previously entered third set. The missing third-round badge uses the supplied first-round
+banner with a live third-round label. All manual edits and the uploaded match photo are included in PNG export.
+
 The local server refreshes `data/recent_results.json` from the official WTA completed-match endpoint at most once
 every five minutes. The page also refreshes while either result card is selected. The official match start timestamp plus
 duration defines the finish time; LastUpdated is the fallback when duration is unavailable. Walkovers are excluded;
@@ -49,7 +58,7 @@ Rank, age, and country come from the latest CSV week. Rank 1 uses `top_1`, ranks
 
 Portraits are supplied for Leylah Fernandez, Elsa Jacquemot, and Diana Shnaider. Alina Charaeva's portrait is cropped from the provided form-card reference. Other players show initials.
 
-Every layout except Player Form Card has a Background button above the preview. Choose a thumbnail from
+The title layouts and Non-Tour Result Card have a Background button above the preview. Choose a thumbnail from
 `assets/surfaces/`, or Original to restore that layout's original background. Each layout remembers its selection
 until reload, and the selected background is included in the saved PNG. Rebuild after adding PNGs to that folder
 to include them in the picker. Tournament, match, photo, and background controls share the preview's width and
@@ -73,11 +82,11 @@ GitHub Pages must publish the generated `dist/` directory. The repository-root H
 
 The `Deploy GitHub Pages` workflow runs `python build_site.py` and deploys `dist/` after pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is **GitHub Actions**.
 
-Right-click the card photo on desktop and choose **Save image as** to save the complete 1440 x 1800 PNG, including all artwork, text and manual edits. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime.
+Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. Player/title exports are 1440 x 1800, Non-Tour results 1440 x 1600, and Tour results 1600 x 900. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime.
 
 On a phone, touch and hold the player photo and choose the browser's Save Image / Save to Photos action to save the complete PNG. The saveable image permits native touch callouts; the editing controls remain interactive. Wait briefly after making edits for the combined PNG to refresh.
 
-The card artwork uses one fixed 1440 x 1800 design surface. The responsive preview scales that entire surface as a unit, so text sizes, positions, outlines and spacing keep their proportions at every viewport width. Browser text auto-enlargement is disabled inside the card. The saveable PNG is rendered directly from the same design surface at full size, independently of preview width or device pixel density. Search menus stay sized for readable interaction outside the artwork's typography.
+Each layout uses a fixed design surface at its export dimensions. The responsive preview scales that entire surface as a unit, so text sizes, positions, outlines and spacing keep their proportions at every viewport width. Browser text auto-enlargement is disabled inside the card. The saveable PNG is rendered directly from the same design surface at full size, independently of preview width or device pixel density. Search menus stay sized for readable interaction outside the artwork's typography.
 
 Responsive checks compared six representative cards (Form with history, Form at career best, both title layouts, prospect, and rank 1) at widths 280, 320, 360, 390, 414, 600, 768, 1024, 1440, and 2560 with pixel densities 1-3. Every card kept matching normalized text bounds and generated byte-identical PNGs across the tested viewports in Chrome. Physical-phone browser rendering has not been verified.
 

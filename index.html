@@ -91,9 +91,13 @@
         </div>
         <div class="result-controls" id="result-controls" hidden>
           <p id="result-status" role="status"></p>
-          <div class="result-photo-controls">
+          <div class="result-photo-controls" id="non-tour-photo-controls">
             <label class="result-photo-upload"><span id="result-winner-upload-label">Winner photo</span><input class="sr-only" id="result-winner-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
             <label class="result-photo-upload"><span id="result-loser-upload-label">Opponent photo</span><input class="sr-only" id="result-loser-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
+          </div>
+          <div class="result-photo-controls" id="tour-photo-controls" hidden>
+            <label class="result-photo-upload"><span>Match photo</span><input class="sr-only" id="tour-photo-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
+            <label class="tour-set-controls" id="tour-set-controls" hidden>Sets <select id="tour-set-count"><option value="2">2 sets</option><option value="3">3 sets</option></select></label>
           </div>
         </div>
       </div>
@@ -132,6 +136,10 @@
           <span id="tour-title-ordinal" aria-hidden="true" hidden>E</span>
         </div>
         <div id="result-card-content" class="result-content" hidden>
+          <img id="tour-match-photo" class="tour-match-photo" alt="Uploaded match photo" hidden>
+          <div class="tour-photo-frame" aria-hidden="true"></div>
+          <div id="tour-round-art" class="tour-cropped-art" hidden><img alt=""></div>
+          <div id="tour-score-art" class="tour-cropped-art" hidden><img alt=""></div>
           <img id="result-round-art" class="result-layer" alt="">
           <div class="result-winner-portrait"><img id="result-winner-photo" alt="" hidden><span id="result-winner-initials"></span></div>
           <img class="result-layer" src="assets/results/opponent.png" alt="">
@@ -168,6 +176,11 @@
       <div class="itf-player-dialog-heading"><label id="itf-player-label" for="itf-player-search">Select a player</label><button type="button" id="itf-player-close">Close</button></div>
       <input id="itf-player-search" type="search" placeholder="Search players" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="itf-player-options">
       <div id="itf-player-options" class="itf-player-options" role="listbox" aria-label="Matching players"></div>
+      <div id="tour-player-details" class="tour-player-details" hidden>
+        <label>Ranking <input id="tour-player-rank" type="text" inputmode="numeric" maxlength="4" pattern="[1-9][0-9]{0,3}|NR" placeholder="NR"></label>
+        <label>Flag <select id="tour-player-country" aria-label="Player country flag"></select></label>
+        <button type="button" id="tour-player-apply">Use these details</button>
+      </div>
       <p id="itf-player-status" class="sr-only" role="status"></p>
     </form>
   </dialog>

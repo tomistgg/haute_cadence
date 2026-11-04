@@ -47,5 +47,38 @@ assert.equal(restored.sets[0].winner, 6);
 context.cardType.value = "tour-result";
 assert.equal(context.isManualResultId("itf-2"), false);
 assert.equal(context.isManualResultId("itf-3"), false);
+assert.equal(context.isManualResultId("tour-manual"), true);
+const tourManual = vm.runInContext("selectedResultId = 'tour-manual'; selectedResultMatch()", context);
+assert.equal(tourManual.sets.length, 2);
+assert.equal(tourManual.round_heading, "MANUAL MATCH");
+vm.runInContext("renderResultCard = () => {}", context);
+context.setManualTourSets(3);
+tourManual.sets[2].winner = 7;
+tourManual.sets[2].loser = 6;
+context.setManualTourSets(2);
+assert.equal(tourManual.sets.length, 2);
+context.setManualTourSets(3);
+assert.equal(tourManual.sets[2].winner, 7);
+assert.equal(tourManual.sets[2].loser, 6);
+context.setManualTourSets(4);
+assert.equal(tourManual.sets.length, 3);
+context.cardType.value = "result";
+context.setManualTourSets(2);
+assert.equal(tourManual.sets.length, 3);
+assert.equal(context.isManualResultId("tour-manual"), false);
 
-console.log("ITF winner calculation, incomplete scores, draft retention, and Non-Tour scope passed.");
+const now = Date.now();
+context.feedMatches = [
+  { id: "tour", completed_at: new Date(now - 3600000).toISOString(), tournament: { category: "WTA 250" } },
+  { id: "125", completed_at: new Date(now - 3600000).toISOString(), tournament: { category: "WTA 125" } },
+  { id: "slam", completed_at: new Date(now - 3600000).toISOString(), tournament: { category: "Grand Slam" } },
+  { id: "stale", completed_at: new Date(now - 90000000).toISOString(), tournament: { category: "WTA 500" } },
+  { id: "future", completed_at: new Date(now + 3600000).toISOString(), tournament: { category: "WTA 500" } },
+  { id: "invalid", completed_at: "bad date", tournament: { category: "WTA 500" } },
+];
+vm.runInContext("resultFeed = { matches: feedMatches }", context);
+assert.equal(context.currentResults().map(match => match.id).join(","), "tour,125,slam");
+context.cardType.value = "tour-result";
+assert.equal(context.currentResults().map(match => match.id).join(","), "tour,slam");
+
+console.log("Winner calculation, draft and third-set retention, manual scope, and Tour/24-hour filtering passed.");

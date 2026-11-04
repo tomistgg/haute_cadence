@@ -27,10 +27,11 @@ function updateBackgroundControls() {
   const type = cardType.value;
   document.getElementById("preview-controls").hidden = type === "form";
   document.getElementById("result-match-picker").hidden = !isResultCard();
+  backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
   const original = isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
-  card.style.backgroundImage = type !== "form" && selected ? `url("${selected}")` : "";
+  card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;
   document.getElementById("default-background-thumbnail").src = original;
   let label = "Original";
@@ -534,8 +535,10 @@ function refreshCalendar() {
     })
     .then(data => {
       yearTournaments(data);
+      const changed = calendarFailed || JSON.stringify(data) !== JSON.stringify(calendar);
       calendar = data;
       calendarFailed = false;
+      if (!changed) return;
       updateTournamentSearch();
       if (selectedPlayer) renderCard(selectedPlayer);
     })

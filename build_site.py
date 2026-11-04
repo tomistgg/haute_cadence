@@ -83,6 +83,14 @@ ASSETS.update({
 SURFACES = sorted((ROOT / "assets" / "surfaces").glob("*.png"))
 ASSETS.update({f"assets/surfaces/{surface.name}": surface for surface in SURFACES})
 ASSETS.update({
+    f"assets/wtatour_result/{name}.png": ROOT / "assets" / "wtatour_result" / f"{source}.png"
+    for name, source in {
+        "premier": "PREMIERS TOURS", "deuxieme": "DEUXIÈMES TOURS", "quartdefinale": "QUARTS DE FINALE TITLE",
+        "demifinale": "DEMI-FINALES TITLE", "finale": "FINALE TITLE",
+        "deux_sets": "match result 2 sets", "trois_sets": "match result 3 sets",
+    }.items()
+})
+ASSETS.update({
     f"assets/results/{name}.png": ROOT / "assets" / "results cards" / f"{name}.png"
     for name in (
         "premier", "deuxieme", "troisieme", "quartdefinale", "demifinale", "finale",

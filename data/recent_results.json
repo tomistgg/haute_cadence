@@ -1,7 +1,48 @@
 {
-  "updated_at": "2026-11-04T14:36:16.990790+00:00",
-  "window_start": "2026-11-03T14:36:16.990790+00:00",
+  "updated_at": "2026-11-04T15:20:46.996979+00:00",
+  "window_start": "2026-11-03T15:20:46.996979+00:00",
   "matches": [
+    {
+      "id": "1148:2026:LS008",
+      "completed_at": "2026-11-04T14:44:04.060000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1148",
+        "name": "Chennai Open - Chennai, IND",
+        "city": "CHENNAI",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "328818",
+        "first_name": "Janice",
+        "last_name": "Tjen",
+        "name": "Janice Tjen",
+        "country": "INA"
+      },
+      "loser": {
+        "id": "326512",
+        "first_name": "Joanna",
+        "last_name": "Garland",
+        "name": "Joanna Garland",
+        "country": "TPE"
+      },
+      "sets": [
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "1"
+        },
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1176:2026:LS011",
       "completed_at": "2026-11-04T13:36:47.820000+00:00",
