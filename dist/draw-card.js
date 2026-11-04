@@ -220,6 +220,15 @@ function drawVersus(x, y, small = false) {
   drawMatches.append(versus);
 }
 
+function updateDrawH2hColors(h2h) {
+  const values = [...h2h.querySelectorAll("[data-h2h-side]")];
+  const scores = values.map(value => value.textContent.trim());
+  values.forEach((value, side) => {
+    const difference = scores.every(score => score !== "") ? Number(scores[side]) - Number(scores[1 - side]) : 0;
+    value.style.color = difference > 0 ? "#00c87d" : difference < 0 ? "#ff3131" : "#b8b8b8";
+  });
+}
+
 function renderDrawHeading(tournament) {
   const manual = isManualDraw();
   document.getElementById("draw-round-art").dataset.manual = String(manual);
@@ -316,6 +325,7 @@ function renderDrawCard() {
         value.textContent = drawH2h.get(key)[side];
         h2h.append(value);
       }
+      updateDrawH2hColors(h2h);
       drawMatches.append(h2h);
     } else if (round === "S") {
       const x = i ? 1045 : 75;
@@ -533,6 +543,7 @@ drawMatches.addEventListener("input", event => {
   const text = value.textContent.replace(/\D/g, "").slice(0, 3);
   if (value.textContent !== text) value.textContent = text;
   drawH2h.get(value.dataset.h2hKey)[Number(value.dataset.h2hSide)] = text;
+  updateDrawH2hColors(value.closest(".draw-h2h"));
 });
 drawMatches.addEventListener("keydown", event => {
   if (event.target.matches("[data-h2h-key]") && ["Enter", "Escape"].includes(event.key)) {

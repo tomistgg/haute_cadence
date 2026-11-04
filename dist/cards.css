@@ -235,9 +235,7 @@
 .draw-vs-small { padding: 5px 8px; border: 5px solid #42d4b4; background: #0eaf9f; font-size: 75px; }
 .draw-h2h { position: absolute; left: 800px; top: 610px; transform: translateX(-50%); min-width: 190px; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 32px 12px 8px; border: 6px solid #00c7a3; color: #fff; font: 800 90px/1 "TT Bluescreens Upright", sans-serif; }
 .draw-h2h strong { position: absolute; top: -35px; padding: 2px 10px; border: 5px solid #00c7a3; background: #669ba6; font: 400 55px/1 "Bebas Neue", sans-serif; }
-.draw-h2h span { min-width: 35px; pointer-events: auto; cursor: text; }
-.draw-h2h span:first-of-type { color: #ff3131; }
-.draw-h2h span:last-of-type { color: #00c87d; }
+.draw-h2h span { min-width: 35px; pointer-events: auto; cursor: text; color: #b8b8b8; }
 .draw-h2h span:empty::before { content: attr(data-placeholder); opacity: .6; }
 .draw-h2h span:focus { outline: 3px solid #ffd400; }
 .draw-brace { position: absolute; top: 240px; height: 600px; color: #00cba8; -webkit-text-stroke: 2px #ccffee; font: 400 630px/1 Georgia, serif; }
