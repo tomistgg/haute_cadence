@@ -319,7 +319,7 @@ function renderCard(player) {
   const titleDetails = document.getElementById("card-title-details");
   titleDetails.hidden = type === "form";
   if (type === "form") titleDetails.removeAttribute("src");
-  else titleDetails.src = "assets/" + (type === "wta-tour" ? "wtatour" : "wta125") + "_title_details.png";
+  else titleDetails.src = "assets/details/" + (type === "wta-tour" ? "wtatour" : "wta125") + "_title_details.png";
   const tournament = titleTournaments().find(item => item.id === selectedTournamentId);
   const eventName = tournament ? tournamentName(tournament).toLocaleUpperCase() : "\u2014";
   const eventHeading = document.getElementById("card-event-name");
@@ -343,11 +343,11 @@ function renderCard(player) {
   document.getElementById("card-rank-ordinal").textContent = player.rank === 1 ? "er" : "\u00e8me";
   const tier = tierForRank(player.rank, age);
   card.dataset.tier = tier;
-  document.getElementById("card-base").src = "assets/" + tier + "_card.png";
+  document.getElementById("card-base").src = "assets/cards/" + tier + "_card.png";
   const detailsTier = ["top_400", "top_500", "top_600"].includes(tier) ? "top_200" : tier;
-  document.getElementById("card-details").src = "assets/" + detailsTier + "_details.png";
+  document.getElementById("card-details").src = "assets/details/" + detailsTier + "_details.png";
   const baseBadge = document.getElementById("card-base-badge");
-  if (tier === "top_10" || tier === "prospect") baseBadge.src = "assets/" + tier + "_card.png";
+  if (tier === "top_10" || tier === "prospect") baseBadge.src = "assets/cards/" + tier + "_card.png";
   else baseBadge.removeAttribute("src");
   document.getElementById("card-name").textContent = name;
   document.getElementById("card-rank").textContent = String(player.rank);

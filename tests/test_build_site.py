@@ -14,9 +14,11 @@ class SiteBuildTest(unittest.TestCase):
             root = Path(directory)
             dist = root / "dist"
             dist.mkdir()
+            data_dir = root / "data"
+            data_dir.mkdir()
             for name in ("index.html", "app.js", "cards.css", "export-card.js"):
                 (root / name).write_text("", encoding="utf-8")
-            calendar = root / "calendar_snapshot.json"
+            calendar = data_dir / "calendar_snapshot.json"
             calendar.write_text("{}", encoding="utf-8")
             titles = [
                 {"champion": {"id": 1, "name": "Different spelling"}, "end_date": "2026-10-25",
@@ -32,7 +34,8 @@ class SiteBuildTest(unittest.TestCase):
                 {"champion": {"id": "1"}, "end_date": "2026-11-01", "start_date": "2026-10-26",
                  "tournament_id": "104", "year": 2026, "category": "WTA 125", "name": "Latest 125 Open"},
             ]
-            (root / "wta_champions.json").write_text(json.dumps({"champions": titles}), encoding="utf-8")
+            champions = data_dir / "wta_champions.json"
+            champions.write_text(json.dumps({"champions": titles}), encoding="utf-8")
             history = [
                 ("2010-01-04", "1", 5), ("2019-01-07", "1", 5),
                 ("2016-01-04", "2", 20), ("2018-01-01", "2", 20),
@@ -45,14 +48,16 @@ class SiteBuildTest(unittest.TestCase):
             ]
             sources = []
             for index, rows in enumerate((history, current)):
-                source = root / f"rankings_{index}.csv"
+                source = data_dir / f"rankings_{index}.csv"
                 with source.open("w", encoding="utf-8", newline="") as handle:
                     writer = csv.writer(handle)
                     writer.writerow(("week_date", "id", "rank", "points", "player", "country", "dob"))
                     for week, player_id, rank in rows:
                         writer.writerow((week, player_id, rank, 100, f"Player {player_id}", "ARM", "2000-01-01"))
                 sources.append(source)
-            with patch.multiple(build_site, ROOT=root, DIST=dist, CALENDAR=calendar, SOURCES=sources, ASSETS={}):
+            with patch.multiple(
+                build_site, ROOT=root, DIST=dist, CALENDAR=calendar, CHAMPIONS=champions, SOURCES=sources, ASSETS={}
+            ):
                 build_site.main()
             data = json.loads((dist / "data" / "players.json").read_text(encoding="utf-8"))
             players = {player["id"]: player for player in data["players"]}

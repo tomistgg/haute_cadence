@@ -239,6 +239,7 @@ def collect_champions(tournaments, start, through, title_records=None):
 def save_history(path, payload):
     temporary = None
     try:
+        path.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as handle:
             temporary = Path(handle.name)
             json.dump(payload, handle, ensure_ascii=False, indent=2)
@@ -254,7 +255,7 @@ def main():
     parser.add_argument("--start-year", type=int, default=2000)
     parser.add_argument("--through", type=date.fromisoformat,
                         default=datetime.now(ZoneInfo("Europe/Madrid")).date())
-    parser.add_argument("--output", type=Path, default=ROOT / "wta_champions.json")
+    parser.add_argument("--output", type=Path, default=ROOT / "data" / "wta_champions.json")
     args = parser.parse_args()
     start = date(args.start_year, 1, 1).isoformat()
     through = args.through.isoformat()

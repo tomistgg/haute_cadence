@@ -59,6 +59,7 @@
 
 .player-card[data-tier="top_1"] .card-rank { display: none; }
 .player-card[data-tier="top_1"] .card-previous { width: 13.7%; }
+.player-card[data-tier="top_1"] .career-best-label { padding: 3px 12px; font-size: 24px; line-height: 26px; }
 .player-card[data-tier="top_1"] .card-title-value { top: calc(93.1% - 2px); }
 /* These badges are baked into the base and extend over the portrait. */
 .card-base-badge { display: none; clip-path: polygon(85.42% 0, 100% 0, 100% 6.39%, 95.56% 18.06%, 94.58% 18.83%, 80.56% 18.83%, 79.24% 18.33%, 79.03% 17.39%); }

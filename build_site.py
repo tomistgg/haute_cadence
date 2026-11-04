@@ -7,63 +7,65 @@ import shutil
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-SOURCES = [ROOT / f"wta_rankings_{period}.csv" for period in ("83_99", "00_09", "10_19", "20_29")]
-CALENDAR = ROOT / "calendar_snapshot.json"
+DATA = ROOT / "data"
+SOURCES = [DATA / f"wta_rankings_{period}.csv" for period in ("83_99", "00_09", "10_19", "20_29")]
+CALENDAR = DATA / "calendar_snapshot.json"
+CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
-    "assets/prospect_card.png": ROOT / "assets" / "prospect_card.png",
-    "assets/prospect_details.png": ROOT / "assets" / "prospect_details.png",
-    "assets/fonts/chunk-five-regular.otf": ROOT / "assets" / "Chunk_Five" / "ChunkFive-Regular.otf",
-    "assets/fonts/chunk-five-OFL.markdown": ROOT / "assets" / "Chunk_Five" / "OFL.markdown",
+    "assets/cards/prospect_card.png": ROOT / "assets" / "cards" / "prospect_card.png",
+    "assets/details/prospect_details.png": ROOT / "assets" / "details" / "prospect_details.png",
+    "assets/fonts/chunk-five-regular.otf": ROOT / "assets" / "fonts" / "Chunk_Five" / "ChunkFive-Regular.otf",
+    "assets/fonts/chunk-five-OFL.markdown": ROOT / "assets" / "fonts" / "Chunk_Five" / "OFL.markdown",
     "export-card.js": ROOT / "export-card.js",
     "assets/vendor/html-to-image-1.11.13.js": ROOT / "assets" / "vendor" / "html-to-image-1.11.13.js",
     "assets/vendor/html-to-image-LICENSE": ROOT / "assets" / "vendor" / "html-to-image-LICENSE",
     "assets/flags/LICENSE": ROOT / "assets" / "flags" / "LICENSE",
-    "assets/fonts/bebas-neue-regular.ttf": ROOT / "assets" / "Bebas_Neue" / "BebasNeue-Regular.ttf",
-    "assets/fonts/bebas-neue-OFL.txt": ROOT / "assets" / "Bebas_Neue" / "OFL.txt",
-    "assets/wtatour_title_details.png": ROOT / "assets" / "wtatour_title_details.png",
-    "assets/wta125_title_details.png": ROOT / "assets" / "wta125_title_details.png",
+    "assets/fonts/bebas-neue-regular.ttf": ROOT / "assets" / "fonts" / "Bebas_Neue" / "BebasNeue-Regular.ttf",
+    "assets/fonts/bebas-neue-OFL.txt": ROOT / "assets" / "fonts" / "Bebas_Neue" / "OFL.txt",
+    "assets/details/wtatour_title_details.png": ROOT / "assets" / "details" / "wtatour_title_details.png",
+    "assets/details/wta125_title_details.png": ROOT / "assets" / "details" / "wta125_title_details.png",
     "assets/players/alina-charaeva.jpg": ROOT / "assets" / "Alina Charaeva.jpg",
     "assets/title-court.svg": ROOT / "assets" / "title-court.svg",
     "assets/tour-court.svg": ROOT / "assets" / "tour-court.svg",
     "assets/fonts/tt-bluescreens-extra-bold.ttf": (
-        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold.ttf"
+        ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold.ttf"
     ),
     "assets/haute-cadence-logo.png": ROOT / "assets" / "Design sans titre (2).png",
     "assets/players/leylah-fernandez.png": ROOT / "assets" / "Fernandez (1).png",
     "assets/players/elsa-jacquemot.png": ROOT / "assets" / "Jacquemot.png",
     "assets/players/diana-shnaider.png": ROOT / "assets" / "Shnaider (2).png",
-    "assets/fonts/barriecito-regular.ttf": ROOT / "assets" / "Barriecito" / "Barriecito-Regular.ttf",
-    "assets/top_1_card.png": ROOT / "assets" / "top_1_card.png",
-    "assets/top_1_details.png": ROOT / "assets" / "top_1_details_blank_caption.png",
-    "assets/top_10_card.png": ROOT / "assets" / "top_10_card.png",
-    "assets/top_10_details.png": ROOT / "assets" / "top_10_details.png",
-    "assets/top_20_card.png": ROOT / "assets" / "top_20_card.png",
-    "assets/top_20_details.png": ROOT / "assets" / "top_20_details.png",
-    "assets/top_200_card.png": ROOT / "assets" / "top_200_card.png",
-    "assets/top_200_details.png": ROOT / "assets" / "top_200_details.png",
-    "assets/top_300_card.png": ROOT / "assets" / "top_300_card.png",
-    "assets/top_400_card.png": ROOT / "assets" / "top_400_card.png",
-    "assets/top_500_card.png": ROOT / "assets" / "top_500_card.png",
-    "assets/top_600_card.png": ROOT / "assets" / "top_600_card.png",
+    "assets/fonts/barriecito-regular.ttf": ROOT / "assets" / "fonts" / "Barriecito" / "Barriecito-Regular.ttf",
+    "assets/cards/top_1_card.png": ROOT / "assets" / "cards" / "top_1_card.png",
+    "assets/details/top_1_details.png": ROOT / "assets" / "details" / "top_1_details_blank_caption.png",
+    "assets/cards/top_10_card.png": ROOT / "assets" / "cards" / "top_10_card.png",
+    "assets/details/top_10_details.png": ROOT / "assets" / "details" / "top_10_details.png",
+    "assets/cards/top_20_card.png": ROOT / "assets" / "cards" / "top_20_card.png",
+    "assets/details/top_20_details.png": ROOT / "assets" / "details" / "top_20_details.png",
+    "assets/cards/top_200_card.png": ROOT / "assets" / "cards" / "top_200_card.png",
+    "assets/details/top_200_details.png": ROOT / "assets" / "details" / "top_200_details.png",
+    "assets/cards/top_300_card.png": ROOT / "assets" / "cards" / "top_300_card.png",
+    "assets/cards/top_400_card.png": ROOT / "assets" / "cards" / "top_400_card.png",
+    "assets/cards/top_500_card.png": ROOT / "assets" / "cards" / "top_500_card.png",
+    "assets/cards/top_600_card.png": ROOT / "assets" / "cards" / "top_600_card.png",
     # shortcut: Use the approved beige overlay until top_300_details.png is supplied.
-    "assets/top_300_details.png": (
-        ROOT / "assets" / "top_300_details.png"
-        if (ROOT / "assets" / "top_300_details.png").is_file()
-        else ROOT / "assets" / "top_200_details.png"
+    "assets/details/top_300_details.png": (
+        ROOT / "assets" / "details" / "top_300_details.png"
+        if (ROOT / "assets" / "details" / "top_300_details.png").is_file()
+        else ROOT / "assets" / "details" / "top_200_details.png"
     ),
-    "assets/top_100_card.png": ROOT / "assets" / "top_100_card.png",
-    "assets/top_100_details.png": ROOT / "assets" / "top_100_details.png",
+    "assets/cards/top_100_card.png": ROOT / "assets" / "cards" / "top_100_card.png",
+    "assets/details/top_100_details.png": ROOT / "assets" / "details" / "top_100_details.png",
     "assets/fonts/tt-condensed-regular.ttf": (
-        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf"
+        ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf"
     ),
-    "assets/fonts/tt-bluescreens-italic.ttf": ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf",
+    "assets/fonts/tt-bluescreens-italic.ttf": ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf",
     "assets/fonts/tt-bluescreens-bold-italic.ttf": (
-        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial Bold Italic.ttf"
+        ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Bold Italic.ttf"
     ),
     "assets/fonts/tt-bluescreens-extra-bold-italic.ttf": (
-        ROOT / "assets" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold Italic.ttf"
+        ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold Italic.ttf"
     ),
 }
 
@@ -119,7 +121,7 @@ def main() -> None:
     latest_titles = {}
     latest_125_titles = {}
     tour_title_counts = {}
-    champions = json.loads((ROOT / "wta_champions.json").read_text(encoding="utf-8"))["champions"]
+    champions = json.loads(CHAMPIONS.read_text(encoding="utf-8"))["champions"]
     for title in champions:
         champion_id = str(title["champion"]["id"])
         is_125_title = title["category"] in {"WTA 125", "125K"}
