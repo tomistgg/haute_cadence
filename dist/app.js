@@ -43,6 +43,7 @@ const TOURNAMENT_NAME_OVERRIDES = {
   "Grand Slam Melbourne": "Australian Open",
   "Grand Slam Paris": "Roland Garros",
   "Grand Slam Wimbledon": "Wimbledon",
+  "Grand Slam Flushing Meadows": "US Open",
   "Grand Slam New York": "US Open"
 };
 
@@ -82,7 +83,8 @@ const formButtons = Array.from({ length: 10 }, (_, index) => {
 
 function lastTitleLabel(item) {
   const category = { "125K": "WTA 125", "Finals": "WTA Finals" }[item.category] || item.category;
-  return (category + " " + tournamentName(item) + " " + item.year).toLocaleUpperCase();
+  const title = item.category === "Grand Slam" ? tournamentName(item) : category + " " + tournamentName(item);
+  return (title + " " + item.year).toLocaleUpperCase();
 }
 
 function fitLastTitleText() {

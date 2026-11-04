@@ -29,6 +29,8 @@ class SiteBuildTest(unittest.TestCase):
                 {"champion": {"id": "99", "name": "Player 3"}, "end_date": "2026-11-01",
                  "start_date": "2026-10-26", "tournament_id": "103", "year": 2026,
                  "category": "WTA 125", "name": "Same Name Different Player"},
+                {"champion": {"id": "1"}, "end_date": "2026-11-01", "start_date": "2026-10-26",
+                 "tournament_id": "104", "year": 2026, "category": "WTA 125", "name": "Latest 125 Open"},
             ]
             (root / "wta_champions.json").write_text(json.dumps({"champions": titles}), encoding="utf-8")
             history = [

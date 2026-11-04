@@ -117,18 +117,21 @@ def main() -> None:
         raise SystemExit("The ranking CSV contains no ranking rows.")
 
     latest_titles = {}
+    latest_125_titles = {}
     tour_title_counts = {}
     champions = json.loads((ROOT / "wta_champions.json").read_text(encoding="utf-8"))["champions"]
     for title in champions:
         champion_id = str(title["champion"]["id"])
-        if title["category"] not in {"WTA 125", "125K"}:
+        is_125_title = title["category"] in {"WTA 125", "125K"}
+        if not is_125_title:
             tour_title_counts[champion_id] = tour_title_counts.get(champion_id, 0) + 1
-        prior_title = latest_titles.get(champion_id)
+        player_titles = latest_125_titles if is_125_title else latest_titles
+        prior_title = player_titles.get(champion_id)
         title_date = (title["end_date"], title["start_date"], str(title["tournament_id"]))
         if prior_title is None or title_date > (
             prior_title["end_date"], prior_title["start_date"], str(prior_title["tournament_id"])
         ):
-            latest_titles[champion_id] = title
+            player_titles[champion_id] = title
 
     players = []
     for player_id, row in latest.items():
@@ -141,7 +144,7 @@ def main() -> None:
             "rank": int(row["rank"]),
             "points": int(row["points"]),
             "previous_rank": int(prior["rank"]) if prior else None,
-            "latest_title": latest_titles.get(player_id),
+            "latest_title": latest_titles.get(player_id) or latest_125_titles.get(player_id),
             "tour_title_count": tour_title_counts.get(player_id, 0),
             "best_rank": best_rank[player_id],
             "best_rank_year": int(best_rank_date[player_id][:4]),
