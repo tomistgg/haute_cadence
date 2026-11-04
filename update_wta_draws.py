@@ -8,7 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from update_wta_champions import fetch_calendar, fetch_json, save_history
+from shared_data import calendar_tournaments as fetch_calendar
+from update_wta_champions import fetch_json, final_champion, merge_draw_champions, read_history, save_history
 from update_wta_results import LEVELS, match_player
 
 ROOT = Path(__file__).resolve().parent
@@ -61,32 +62,48 @@ def collect_draws(now=None):
     today = now.date().isoformat()
     calendar = fetch_calendar((now - timedelta(days=30)).date().isoformat(), today)
     active = {}
+    history = read_history()
+    known = {(str(row["tournament_id"]), int(row["year"])) for row in history["champions"]}
     for tournament in calendar:
         group = tournament.get("tournamentGroup") or {}
         year = tournament.get("year")
         cancelled = str((group.get("metadata") or {}).get("cancelledSeasons", ""))
         if tournament.get("level") not in LEVELS or not group.get("id") or str(year) in cancelled:
             continue
-        if str(tournament.get("startDate", ""))[:10] <= today <= str(tournament.get("endDate", ""))[:10]:
+        start, end = str(tournament.get("startDate", ""))[:10], str(tournament.get("endDate", ""))[:10]
+        if start <= end and start <= today and (end >= today or (str(group["id"]), int(year)) not in known):
             active[(str(group["id"]), year)] = tournament
 
     def load(tournament):
         group = tournament["tournamentGroup"]
         url = f"https://api.wtatennis.com/tennis/tournaments/{group['id']}/{tournament['year']}/matches"
         payload = fetch_json(url)
+        matches = payload.get("matches")
+        rounds = bracket_rounds(matches)
+        champion = final_champion(matches)
+        title = {
+            "end_date": tournament["endDate"][:10], "start_date": tournament["startDate"][:10],
+            "year": int(tournament["year"]), "tournament_id": str(group["id"]),
+            "name": tournament.get("title") or group.get("name") or "WTA",
+            "city": tournament.get("city") or group.get("name") or "WTA",
+            "category": tournament["level"], "country": tournament.get("country", ""),
+            "surface": tournament.get("surface", ""), "source_url": url, "champion": champion,
+        } if champion else None
         return {
             "id": f"{group['id']}:{tournament['year']}", "wta_id": str(group["id"]), "year": tournament["year"],
             "name": tournament.get("title") or group.get("name") or "WTA",
             "city": tournament.get("city") or group.get("name") or "WTA",
             "category": tournament["level"], "surface": tournament.get("surface", ""),
             "start_date": tournament["startDate"], "end_date": tournament["endDate"], "source_url": url,
-            "rounds": bracket_rounds(payload.get("matches")),
-        }
+            "rounds": rounds,
+        }, title
 
     with ThreadPoolExecutor(max_workers=4) as pool:
-        tournaments = list(pool.map(load, active.values()))
+        fetched = list(pool.map(load, active.values()))
+    tournaments = [item for item, _ in fetched if item["start_date"][:10] <= today <= item["end_date"][:10]]
     tournaments.sort(key=lambda item: (item["category"], item["city"], item["id"]))
-    return {"updated_at": now.isoformat(), "date": today, "tournaments": tournaments}
+    return {"updated_at": now.isoformat(), "date": today, "tournaments": tournaments,
+            "champions": [title for _, title in fetched if title]}
 
 
 def main():
@@ -94,6 +111,7 @@ def main():
     parser.add_argument("--output", type=Path, default=OUTPUT)
     args = parser.parse_args()
     payload = collect_draws()
+    merge_draw_champions(payload["champions"])
     save_history(args.output, payload)
     print(f"Saved {len(payload['tournaments'])} current WTA singles draws to {args.output}")
 

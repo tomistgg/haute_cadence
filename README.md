@@ -1,6 +1,6 @@
 # Haute Cadence player cards
 
-A local, static player card builder using the copied WTA rankings CSV in this project.
+A local, static player card builder using rankings and calendars saved by `tenis-fem-arg`.
 
 ## Run locally
 
@@ -11,7 +11,17 @@ python build_site.py
 python serve_site.py
 ```
 
-Then open <http://127.0.0.1:8765/>. The build reads all four copied WTA ranking CSVs and uses their latest ranking week and prepares the searchable player list in `dist/data/players.json`.
+Then open <http://127.0.0.1:8765/>. By default the build reads all four WTA ranking CSVs from
+`../tenis-fem-arg/data/`, uses their latest ranking week, and prepares `dist/data/players.json`.
+The source files are read only; Haute Cadence does not fetch or update rankings.
+For a different checkout location, set `$env:HAUTE_CADENCE_DATA_DIR = 'C:\path\to\tenis-fem-arg\data'` before running.
+The source directory must contain the four ranking CSVs, `calendar_snapshot.json`, and `wta_full_calendar_cache.json`.
+Missing or invalid shared files produce an error instead of silently using Haute Cadence's old ranking copies.
+
+Tournament lists merge both shared calendar files. Current WTA dates, categories, cities, cancellations, and new events
+come from the shared cache. `data/calendar_snapshot.json` is an accumulated calendar archive: older tournaments remain
+searchable after they leave the other project's moving cache window. The build writes the merged calendar to `dist/data/`.
+The local server notices changed source files and rebuilds player/calendar data when requested; reload the page to load it.
 
 All player searches include anyone ranked within two calendar years of the latest ranking snapshot. Players absent
 from the latest week show NR; their old ranking is retained only as `last_rank` / `last_rank_date` in the data.
@@ -42,6 +52,10 @@ positions even when the feed gives a scheduled match an unreliable round label. 
 only from confirmed winners of their direct child matches. Doubles, qualifying, and round-robin results never
 advance into the knockout bracket. The updater preserves the previous snapshot on failure. The local server and
 Draw refresh every five minutes while used; GitHub Pages updates draws on deployment and its 30-minute schedule.
+Tournament discovery uses the shared calendar, but match states and scores still come directly from WTA.
+Confirmed main-draw singles finals update `data/wta_champions.json` using the same draw response. Recently ended events
+without a saved champion are checked too; existing titles are merged by tournament ID and season, so refreshes do not
+increase title counts twice. Player title counts and DERNIER TITRE are regenerated on the next player-data request or build.
 
 Non-Tour Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
@@ -82,7 +96,7 @@ every five minutes. The page also refreshes while either result card is selected
 duration defines the finish time; LastUpdated is the fallback when duration is unavailable. Walkovers are excluded;
 retirements/defaults with played sets are marked. Cached matches outside the last 24 hours never appear.
 If WTA is unavailable, the last successful feed is retained and the page reports the refresh failure.
-For a static build, run `python update_wta_results.py` before `python build_site.py`.
+For a static build, run `python update_wta_results.py` and `python update_wta_draws.py` before `python build_site.py`.
 The Pages workflow refreshes the feed on each deployment and every 30 minutes once this workflow is published.
 
 Use the selector next to player search to switch between Player Form Card, WTA 125 Title Card, and WTA Tour Title Card. The selected player is preserved when changing card types. The layouts follow the three references in `examples/` using supplied PNG layers and CSS. Title cards layer `assets/details/wta125_title_details.png` or `assets/details/wtatour_title_details.png` over the complete card; the Tour overlay includes its trophy and laurels. No AI image generation is used.
@@ -99,9 +113,16 @@ stack on smaller screens.
 
 The supplied TT Bluescreens font is a trial font. Keep this site local/private for evaluation unless you obtain the appropriate license.
 
-The four ranking CSVs, champions history, career-best cache, and calendar snapshot are stored in `data/`. Career-best ranks use all four local ranking CSVs (1983 onward). The caption year is the most recent year the player held that exact career-best position, including later returns to the same rank. The older `data/career_bests.json` cache is no longer used by the build. The site remains independent of that other project at runtime and build time.
+Champions history, the accumulated calendar, recent results, and current draws are stored in `data/`. Career-best ranks
+use all four shared ranking CSVs (1983 onward). The caption year is the most recent year the player held that exact
+career-best position, including later returns to the same rank. The old ranking CSV copies and `data/career_bests.json`
+in Haute Cadence are no longer used by the build. The generated site remains static; only builds and the local server
+read the other project's files.
 
-The copied calendar was supplemented with the missing weeks of October 26 and November 2, 2026, and city metadata from the local `wta_full_calendar_cache.json`; cancelled events were excluded. BJKC, Grand Slams, Finals, WTA 1000/500/250/125, and Grand Slam Juniors use their specified heading colors. City headings use the bundled Bebas Neue font from https://github.com/google/fonts/tree/main/ofl/bebasneue, with its OFL license included.
+The initial calendar archive preserves the previously saved 2026 season, including October 26 and November 2.
+Subsequent builds overlay `tenis-fem-arg` calendar data. BJKC, Grand Slams, Finals, WTA 1000/500/250/125, and Grand Slam
+Juniors use their specified heading colors. City headings use the bundled Bebas Neue font from
+https://github.com/google/fonts/tree/main/ofl/bebasneue, with its OFL license included.
 
 Form cards use locally bundled circular country flags, with the CSV's three-letter country code followed by a dot beside the flag. Flag SVGs are from https://github.com/lipis/flag-icons; their MIT license is included in `assets/flags/LICENSE`. The current ranking countries are covered, including IOC-code aliases. The browser makes no external flag requests. Tournament cities use Bebas Neue; categories use the locally bundled [Chunk Five from The League of Moveable Type](https://github.com/theleagueof/chunk), with its OFL license included in `assets/fonts/Chunk_Five/`. The career-best number has a black outline, a separated ordinal, and a smaller TT Bluescreens year caption.
 
@@ -114,6 +135,10 @@ Tournament display-name overrides apply to both search results and card headings
 GitHub Pages must publish the generated `dist/` directory. The repository-root HTML is the source template and refers to files that exist only in the build output.
 
 The `Deploy GitHub Pages` workflow runs `python build_site.py` and deploys `dist/` after pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is **GitHub Actions**.
+It checks out only the required shared files from `tomistgg/tenis-fem-arg`'s validated `data-state` branch and keeps the
+existing 30-minute WTA results/draw refresh. The generated calendar archive and champion history are retained on a
+separate `card-data` branch, so later deployments preserve past tournaments and newly won titles. This requires the
+workflow's contents-write permission. No workflow or data in `tenis-fem-arg` is changed.
 
 Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. Player/title exports are 1440 x 1800, Non-Tour results 1440 x 1600, and Tour results 1600 x 900. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime.
 

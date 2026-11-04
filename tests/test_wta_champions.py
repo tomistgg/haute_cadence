@@ -1,6 +1,7 @@
 import json
 import tempfile
 import unittest
+from datetime import UTC, datetime
 from pathlib import Path
 from unittest.mock import patch
 
@@ -19,6 +20,38 @@ def event(tid=100, year=2026, end="2026-02-08", level="WTA 250", player=PLAYER):
 
 
 class ChampionsTest(unittest.TestCase):
+    def test_completed_final_match_id_identifies_final_even_when_round_label_is_unreliable(self):
+        match = {
+            "MatchID": "LS001", "RoundID": "2", "DrawMatchType": "S", "DrawLevelType": "M",
+            "MatchState": "F", "Winner": "2", "PlayerIDA": "1", "PlayerNameFirstA": "Example",
+            "PlayerNameLastA": "Champion", "PlayerCountryA": "ARG",
+        }
+        self.assertEqual(champions.final_champion([match])["id"], "1")
+        self.assertIsNone(champions.final_champion([match | {"DrawMatchType": "D"}]))
+
+    def test_incremental_champions_are_deduplicated_corrected_and_resolve_missing_history(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "history.json"
+            title = {
+                "tournament_id": "1", "year": 2026, "start_date": "2026-11-02", "end_date": "2026-11-08",
+                "category": "WTA 125", "champion": {"id": "1", "name": "Example", "country": "ARG"},
+            }
+            champions.save_history(path, {
+                "through": "2026-11-01", "champions": [], "missing_champions": [title],
+            })
+            now = datetime(2026, 11, 8, tzinfo=UTC)
+            self.assertTrue(champions.merge_draw_champions([title, title], path, now))
+            first = path.read_bytes()
+            self.assertFalse(champions.merge_draw_champions([title], path, now))
+            self.assertEqual(path.read_bytes(), first)
+            corrected = title | {"champion": {"id": "2", "name": "Corrected", "country": "FRA"}}
+            self.assertTrue(champions.merge_draw_champions([corrected], path, now))
+            data = champions.read_history(path)
+            self.assertEqual(data["champion_count"], 1)
+            self.assertEqual(data["champions"][0]["champion"]["id"], "2")
+            self.assertEqual(data["missing_champions"], [])
+            self.assertEqual(data["through"], "2026-11-08")
+
     def test_paginates_when_num_pages_is_zero_and_api_caps_page_size(self):
         pages = [
             {"pageInfo": {"page": 0, "numPages": 0, "numEntries": 2}, "content": [event(100)]},

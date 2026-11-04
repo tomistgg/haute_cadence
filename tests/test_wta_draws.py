@@ -49,6 +49,25 @@ class DrawTest(unittest.TestCase):
         self.assertNotIn("states=C", fetch.call_args.args[0])
         self.assertEqual(result["tournaments"][0]["rounds"]["S"][0]["players"][0]["id"], "4")
 
+    def test_finished_tournament_final_updates_champions_without_appearing_as_an_active_draw(self):
+        tournament = {
+            "tournamentGroup": {"id": 1, "name": "City"}, "year": 2026, "level": "WTA 125",
+            "startDate": "2026-10-26", "endDate": "2026-11-01", "city": "City",
+        }
+        with patch.object(draws, "fetch_calendar", return_value=[tournament]), \
+                patch.object(draws, "read_history", return_value={"champions": []}), \
+                patch.object(draws, "fetch_json", return_value={"matches": [match(1)]}) as fetch:
+            result = draws.collect_draws(datetime(2026, 11, 4, tzinfo=UTC))
+        self.assertEqual(result["tournaments"], [])
+        self.assertEqual(result["champions"][0]["champion"]["id"], "2")
+        self.assertEqual(result["champions"][0]["category"], "WTA 125")
+        self.assertEqual(fetch.call_count, 1)
+        with patch.object(draws, "fetch_calendar", return_value=[tournament]), \
+                patch.object(draws, "read_history", return_value={"champions": result["champions"]}), \
+                patch.object(draws, "fetch_json") as fetch:
+            draws.collect_draws(datetime(2026, 11, 4, tzinfo=UTC))
+        fetch.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

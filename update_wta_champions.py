@@ -16,6 +16,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
+HISTORY = ROOT / "data" / "wta_champions.json"
 API = "https://api.wtatennis.com/tennis/tournaments/"
 HEADERS = {
     "account": "wta",
@@ -147,7 +148,8 @@ def fetch_title_records(tournaments):
 
 def final_champion(matches):
     finals = [match for match in matches if match.get("DrawMatchType") == "S"
-              and match.get("DrawLevelType") == "M" and str(match.get("RoundID")) == "F"
+              and match.get("DrawLevelType") == "M"
+              and (str(match.get("RoundID")) == "F" or re.fullmatch(r"LS0*1", str(match.get("MatchID", ""))))
               and match.get("MatchState") == "F"]
     if not finals:
         return None
@@ -250,12 +252,46 @@ def save_history(path, payload):
             temporary.unlink()
 
 
+def read_history(path=None):
+    return json.loads((path or HISTORY).read_text(encoding="utf-8"))
+
+
+def merge_draw_champions(entries, path=None, now=None):
+    """Add confirmed singles finals to the existing history without duplicating title counts."""
+    if not entries:
+        return False
+    path = path or HISTORY
+    payload = read_history(path)
+    keyed = {(str(row["tournament_id"]), int(row["year"])): row for row in payload["champions"]}
+    changed = False
+    for entry in entries:
+        key = (str(entry["tournament_id"]), int(entry["year"]))
+        updated = keyed.get(key, {}) | entry
+        if keyed.get(key) != updated:
+            keyed[key] = updated
+            changed = True
+    if not changed:
+        return False
+    payload["champions"] = sorted(keyed.values(), key=lambda row: (
+        row["end_date"], row["start_date"], str(row["tournament_id"]), row["year"],
+    ))
+    payload["missing_champions"] = [row for row in payload.get("missing_champions", [])
+                                    if (str(row["tournament_id"]), int(row["year"])) not in keyed]
+    payload["champion_count"] = len(payload["champions"])
+    payload["missing_champion_count"] = len(payload["missing_champions"])
+    stamp = now or datetime.now(UTC)
+    payload["updated_at"] = stamp.isoformat()
+    payload["through"] = max(payload["through"], stamp.date().isoformat())
+    save_history(path, payload)
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start-year", type=int, default=2000)
     parser.add_argument("--through", type=date.fromisoformat,
                         default=datetime.now(ZoneInfo("Europe/Madrid")).date())
-    parser.add_argument("--output", type=Path, default=ROOT / "data" / "wta_champions.json")
+    parser.add_argument("--output", type=Path, default=HISTORY)
     args = parser.parse_args()
     start = date(args.start_year, 1, 1).isoformat()
     through = args.through.isoformat()

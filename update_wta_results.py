@@ -8,7 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from update_wta_champions import fetch_calendar, fetch_json, save_history
+from shared_data import calendar_tournaments as fetch_calendar
+from update_wta_champions import fetch_json, save_history
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT = ROOT / "data" / "recent_results.json"

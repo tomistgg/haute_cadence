@@ -7,9 +7,11 @@ import shutil
 from datetime import date
 from pathlib import Path
 
+from shared_data import merged_calendar, ranking_sources
+from update_wta_champions import save_history
+
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
-SOURCES = [DATA / f"wta_rankings_{period}.csv" for period in ("83_99", "00_09", "10_19", "20_29")]
 CALENDAR = DATA / "calendar_snapshot.json"
 CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
@@ -102,11 +104,8 @@ ASSETS.update({
 
 
 def main() -> None:
-    if not CALENDAR.is_file():
-        raise SystemExit(f"Missing calendar JSON: {CALENDAR}")
-    for source in SOURCES:
-        if not source.is_file():
-            raise SystemExit(f"Missing ranking CSV: {source}")
+    sources = ranking_sources()
+    calendar = merged_calendar(CALENDAR)
 
     latest_date = ""
     previous_date = ""
@@ -116,7 +115,7 @@ def main() -> None:
     best_rank_date: dict[str, str] = {}
     last_rows: dict[str, dict[str, str]] = {}
 
-    for source in SOURCES:
+    for source in sources:
         with source.open(encoding="utf-8-sig", newline="") as handle:
             for row in csv.DictReader(handle):
                 player_id = row["id"]
@@ -210,7 +209,9 @@ def main() -> None:
         {"src": f"assets/surfaces/{surface.name}", "name": surface.stem.replace("_", " ").title()}
         for surface in SURFACES
     ]), encoding="utf-8")
-    shutil.copy2(CALENDAR, data_dir / "calendar_snapshot.json")
+    if not CALENDAR.is_file() or json.loads(CALENDAR.read_text(encoding="utf-8")) != calendar:
+        save_history(CALENDAR, calendar)
+    save_history(data_dir / "calendar_snapshot.json", calendar)
     results = ROOT / "data" / "recent_results.json"
     if results.is_file():
         shutil.copy2(results, data_dir / "recent_results.json")
@@ -222,9 +223,7 @@ def main() -> None:
         shutil.copy2(draws, data_dir / "current_draws.json")
     else:
         (data_dir / "current_draws.json").write_text('{"updated_at":null,"tournaments":[]}', encoding="utf-8")
-    (data_dir / "players.json").write_text(
-        json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
-    )
+    save_history(data_dir / "players.json", payload)
     print(f"Prepared {len(players):,} WTA singles players from {latest_date} in {DIST}")
 
 
