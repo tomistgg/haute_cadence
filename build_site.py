@@ -14,6 +14,8 @@ CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "result-card.js": ROOT / "result-card.js",
+    "assets/result-court.svg": ROOT / "assets" / "result-court.svg",
     "assets/cards/prospect_card.png": ROOT / "assets" / "cards" / "prospect_card.png",
     "assets/details/prospect_details.png": ROOT / "assets" / "details" / "prospect_details.png",
     "assets/fonts/chunk-five-regular.otf": ROOT / "assets" / "fonts" / "Chunk_Five" / "ChunkFive-Regular.otf",
@@ -60,7 +62,9 @@ ASSETS = {
     "assets/fonts/tt-condensed-regular.ttf": (
         ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Condensed Regular.ttf"
     ),
-    "assets/fonts/tt-bluescreens-italic.ttf": ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf",
+    "assets/fonts/tt-bluescreens-italic.ttf": (
+        ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Italic.ttf"
+    ),
     "assets/fonts/tt-bluescreens-bold-italic.ttf": (
         ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial Bold Italic.ttf"
     ),
@@ -73,6 +77,13 @@ ASSETS = {
 ASSETS.update({
     f"assets/flags/{flag.name}": flag
     for flag in sorted((ROOT / "assets" / "flags").glob("*.svg"))
+})
+ASSETS.update({
+    f"assets/results/{name}.png": ROOT / "assets" / "results cards" / f"{name}.png"
+    for name in (
+        "premier", "deuxieme", "troisieme", "quartdefinale", "demifinale", "finale",
+        "deux_sets", "trois_sets", "opponent",
+    )
 })
 
 
@@ -161,7 +172,7 @@ def main() -> None:
         shutil.copy2(source, target)
 
     page = (ROOT / "index.html").read_text(encoding="utf-8")
-    for filename in ("app.js", "cards.css", "export-card.js"):
+    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js"):
         version = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:12]
         page = page.replace(f'"{filename}"', f'"{filename}?v={version}"')
     (DIST / "index.html").write_text(page, encoding="utf-8")
@@ -170,6 +181,11 @@ def main() -> None:
     data_dir = DIST / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy2(CALENDAR, data_dir / "calendar_snapshot.json")
+    results = ROOT / "data" / "recent_results.json"
+    if results.is_file():
+        shutil.copy2(results, data_dir / "recent_results.json")
+    else:
+        (data_dir / "recent_results.json").write_text('{"updated_at":null,"matches":[]}', encoding="utf-8")
     payload = {"snapshot_date": latest_date, "players": players}
     (data_dir / "players.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"

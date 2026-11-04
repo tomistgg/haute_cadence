@@ -8,6 +8,7 @@ let exportRunning = false;
 const exportFontsReady = Promise.all([...document.fonts].map(font => font.load()));
 exportFontsReady.then(fitLastTitleText);
 let exportFontCSS;
+let exportFontType;
 
 function scheduleCardExport() {
   exportVersion += 1;
@@ -24,7 +25,7 @@ async function renderCardExport() {
     await exportFontsReady;
     await document.fonts.ready;
     await Promise.all([...card.querySelectorAll("img")]
-      .filter(image => image !== cardSaveImage && image.getAttribute("src") && !image.hidden)
+      .filter(image => image !== cardSaveImage && image.getAttribute("src") && image.getClientRects().length)
       .map(image => image.decode()));
     const width = cardDesign.offsetWidth;
     const height = cardDesign.offsetHeight;
@@ -34,7 +35,7 @@ async function renderCardExport() {
     copy.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;height:${height}px;box-shadow:none;margin:0;--card-scale:1;`;
     copy.querySelectorAll("#card-save-image, .suggestions, .sr-only").forEach(node => node.remove());
     copy.querySelectorAll("img").forEach(image => {
-      if (image.hidden || !image.getAttribute("src")) image.remove();
+      if (image.closest("[hidden]") || !image.getAttribute("src")) image.remove();
     });
     const originalInputs = [...card.querySelectorAll("input")];
     copy.querySelectorAll("input").forEach((input, index) => {
@@ -49,9 +50,10 @@ async function renderCardExport() {
       input.replaceWith(text);
     });
     document.body.append(copy);
-    if (!exportFontCSS) {
+    if (!exportFontCSS || exportFontType !== card.dataset.type) {
       exportFontCSS = (await htmlToImage.getFontEmbedCSS(copy))
         .replace(/font-display:\s*swap/g, "font-display: block");
+      exportFontType = card.dataset.type;
     }
     const png = await htmlToImage.toPng(copy, {
       width, height, canvasWidth: width, canvasHeight: height, pixelRatio: 1,

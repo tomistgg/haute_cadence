@@ -72,12 +72,22 @@
           <option value="form">Player Form Card</option>
           <option value="wta-125">WTA 125 Title Card</option>
           <option value="wta-tour">WTA Tour Title Card</option>
+          <option value="result">Result Card</option>
         </select>
         <div class="tournament-wrap" id="tournament-search-wrap" hidden>
           <label class="sr-only" for="tournament-search">Search tournaments</label>
           <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
           <div class="suggestions tournament-options" id="tournament-options" role="listbox" aria-label="Matching tournaments"></div>
           <p class="sr-only" id="tournament-status" aria-live="polite"></p>
+        </div>
+        <div class="result-controls" id="result-controls" hidden>
+          <label for="result-match">Completed WTA singles · last 24 hours</label>
+          <div class="result-match-picker"><select id="result-match" disabled><option>Loading matches…</option></select><button id="refresh-results" type="button">Refresh</button></div>
+          <p id="result-status" role="status"></p>
+          <div class="result-photo-controls">
+            <label>Winner photo <input id="result-winner-upload" type="file" accept="image/*"><span id="result-winner-photo-status"></span></label>
+            <label>Opponent photo <input id="result-loser-upload" type="file" accept="image/*"><span id="result-loser-photo-status"></span></label>
+          </div>
         </div>
       </div>
     </header>
@@ -116,12 +126,25 @@
           <span id="tour-title-number" aria-label="WTA Tour titles">0</span>
           <span id="tour-title-ordinal" aria-hidden="true" hidden>E</span>
         </div>
+        <div id="result-card-content" class="result-content" hidden>
+          <img id="result-round-art" class="result-layer" alt="">
+          <div class="result-winner-portrait"><img id="result-winner-photo" alt="" hidden><span id="result-winner-initials"></span></div>
+          <img class="result-layer" src="assets/results/opponent.png" alt="">
+          <div class="result-opponent-portrait"><img id="result-loser-photo" alt="" hidden><span id="result-loser-initials"></span></div>
+          <div id="result-round-heading" class="result-round-heading" hidden></div>
+          <div class="result-event" id="result-event"><strong id="result-event-name"></strong><span id="result-event-category"></span></div>
+          <span id="result-retired" class="result-retired" hidden>RET.</span>
+          <img id="result-score-art" class="result-layer" alt="">
+          <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+          <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+        </div>
         </div>
       </div>
     </section>
   </main>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="result-card.js" defer></script>
   <script src="export-card.js" defer></script>
 </body>
 </html>

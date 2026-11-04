@@ -255,7 +255,7 @@ function showTournamentOptions(query) {
 
 function updateTournamentSearch() {
   tournaments = calendar ? yearTournaments(calendar) : [];
-  tournamentWrap.hidden = cardType.value === "form";
+  tournamentWrap.hidden = !["wta-125", "wta-tour"].includes(cardType.value);
   if (tournamentWrap.hidden) {
     closeTournamentOptions();
     return;
@@ -312,6 +312,9 @@ function selectPlayer(player) {
 }
 
 function renderCard(player) {
+  if (cardType.value === "result") return renderResultCard();
+  document.querySelector(".card-content").hidden = false;
+  document.getElementById("result-card-content").hidden = true;
   const name = player.name.toLocaleUpperCase();
   const age = getAge(player.dob, snapshotDate);
   const type = cardType.value;
@@ -394,13 +397,14 @@ function moveActive(direction) {
 }
 
 cardType.addEventListener("change", () => {
+  document.getElementById("player-search-wrap").hidden = cardType.value === "result";
   updateTournamentSearch();
   if (selectedPlayer) renderCard(selectedPlayer);
-  if (cardType.value !== "form") refreshCalendar();
+  if (["wta-125", "wta-tour"].includes(cardType.value)) refreshCalendar();
 });
 
 window.addEventListener("focus", () => {
-  if (cardType.value !== "form") refreshCalendar();
+  if (["wta-125", "wta-tour"].includes(cardType.value)) refreshCalendar();
 });
 
 tournamentInput.addEventListener("focus", () => {

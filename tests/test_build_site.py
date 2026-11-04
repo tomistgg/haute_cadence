@@ -16,7 +16,7 @@ class SiteBuildTest(unittest.TestCase):
             dist.mkdir()
             data_dir = root / "data"
             data_dir.mkdir()
-            for name in ("index.html", "app.js", "cards.css", "export-card.js"):
+            for name in ("index.html", "app.js", "cards.css", "export-card.js", "result-card.js"):
                 (root / name).write_text("", encoding="utf-8")
             calendar = data_dir / "calendar_snapshot.json"
             calendar.write_text("{}", encoding="utf-8")

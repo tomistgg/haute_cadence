@@ -78,3 +78,41 @@
 
 .player-card .card-content, .player-card .title-event { -webkit-user-select: none; user-select: none; }
 .player-card input { -webkit-user-select: text; user-select: text; }
+
+.result-controls { flex: 1 1 100%; min-width: 0; }
+.result-controls > label { display: block; margin-bottom: 7px; color: #c8e4e6; font-size: .85rem; }
+.result-match-picker { display: flex; gap: 8px; }
+#result-match { flex: 1; width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; color: #f5fbff; background: #051b31; font: inherit; }
+#refresh-results { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
+#result-status { margin: 8px 0; color: #b9d7df; font-size: .8rem; }
+.result-photo-controls { display: flex; flex-wrap: wrap; gap: 12px; }
+.result-photo-controls label { flex: 1 1 220px; padding: 10px; border: 1px solid #ffffff25; border-radius: 10px; font-size: .85rem; }
+.result-photo-controls input, .result-photo-controls span { display: block; width: 100%; margin-top: 6px; font-size: .75rem; }
+.result-photo-controls span { color: #b9d7df; }
+.player-card[data-type="result"] { aspect-ratio: 9 / 10; background: url("assets/result-court.svg") center / cover; }
+.player-card[data-type="result"] .card-design { height: 1600px; }
+.result-content, .result-layer { position: absolute; inset: 0; width: 1440px; height: 1600px; }
+.result-winner-portrait { position: absolute; left: 204px; top: 233px; width: 1033px; height: 1311px; overflow: hidden; background: #122b3e; }
+.result-winner-portrait img, .result-opponent-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.result-winner-portrait > span, .result-opponent-portrait > span { display: flex; align-items: center; justify-content: center; height: 100%; color: #d2f9f4; font: 800 180px/1 "TT Bluescreens Upright", sans-serif; }
+.result-opponent-portrait { position: absolute; left: 865px; top: 853px; width: 507px; height: 507px; overflow: hidden; border-radius: 50%; background: #333; }
+.result-opponent-portrait img { filter: grayscale(1); }
+.result-event { position: absolute; top: 49px; width: 278px; height: 124px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 5px; border-radius: 17px; color: #fff; }
+.result-event strong { width: 100%; text-align: center; white-space: nowrap; font: 400 72px/.95 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; }
+.result-event span { margin-top: 4px; font: 400 27px/1 "Chunk Five", serif; white-space: nowrap; }
+.result-round-heading { position: absolute; left: 395px; top: 53px; width: 580px; height: 122px; display: flex; align-items: center; padding: 0 10px; background: linear-gradient(90deg, #09b69d, #3bcaaf); font: 400 70px/1 "Bebas Neue", sans-serif; white-space: nowrap; }
+.result-retired { position: absolute; left: 1170px; top: 1270px; padding: 6px 14px; border-radius: 9px; background: #071e36; font: 400 38px/1 "Bebas Neue", sans-serif; }
+.result-score-row { --row-top: 1328px; position: absolute; inset: 0; }
+.result-score-row[data-side="loser"] { --row-top: 1446px; }
+.result-score-flag, .result-flag-fallback, .result-score-rank { position: absolute; left: 74px; top: var(--row-top); width: 108px; height: 110px; }
+.result-score-flag { object-fit: cover; }
+.result-flag-fallback { display: flex; align-items: center; justify-content: center; background: #123e58; font: 800 25px/1 Arial, sans-serif; }
+.result-score-rank { display: flex; align-items: center; justify-content: center; color: #fff; -webkit-text-stroke: 2px #000; paint-order: stroke fill; font: italic 800 80px/1 "TT Bluescreens", sans-serif; }
+.result-score-name { position: absolute; left: 210px; top: var(--row-top); width: 900px; height: 110px; display: flex; align-items: center; color: #ffde00; font: 400 86px/1 "Chunk Five", serif; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+.result-score-name > span { display: block; flex: none; white-space: nowrap; transform-origin: left center; }
+.result-score-row[data-side="loser"] .result-score-name { color: #fff; }
+.result-score-sets { position: absolute; left: 1149px; top: var(--row-top); width: 171px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); color: #fff; font: italic 800 104px/1 "TT Bluescreens", sans-serif; -webkit-text-stroke: 2px #000; paint-order: stroke fill; }
+.result-content[data-sets="3"] .result-score-sets { width: 247px; grid-template-columns: repeat(3, 1fr); }
+.result-score-sets > span { position: relative; display: flex; align-items: center; justify-content: center; }
+.result-score-sets .set-won { color: #ffde00; }
+.result-score-sets sup { position: absolute; right: 1px; top: 6px; font-size: 32px; -webkit-text-stroke: 1px #000; }
