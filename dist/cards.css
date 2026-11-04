@@ -20,12 +20,12 @@
 .card-previous { top: 13.6%; height: 3.5%; font-size: 3.6cqw; text-align: center; white-space: nowrap; }
 /* Use the Form card's typography without inheriting the inset title-card container size. */
 .career-best-label { display: block; max-width: 100%; padding: 2.88px 10.08px; white-space: pre; font: normal 800 25.92px/28.512px "TT Bluescreens Upright", sans-serif; font-kerning: normal; letter-spacing: 0; word-spacing: 0; }
-.best-rank-label { display: flex; align-items: center; justify-content: center; gap: .7cqw; color: #050505; }
-.best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.1cqw/1 "TT Bluescreens", sans-serif; }
+.best-rank-label { box-sizing: border-box; display: flex; align-items: center; justify-content: space-around; gap: .25cqw; width: 100%; height: 100%; padding: 0 1.2cqw; color: #050505; }
+.best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.3cqw/1 "TT Bluescreens", sans-serif; }
 #best-rank-value { color: #fff; -webkit-text-stroke: .25cqw #000; paint-order: stroke fill; }
-#best-rank-year { transform: translateY(-2.4px); color: #050505; font: 800 2.8cqw/1 "TT Bluescreens Upright", sans-serif; }
+#best-rank-year { color: #050505; font: 400 3.2cqw/1 "Bebas Neue", sans-serif; }
 .best-rank-label.long-rank .best-position { font-size: 3.4cqw; }
-.best-rank-label.long-rank #best-rank-year { font-size: 2.5cqw; }
+.best-rank-label.long-rank #best-rank-year { font-size: 2.8cqw; }
 .best-position sup { margin-top: .18cqw; font-size: .45em; color: #050505; }
 .card-form { left: 21.111111%; top: 86.2%; width: 52%; height: 6.944444cqw; display: flex; gap: .763889cqw; }
 .form-result { display: flex; flex: none; align-items: center; justify-content: center; width: 3.819444cqw; min-width: 0; padding: 0; border: .08cqw solid #071e3640; border-radius: .35cqw; background: #ffffff18; color: #15564c; font: 400 6.944444cqw/1 "Barriecito", sans-serif; cursor: pointer; }
