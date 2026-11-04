@@ -532,21 +532,18 @@ function openItfPlayerSearch(side) {
   itfPlayerMatchId = match.id;
   document.getElementById("itf-player-label").textContent = "Select Player " + (side === "winner" ? "1" : "2");
   itfPlayerInput.value = match[side].placeholder ? "" : match[side].name;
-  const tour = cardType.value === "tour-result";
-  document.getElementById("tour-player-details").hidden = !tour;
-  if (tour) {
-    document.getElementById("tour-player-rank").value = match[side].placeholder ? "" : String(resultRank(match[side]));
-    const country = document.getElementById("tour-player-country");
-    country.replaceChildren();
-    const countries = [...new Set(["", ...players.map(player => player.country), match[side].country])].sort();
-    countries.forEach(code => {
-      const option = document.createElement("option");
-      option.value = code;
-      option.textContent = code || "No flag";
-      country.append(option);
-    });
-    country.value = match[side].country;
-  }
+  document.getElementById("tour-player-details").hidden = false;
+  document.getElementById("tour-player-rank").value = match[side].placeholder ? "" : String(resultRank(match[side]));
+  const country = document.getElementById("tour-player-country");
+  country.replaceChildren();
+  const countries = [...new Set(["", ...players.map(player => player.country), match[side].country])].sort();
+  countries.forEach(code => {
+    const option = document.createElement("option");
+    option.value = code;
+    option.textContent = code || "No flag";
+    country.append(option);
+  });
+  country.value = match[side].country;
   itfPlayerDialog.showModal();
   showItfPlayerOptions();
   itfPlayerInput.focus();
@@ -591,10 +588,10 @@ document.getElementById("tour-player-apply").addEventListener("click", () => {
   const match = selectedResultMatch();
   const name = itfPlayerInput.value.trim().slice(0, 80);
   const rank = document.getElementById("tour-player-rank");
-  if (cardType.value !== "tour-result" || !match?.manual || match.id !== itfPlayerMatchId || !name) return;
+  if (!match?.manual || match.id !== itfPlayerMatchId || !name) return;
   if (!rank.reportValidity()) return;
   match[itfPlayerSide] = {
-    id: match.id + "-" + itfPlayerSide, name,
+    ...match[itfPlayerSide], name, placeholder: false,
     rank: rank.value ? /^\d+$/.test(rank.value) ? Number(rank.value) : "NR" : "NR",
     country: document.getElementById("tour-player-country").value,
   };

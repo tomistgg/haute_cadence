@@ -27,6 +27,8 @@ Players without a portrait show initials; players absent from the ranking snapsh
 Non-Tour Result Card also includes ITF MATCH 2 SETS and ITF MATCH 3 SETS at the bottom of the match selector.
 Click the tournament name, category, or a score on the card to edit it directly; click a player name to search and
 select from the current ranking list. Flags, rankings, and saved portraits load with that selection.
+The player dialog also lets you override the name, ranking, and flag using Use these details, just like the Tour
+manual match. Ranking/flag edits keep the player's uploaded portrait.
 Click the ITF MATCH heading to choose the first, second, or third round, quarterfinals, semifinals, or final.
 The heading uses that round's supplied artwork and stays clickable to change the round again.
 Each ITF option keeps a separate draft in the current tab. Player rows stay in place, and a player becomes yellow
