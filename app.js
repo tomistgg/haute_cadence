@@ -54,26 +54,16 @@ const photoByName = new Map([
 ]);
 
 function playerForm(player) {
-  if (!manualForms.has(player.id)) {
-    manualForms.set(player.id, { results: Array(10).fill(""), tourTitleNumber: "" });
-  }
+  if (!manualForms.has(player.id)) manualForms.set(player.id, { results: Array(10).fill("") });
   return manualForms.get(player.id);
 }
 
 function renderTourTitleNumber(player) {
-  const number = playerForm(player).tourTitleNumber;
-  tourTitleNumber.value = number;
-  tourTitleNumber.style.width = Math.max(1, number.length) + "ch";
+  const number = String(player.tour_title_count);
+  tourTitleNumber.textContent = number;
   tourTitleNumber.parentElement.classList.toggle("wide", number.length > 2);
-  tourTitleOrdinal.hidden = !number;
+  tourTitleOrdinal.hidden = !player.tour_title_count;
 }
-
-tourTitleNumber.addEventListener("input", () => {
-  if (!selectedPlayer) return;
-  playerForm(selectedPlayer).tourTitleNumber = tourTitleNumber.value.replace(/\D/g, "").replace(/^0+/, "").slice(0, 3);
-  renderTourTitleNumber(selectedPlayer);
-});
-tourTitleNumber.addEventListener("focus", () => tourTitleNumber.select());
 
 const formButtons = Array.from({ length: 10 }, (_, index) => {
   const button = document.createElement("button");
