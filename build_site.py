@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import shutil
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -14,6 +15,7 @@ CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
+    "draw-card.js": ROOT / "draw-card.js",
     "result-card.js": ROOT / "result-card.js",
     "assets/result-court.svg": ROOT / "assets" / "result-court.svg",
     "assets/cards/prospect_card.png": ROOT / "assets" / "cards" / "prospect_card.png",
@@ -112,6 +114,7 @@ def main() -> None:
     previous: dict[str, dict[str, str]] = {}
     best_rank: dict[str, int] = {}
     best_rank_date: dict[str, str] = {}
+    last_rows: dict[str, dict[str, str]] = {}
 
     for source in SOURCES:
         with source.open(encoding="utf-8-sig", newline="") as handle:
@@ -119,6 +122,8 @@ def main() -> None:
                 player_id = row["id"]
                 week = row["week_date"]
                 rank = int(row["rank"])
+                if player_id not in last_rows or week > last_rows[player_id]["week_date"]:
+                    last_rows[player_id] = row
                 if (
                     player_id not in best_rank
                     or rank < best_rank[player_id]
@@ -158,23 +163,32 @@ def main() -> None:
         ):
             player_titles[champion_id] = title
 
+    snapshot = date.fromisoformat(latest_date)
+    try:
+        cutoff = snapshot.replace(year=snapshot.year - 2).isoformat()
+    except ValueError:
+        cutoff = snapshot.replace(year=snapshot.year - 2, day=28).isoformat()
     players = []
-    for player_id, row in latest.items():
-        prior = previous.get(player_id)
+    for player_id, row in last_rows.items():
+        if row["week_date"] < cutoff:
+            continue
+        prior = previous.get(player_id) if player_id in latest else None
         players.append({
             "id": player_id,
             "name": row["player"],
             "country": row["country"],
             "dob": row["dob"],
-            "rank": int(row["rank"]),
-            "points": int(row["points"]),
+            "rank": int(row["rank"]) if player_id in latest else None,
+            "points": int(row["points"]) if player_id in latest else 0,
+            "last_rank": int(row["rank"]),
+            "last_rank_date": row["week_date"],
             "previous_rank": int(prior["rank"]) if prior else None,
             "latest_title": latest_titles.get(player_id) or latest_125_titles.get(player_id),
             "tour_title_count": tour_title_counts.get(player_id, 0),
             "best_rank": best_rank[player_id],
             "best_rank_year": int(best_rank_date[player_id][:4]),
         })
-    players.sort(key=lambda player: (player["rank"], player["name"].casefold()))
+    players.sort(key=lambda player: (player["rank"] or float("inf"), player["name"].casefold()))
 
     for destination, source in ASSETS.items():
         if not source.is_file():
@@ -184,7 +198,7 @@ def main() -> None:
         shutil.copy2(source, target)
 
     page = (ROOT / "index.html").read_text(encoding="utf-8")
-    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js"):
+    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js"):
         version = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:12]
         page = page.replace(f'"{filename}"', f'"{filename}?v={version}"')
     (DIST / "index.html").write_text(page, encoding="utf-8")
@@ -203,6 +217,11 @@ def main() -> None:
     else:
         (data_dir / "recent_results.json").write_text('{"updated_at":null,"matches":[]}', encoding="utf-8")
     payload = {"snapshot_date": latest_date, "players": players}
+    draws = ROOT / "data" / "current_draws.json"
+    if draws.is_file():
+        shutil.copy2(draws, data_dir / "current_draws.json")
+    else:
+        (data_dir / "current_draws.json").write_text('{"updated_at":null,"tournaments":[]}', encoding="utf-8")
     (data_dir / "players.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
     )

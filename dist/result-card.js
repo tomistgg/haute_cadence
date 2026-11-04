@@ -203,11 +203,12 @@ function renderTourResult(match) {
   heading.style.width = width - 106 + "px";
   document.getElementById("result-event").style.left = "auto";
   const eventName = document.getElementById("result-event-name");
-  eventName.style.fontSize = Math.min(64, 462 / Math.max(1, eventName.textContent.length || 10)) + "px";
+  eventName.style.fontSize = "78px";
 }
 
 function renderResultCard() {
   if (!isResultCard()) return;
+  document.getElementById("draw-card-content").hidden = true;
   const match = selectedResultMatch();
   const tour = cardType.value === "tour-result";
   document.getElementById("non-tour-photo-controls").hidden = tour;
@@ -256,11 +257,11 @@ function renderResultCard() {
   event.style.backgroundColor = tournamentStyle({ level: match.tournament.category, name: match.tournament.name })?.color || "#7ed957";
   const eventName = document.getElementById("result-event-name");
   eventName.textContent = match.manual ? match.tournament.name : tournamentName(match.tournament).toLocaleUpperCase();
-  eventName.style.fontSize = Math.min(72, 640 / Math.max(1, eventName.textContent.length || 10)) + "px";
+  eventName.style.fontSize = "84px";
   makeResultEditable(eventName, match.manual, "name");
   const eventCategory = document.getElementById("result-event-category");
   eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS" : match.tournament.category.toLocaleUpperCase();
-  eventCategory.style.fontSize = match.manual ? Math.min(27, 400 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
+  eventCategory.style.fontSize = match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
   document.getElementById("result-retired").textContent = match.status;
@@ -305,6 +306,7 @@ function renderResultCard() {
   updateResultOutcome(match);
   card.hidden = false;
   scaleCardDesign();
+  fitTournamentName(eventName, tour ? "78px" : "84px");
   fitResultNames();
 }
 
@@ -499,11 +501,9 @@ resultContent.addEventListener("input", event => {
     match.tournament[kind] = value;
     if (kind === "name") {
       match.tournament.city = value;
-      field.style.fontSize = (cardType.value === "tour-result"
-        ? Math.min(64, 462 / Math.max(1, value.length || 10))
-        : Math.min(72, 640 / Math.max(1, value.length || 10))) + "px";
+      fitTournamentName(field, cardType.value === "tour-result" ? "78px" : "84px");
     } else {
-      field.style.fontSize = Math.min(27, 400 / Math.max(1, value.length || 8)) + "px";
+      field.style.fontSize = Math.min(cardType.value === "tour-result" ? 20 : 22, 320 / Math.max(1, value.length || 8)) + "px";
       document.getElementById("result-event").style.backgroundColor = tournamentStyle({
         level: value, name: match.tournament.name,
       })?.color || "#7ed957";
@@ -618,7 +618,7 @@ function showItfPlayerOptions() {
     const name = document.createElement("span");
     name.textContent = player.name;
     const rank = document.createElement("span");
-    rank.textContent = "#" + player.rank + " · " + player.country;
+    rank.textContent = (player.rank == null ? "NR" : "#" + player.rank) + " · " + player.country;
     option.append(name, rank);
     option.addEventListener("mousedown", event => event.preventDefault());
     option.addEventListener("click", () => chooseItfPlayer(player));

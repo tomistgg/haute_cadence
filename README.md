@@ -13,6 +13,26 @@ python serve_site.py
 
 Then open <http://127.0.0.1:8765/>. The build reads all four copied WTA ranking CSVs and uses their latest ranking week and prepares the searchable player list in `dist/data/players.json`.
 
+All player searches include anyone ranked within two calendar years of the latest ranking snapshot. Players absent
+from the latest week show NR; their old ranking is retained only as `last_rank` / `last_rank_date` in the data.
+Current rank, career-best rank, and last recorded rank remain separate. Country flags cover the expanded list.
+
+Draw lists current WTA tournaments (including WTA 125) and FINALE, DEMI-FINALES, and QUARTS DE FINALE.
+It follows the reference layouts with two, four, or eight Form cards. Players fill automatically from the official
+singles bracket; unresolved slots show TBD. Click a portrait to upload its photo. Click the ten form results on a
+card, or use Player form for larger controls, to cycle blank, win, loss from oldest to newest. Form edits share the
+same per-player draft as the main Form card. The final layout's H2H values are edited directly on the image.
+Photos, form, H2H, background choice, and selected round are included in the saved PNG. Uploads and edits reset
+on reload. Final/quarterfinal exports are 1600 × 900; semifinals are 1600 × 1350.
+The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
+
+`python update_wta_draws.py` saves current tournaments and their singles brackets to `data/current_draws.json`.
+The matches endpoint is requested without a completed-only filter, and `LS` match numbers preserve bracket
+positions even when the feed gives a scheduled match an unreliable round label. Missing parent slots are filled
+only from confirmed winners of their direct child matches. Doubles, qualifying, and round-robin results never
+advance into the knockout bracket. The updater preserves the previous snapshot on failure. The local server and
+Draw refresh every five minutes while used; GitHub Pages updates draws on deployment and its 30-minute schedule.
+
 Non-Tour Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
 The supplied result layers in `assets/results cards/` are composed at 1440 × 1600, following `preview.png`.
@@ -26,7 +46,7 @@ Players without a portrait show initials; players absent from the ranking snapsh
 
 Non-Tour Result Card also includes ITF MATCH 2 SETS and ITF MATCH 3 SETS at the bottom of the match selector.
 Click the tournament name, category, or a score on the card to edit it directly; click a player name to search and
-select from the current ranking list. Flags, rankings, and saved portraits load with that selection.
+select from the two-year player list. Flags, current rankings, and saved portraits load with that selection.
 The player dialog also lets you override the name, ranking, and flag using Use these details, just like the Tour
 manual match. Ranking/flag edits keep the player's uploaded portrait.
 Click the ITF MATCH heading to choose the first, second, or third round, quarterfinals, semifinals, or final.
@@ -60,7 +80,7 @@ Rank, age, and country come from the latest CSV week. Rank 1 uses `top_1`, ranks
 
 Portraits are supplied for Leylah Fernandez, Elsa Jacquemot, and Diana Shnaider. Alina Charaeva's portrait is cropped from the provided form-card reference. Other players show initials.
 
-The title layouts and Non-Tour Result Card have a Background button above the preview. Choose a thumbnail from
+The title layouts, Non-Tour Result Card, and Draw have a Background button above the preview. Choose a thumbnail from
 `assets/surfaces/`, or Original to restore that layout's original background. Each layout remembers its selection
 until reload, and the selected background is included in the saved PNG. Rebuild after adding PNGs to that folder
 to include them in the picker. Tournament, match, photo, and background controls share the preview's width and

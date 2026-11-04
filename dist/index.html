@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=304135c3d73c">
+  <link rel="stylesheet" href="cards.css?v=f7674e755f77">
 </head>
 <body>
   <main class="page">
@@ -74,12 +74,14 @@
           <option value="wta-tour">WTA Tour Title Card</option>
           <option value="result">Non-Tour Result Card</option>
           <option value="tour-result">Tour Result Card</option>
+          <option value="draw">Draw</option>
         </select>
       </div>
     </header>
     <section class="card-stage" aria-label="Selected player card">
       <div class="preview-controls" id="preview-controls" hidden>
         <div class="preview-toolbar">
+          <div id="draw-tournament-picker" class="draw-tournament-picker" hidden><label class="sr-only" for="draw-tournament">Current WTA tournament</label><select id="draw-tournament"><option value="">Loading tournaments...</option></select></div>
           <div class="tournament-wrap" id="tournament-search-wrap" hidden>
             <label class="sr-only" for="tournament-search">Search tournaments</label>
             <div class="search-box"><input id="tournament-search" type="search" autocomplete="off" placeholder="Search tournaments" role="combobox" aria-autocomplete="list" aria-controls="tournament-options" aria-expanded="false" disabled></div>
@@ -89,6 +91,12 @@
           <div class="result-match-picker" id="result-match-picker" hidden><label class="sr-only" for="result-match">Select a completed match</label><select id="result-match" disabled><option>Loading matches&#8230;</option></select><button id="refresh-results" type="button">Refresh</button></div>
           <button id="choose-background" type="button" aria-haspopup="dialog" aria-controls="background-dialog"><img id="background-thumbnail" src="assets/title-court.svg" alt=""><span>Background</span></button>
         </div>
+        <div id="draw-options" class="draw-options" hidden>
+          <label class="sr-only" for="draw-round">Draw round</label><select id="draw-round"><option value="F">FINALE</option><option value="S">DEMI-FINALES</option><option value="Q">QUARTS DE FINALE</option></select>
+          <button id="edit-draw-form" type="button" aria-haspopup="dialog" aria-controls="draw-form-dialog">Player form</button>
+          <button id="refresh-draws" type="button">Refresh</button>
+        </div>
+        <p id="draw-status" role="status" hidden></p>
         <div class="result-controls" id="result-controls" hidden>
           <p id="result-status" role="status"></p>
           <div class="result-photo-controls" id="non-tour-photo-controls">
@@ -151,10 +159,23 @@
           <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
           <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
         </div>
+        <div id="draw-card-content" class="draw-content" hidden>
+          <div class="draw-frame" aria-hidden="true"></div>
+          <div id="draw-round-art" class="tour-cropped-art"><img alt=""></div>
+          <div class="draw-event"><strong id="draw-event-name"></strong><span id="draw-event-category"></span></div>
+          <div id="draw-matches"></div>
+        </div>
         </div>
       </div>
     </section>
   </main>
+  <input id="draw-portrait-upload" class="sr-only" type="file" accept="image/*" aria-label="Upload a player portrait">
+  <dialog id="draw-form-dialog" class="itf-player-dialog" aria-labelledby="draw-form-heading">
+    <form method="dialog" class="itf-player-dialog-heading"><strong id="draw-form-heading">Last ten matches</strong><button type="submit">Close</button></form>
+    <label class="sr-only" for="draw-form-player">Player</label><select id="draw-form-player"></select>
+    <p class="draw-form-hint">Oldest to newest. Click to cycle blank, win, loss.</p>
+    <div id="draw-form-buttons" class="draw-form-buttons"></div>
+  </dialog>
   <dialog id="background-dialog" class="background-dialog" aria-labelledby="background-heading">
     <form method="dialog" class="background-dialog-heading"><h2 id="background-heading">Choose a background</h2><button type="submit">Close</button></form>
     <div id="background-options" class="background-options"><button type="button" data-background="" aria-pressed="true"><img id="default-background-thumbnail" src="assets/title-court.svg" alt=""><span>Original</span></button></div>
@@ -185,8 +206,9 @@
     </form>
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
-  <script src="app.js?v=e22df69634ef" defer></script>
-  <script src="result-card.js?v=8d7f7afd6a82" defer></script>
-  <script src="export-card.js?v=ffc0e57db991" defer></script>
+  <script src="app.js?v=709ec79bd97d" defer></script>
+  <script src="result-card.js?v=c0dd96b1e38a" defer></script>
+  <script src="draw-card.js?v=c0cde765fc5e" defer></script>
+  <script src="export-card.js?v=9007defe9775" defer></script>
 </body>
 </html>

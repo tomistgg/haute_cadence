@@ -16,7 +16,7 @@ class SiteBuildTest(unittest.TestCase):
             dist.mkdir()
             data_dir = root / "data"
             data_dir.mkdir()
-            for name in ("index.html", "app.js", "cards.css", "export-card.js", "result-card.js"):
+            for name in ("index.html", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js"):
                 (root / name).write_text("", encoding="utf-8")
             calendar = data_dir / "calendar_snapshot.json"
             calendar.write_text("{}", encoding="utf-8")
@@ -42,6 +42,7 @@ class SiteBuildTest(unittest.TestCase):
                 ("2019-12-30", "3", 2),
             ]
             current = [
+                ("2024-11-02", "4", 100), ("2024-11-01", "5", 200), ("2025-11-03", "6", 900),
                 ("2020-01-06", "1", 15), ("2020-01-06", "2", 20), ("2020-01-06", "3", 5),
                 ("2025-11-03", "1", 15), ("2025-11-03", "2", 20), ("2025-11-03", "3", 1),
                 ("2026-11-02", "1", 12), ("2026-11-02", "2", 30), ("2026-11-02", "3", 4),
@@ -63,14 +64,21 @@ class SiteBuildTest(unittest.TestCase):
             players = {player["id"]: player for player in data["players"]}
             self.assertEqual(data["snapshot_date"], "2026-11-02")
             self.assertEqual({key: (row["best_rank"], row["best_rank_year"]) for key, row in players.items()}, {
-                "1": (5, 2019), "2": (20, 2025), "3": (1, 2025),
+                "1": (5, 2019), "2": (20, 2025), "3": (1, 2025), "4": (100, 2024), "6": (900, 2025),
             })
-            self.assertEqual({key: row["previous_rank"] for key, row in players.items()}, {"1": 15, "2": 20, "3": 1})
+            self.assertEqual({key: row["previous_rank"] for key, row in players.items()}, {
+                "1": 15, "2": 20, "3": 1, "4": None, "6": None,
+            })
+            self.assertIsNone(players["4"]["rank"])
+            self.assertIsNone(players["6"]["rank"])
+            self.assertEqual(players["4"]["last_rank"], 100)
+            self.assertEqual(players["4"]["last_rank_date"], "2024-11-02")
+            self.assertNotIn("5", players)
             self.assertEqual(players["1"]["latest_title"], titles[0])
             self.assertEqual(players["2"]["latest_title"], titles[2])
             self.assertIsNone(players["3"]["latest_title"])
             self.assertEqual({key: row["tour_title_count"] for key, row in players.items()}, {
-                "1": 2, "2": 0, "3": 0,
+                "1": 2, "2": 0, "3": 0, "4": 0, "6": 0,
             })
 
 

@@ -29,7 +29,7 @@ function updateBackgroundControls() {
   document.getElementById("result-match-picker").hidden = !isResultCard();
   backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
-  const original = isResultCard() ? "assets/result-court.svg"
+  const original = type === "draw" ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
   card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;
@@ -116,7 +116,9 @@ function playerForm(player) {
   return manualForms.get(player.id);
 }
 
-function renderTourTitleNumber(player) {
+function renderTourTitleNumber(player, root = cardDesign) {
+  const tourTitleNumber = root.querySelector("#tour-title-number");
+  const tourTitleOrdinal = root.querySelector("#tour-title-ordinal");
   const number = String(player.tour_title_count);
   tourTitleNumber.textContent = number;
   tourTitleNumber.parentElement.classList.toggle("wide", number.length > 2);
@@ -144,23 +146,43 @@ function lastTitleLabel(item) {
   return (title + " " + item.year).toLocaleUpperCase();
 }
 
-function fitLastTitleText() {
-  const available = lastTitleValue.parentElement.clientWidth;
+function fitLastTitleText() { fitLastTitleValue(lastTitleValue); }
+
+function fitTournamentName(name, fontSize) {
+  name.style.fontSize = fontSize;
+  const boxStyle = getComputedStyle(name.parentElement);
+  const available = name.parentElement.clientWidth - parseFloat(boxStyle.paddingLeft) - parseFloat(boxStyle.paddingRight);
   if (!available) return;
   const measure = document.createElement("canvas").getContext("2d");
-  measure.font = getComputedStyle(lastTitleValue).font;
-  const text = lastTitleValue.textContent;
+  measure.font = getComputedStyle(name).font;
+  const width = measure.measureText(name.textContent || name.dataset.placeholder || "TOURNAMENT").width + 2;
+  name.style.width = Math.max(available, width) + "px";
+  name.style.setProperty("--tournament-name-scale", Math.min(1, available / width));
+}
+
+function fitTournamentHeadings() {
+  document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong").forEach(name => {
+    if (name.getClientRects().length) fitTournamentName(name, name.style.fontSize || getComputedStyle(name).fontSize);
+  });
+}
+
+function fitLastTitleValue(value) {
+  const available = value.parentElement.clientWidth;
+  if (!available) return;
+  const measure = document.createElement("canvas").getContext("2d");
+  measure.font = getComputedStyle(value).font;
+  const text = value.textContent;
   const width = Math.max(available, measure.measureText(text).width + 2);
-  lastTitleValue.style.width = width + "px";
-  lastTitleValue.style.transform = width > available ? "scaleX(" + available / width + ")" : "none";
+  value.style.width = width + "px";
+  value.style.transform = width > available ? "scaleX(" + available / width + ")" : "none";
 }
 
 new ResizeObserver(fitLastTitleText).observe(lastTitleValue.parentElement);
 document.fonts.ready.then(fitLastTitleText);
 
-function renderPlayerForm(player) {
+function renderPlayerForm(player, root = cardDesign) {
   const form = playerForm(player);
-  formButtons.forEach((button, index) => {
+  [...root.querySelector(".card-content").querySelectorAll(".form-result")].forEach((button, index) => {
     const result = form.results[index];
     const label = result === "win" ? "win" : result === "loss" ? "loss" : "not set";
     button.dataset.result = result;
@@ -168,8 +190,9 @@ function renderPlayerForm(player) {
     button.setAttribute("aria-label", "Match " + (index + 1) + ": " + label + ". Click to cycle blank, win, loss.");
     button.title = "Match " + (index + 1) + ": " + label + " (click: blank > win > loss)";
   });
-  lastTitleValue.textContent = player.latest_title ? lastTitleLabel(player.latest_title) : "W/O";
-  fitLastTitleText();
+  const value = root.querySelector("#last-title-value");
+  value.textContent = player.latest_title ? lastTitleLabel(player.latest_title) : "W/O";
+  fitLastTitleValue(value);
 }
 
 
@@ -187,6 +210,7 @@ function getAge(dob, asOf) {
 }
 
 function tierForRank(rank, age) {
+  if (!Number.isFinite(rank)) return Number.isFinite(age) && age >= 0 && age <= 19 ? "prospect" : "top_300";
   if (rank === 1) return "top_1";
   if (rank <= 10) return "top_10";
   if (Number.isFinite(age) && age >= 0 && age <= 19) return "prospect";
@@ -364,67 +388,80 @@ function selectPlayer(player) {
   options.classList.remove("open");
   searchInput.setAttribute("aria-expanded", "false");
   options.replaceChildren();
-  status.textContent = "Selected #" + player.rank + " · " + player.country;
+  status.textContent = "Selected " + (player.rank ?? "NR") + " · " + player.country;
   renderCard(player);
 }
 
 function renderCard(player) {
+  if (cardType.value === "draw") return renderDrawCard();
   if (isResultCard()) return renderResultCard();
   document.querySelector(".card-content").hidden = false;
   document.getElementById("result-card-content").hidden = true;
+  document.getElementById("draw-card-content").hidden = true;
+  renderPlayerArtwork(cardDesign, player, cardType.value);
+  card.hidden = false;
+  scaleCardDesign();
+  fitTournamentHeadings();
+}
+
+function renderPlayerArtwork(root, player, type = "form") {
+  const node = id => root.querySelector("#" + id);
   const name = player.name.toLocaleUpperCase();
   const age = getAge(player.dob, snapshotDate);
-  const type = cardType.value;
-  card.dataset.type = type;
-  const titleDetails = document.getElementById("card-title-details");
+  const frame = root === cardDesign ? card : root;
+  frame.dataset.type = type;
+  const titleDetails = node("card-title-details");
   titleDetails.hidden = type === "form";
   if (type === "form") titleDetails.removeAttribute("src");
   else titleDetails.src = "assets/details/" + (type === "wta-tour" ? "wtatour" : "wta125") + "_title_details.png";
   const tournament = titleTournaments().find(item => item.id === selectedTournamentId);
   const eventName = tournament ? tournamentName(tournament).toLocaleUpperCase() : "\u2014";
-  const eventHeading = document.getElementById("card-event-name");
+  const eventHeading = node("card-event-name");
   eventHeading.textContent = eventName;
-  eventHeading.style.fontSize = Math.min(7.7, 110 / eventName.length) + "cqw";
-  const eventBox = document.querySelector(".title-event");
+  eventHeading.style.fontSize = "8.3cqw";
+  const eventBox = root.querySelector(".title-event");
   eventBox.style.backgroundColor = tournament ? tournament.color : type === "wta-125" ? "#7ed957" : "#699694";
   const category = tournament ? tournament.category : type === "wta-125" ? "WTA 125" : "WTA TOUR";
   eventBox.style.width = Math.max(18, Math.min(48, eventName.length * 2.9 + 3), Math.min(48, category.length * 1.35 + 3)) + "%";
-  document.getElementById("card-event-category").textContent = tournament
+  node("card-event-category").textContent = tournament
     ? tournament.category.toLocaleUpperCase()
     : type === "wta-125" ? "WTA 125" : "WTA TOUR";
-  document.getElementById("card-age").textContent = age + " ANS";
-  document.getElementById("card-country").textContent = player.country + ".";
-  const flag = document.getElementById("card-flag");
+  node("card-age").textContent = age + " ANS";
+  node("card-country").textContent = player.country ? player.country + "." : "—";
+  const flag = node("card-flag");
   // Flag filenames use the three-letter country codes from the rankings CSV.
-  flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
+  flag.hidden = !player.country;
+  if (player.country) flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
+  else flag.removeAttribute("src");
   flag.alt = player.country + " flag";
-  document.getElementById("card-name").style.fontSize = Math.min(10.2, 140 / name.length) + "cqw";
-  document.getElementById("card-rank").parentElement.style.fontSize = String(player.rank).length > 3 ? "9cqw" : "12cqw";
-  document.getElementById("card-rank-ordinal").textContent = player.rank === 1 ? "er" : "\u00e8me";
+  node("card-name").style.fontSize = Math.min(10.2, 140 / name.length) + "cqw";
+  node("card-rank").parentElement.style.fontSize = String(player.rank).length > 3 ? "9cqw" : "12cqw";
+  node("card-rank-ordinal").textContent = player.rank == null ? "" : player.rank === 1 ? "er" : "\u00e8me";
+  node("card-rank-ordinal").hidden = player.rank == null;
   const tier = tierForRank(player.rank, age);
-  card.dataset.tier = tier;
-  document.getElementById("card-base").src = "assets/cards/" + tier + "_card.png";
+  frame.dataset.tier = tier;
+  node("card-base").src = "assets/cards/" + tier + "_card.png";
   const detailsTier = ["top_400", "top_500", "top_600"].includes(tier) ? "top_200" : tier;
-  document.getElementById("card-details").src = "assets/details/" + detailsTier + "_details.png";
-  const baseBadge = document.getElementById("card-base-badge");
+  node("card-details").src = "assets/details/" + detailsTier + "_details.png";
+  const baseBadge = node("card-base-badge");
   if (tier === "top_10" || tier === "prospect") baseBadge.src = "assets/cards/" + tier + "_card.png";
   else baseBadge.removeAttribute("src");
-  document.getElementById("card-name").textContent = name;
-  document.getElementById("card-rank").textContent = String(player.rank);
-  const atCareerBest = player.rank === player.best_rank;
-  const careerLabel = document.getElementById("career-best-label");
+  node("card-name").textContent = name;
+  node("card-rank").textContent = String(player.rank ?? "NR");
+  const atCareerBest = Number.isFinite(player.rank) && player.rank === player.best_rank;
+  const careerLabel = node("career-best-label");
   careerLabel.hidden = !atCareerBest;
   careerLabel.textContent = "MEILLEUR CLASSEMENT\nEN CARRI\u00c8RE";
-  const bestRankLabel = document.getElementById("best-rank-label");
+  const bestRankLabel = node("best-rank-label");
   bestRankLabel.hidden = atCareerBest;
   const bestRankDigits = String(player.best_rank).length;
   bestRankLabel.classList.toggle("long-rank", bestRankDigits > 2);
   bestRankLabel.classList.toggle("three-digit-rank", bestRankDigits === 3);
-  document.getElementById("best-rank-value").textContent = player.best_rank;
-  document.getElementById("best-rank-year").textContent = "EN " + player.best_rank_year;
+  node("best-rank-value").textContent = player.best_rank ?? "—";
+  node("best-rank-year").textContent = player.best_rank_year ? "EN " + player.best_rank_year : "";
 
-  const image = document.getElementById("card-photo");
-  const initials = document.getElementById("card-initials");
+  const image = node("card-photo");
+  const initials = node("card-initials");
   const photoPath = photoByName.get(normalize(player.name));
   if (photoPath) {
     image.src = photoPath;
@@ -438,12 +475,10 @@ function renderCard(player) {
     initials.textContent = player.name.split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
     initials.style.display = "flex";
   }
-  document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + player.rank;
-  document.getElementById("svg-description").textContent = name + ", WTA singles rank " + player.rank + ", " + player.country + ", " + age + " years old.";
-  renderPlayerForm(player);
-  renderTourTitleNumber(player);
-  card.removeAttribute("hidden");
-  scaleCardDesign();
+  node("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + (player.rank ?? "NR");
+  node("svg-description").textContent = name + ", WTA singles rank " + (player.rank ?? "NR") + ", " + player.country + ", " + age + " years old.";
+  renderPlayerForm(player, root);
+  renderTourTitleNumber(player, root);
 }
 
 function moveActive(direction) {
@@ -456,8 +491,8 @@ function moveActive(direction) {
 cardType.addEventListener("change", () => {
   updateBackgroundControls();
   const playerSearchWrap = document.getElementById("player-search-wrap");
-  playerSearchWrap.style.visibility = isResultCard() ? "hidden" : "";
-  playerSearchWrap.inert = isResultCard();
+  playerSearchWrap.style.visibility = isResultCard() || cardType.value === "draw" ? "hidden" : "";
+  playerSearchWrap.inert = isResultCard() || cardType.value === "draw";
   updateTournamentSearch();
   if (selectedPlayer) renderCard(selectedPlayer);
   else if (!isResultCard()) card.hidden = true;

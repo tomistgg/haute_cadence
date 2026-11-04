@@ -11,6 +11,8 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
 
 from update_wta_champions import save_history
+from update_wta_draws import OUTPUT as DRAW_OUTPUT
+from update_wta_draws import collect_draws
 from update_wta_results import OUTPUT, ROOT, api_time, collect_results
 
 _refresh_lock = threading.Lock()
@@ -18,20 +20,24 @@ _refresh_lock = threading.Lock()
 
 class CardHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
-        if urlsplit(self.path).path != "/data/recent_results.json":
+        path = urlsplit(self.path).path
+        if path not in {"/data/recent_results.json", "/data/current_draws.json"}:
             return super().do_GET()
+        output, collect = (
+            (DRAW_OUTPUT, collect_draws) if path == "/data/current_draws.json" else (OUTPUT, collect_results)
+        )
         try:
             with _refresh_lock:
-                payload = json.loads(OUTPUT.read_text(encoding="utf-8")) if OUTPUT.is_file() else {}
+                payload = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
                 updated = api_time(payload.get("updated_at"))
                 if updated is None or datetime.now(UTC) - updated > timedelta(minutes=5):
                     try:
-                        payload = collect_results()
-                        save_history(OUTPUT, payload)
+                        payload = collect()
+                        save_history(output, payload)
                     except Exception as error:
                         if not payload:
                             raise
-                        payload["refresh_error"] = "WTA results could not be refreshed; showing the saved feed."
+                        payload["refresh_error"] = "WTA data could not be refreshed; showing the saved feed."
                         self.log_error("WTA result refresh failed: %s", error)
             body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
             self.send_response(200)
