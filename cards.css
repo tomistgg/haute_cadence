@@ -70,7 +70,7 @@
 .player-card[data-type="wta-125"] .title-event, .player-card[data-type="wta-tour"] .title-event { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; left: 50%; transform: translateX(-50%); top: .85%; width: 32%; height: 7.9%; padding: .4% .5%; border-radius: 1.1cqw; background: #7ed957; color: #fff; box-shadow: 0 .4cqw 1.2cqw #142a3640; }
 .title-event strong { display: block; flex: none; width: 100%; text-align: center; transform: translateY(calc(.7cqw + 2px)); font: 400 8.3cqw/.7 "Bebas Neue", sans-serif; white-space: nowrap; text-shadow: .1cqw .3cqw .5cqw #16392355; }
 .title-event span { display: block; flex: none; width: 100%; text-align: center; font: 400 2cqw/1 "Chunk Five", serif; }
-.title-event > span, .result-event > span, .draw-event > span { letter-spacing: .08em; }
+.title-event > span, .result-event > span, .draw-event > span, .schedule-tournament-button > span { letter-spacing: .08em; }
 .title-event > span, .result-event > span, .draw-event > span, .schedule-tournament-button > span { position: relative; top: 4px; }
 .title-event strong, .result-event strong, .draw-event strong, .schedule-tournament-button strong { position: relative; top: 1px; }
 .player-card[data-type="wta-tour"] .title-event { background: #699694; }
@@ -144,13 +144,13 @@
 .result-score-name > span { display: block; flex: none; white-space: nowrap; }
 .result-score-row[data-side="loser"] .result-score-name { top: calc(var(--row-top) - 3px); }
 .result-score-row.is-match-winner .result-score-name { color: #ffd400; }
-.result-score-sets { position: absolute; left: 1155px; top: var(--row-top); width: 160px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 104px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
+.result-score-sets { position: absolute; left: 1155px; top: var(--row-top); width: 160px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 89px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
 .result-content[data-sets="3"] .result-score-sets { left: 1163px; width: 216px; grid-template-columns: repeat(3, 1fr); }
 .result-score-sets > span { position: relative; display: flex; align-items: center; justify-content: center; }
 .result-score-row[data-side="loser"] .result-score-sets > span { top: -2px; }
 .result-score-sets .set-won { color: #ffd400; }
 .result-score-sets sup { align-self: flex-start; margin-top: 10px; font-size: 24px; -webkit-text-stroke: 3px #000; }
-.result-score-sets > .two-digit-score { font-size: 62px; }
+.result-score-sets > .two-digit-score { font-size: 47px; }
 .result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
 .result-content[data-manual="true"] :is([data-itf-field="player"], [data-itf-field="category"], [data-itf-field="tournament"]) { cursor: pointer; }
 .result-content[data-manual="true"] .result-round-heading { cursor: pointer; }
