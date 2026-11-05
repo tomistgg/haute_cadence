@@ -3,7 +3,6 @@
 const drawContent = document.getElementById("draw-card-content");
 const drawTournament = document.getElementById("draw-tournament");
 const drawRound = document.getElementById("draw-round");
-const drawDesign = document.getElementById("draw-design");
 const drawStatus = document.getElementById("draw-status");
 const drawMatches = document.getElementById("draw-matches");
 const drawPortraitInput = document.getElementById("draw-portrait-upload");
@@ -39,7 +38,6 @@ function manualDraw(round = drawRound.value) {
   if (!manualDraws.has(round)) {
     manualDraws.set(round, {
       id: "manual-draw-" + round, name: "", city: "", category: "",
-      design: ["tour", "125"].includes(drawDesign.value) ? drawDesign.value : "tour",
       header: { F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE" }[round],
       rounds: { [round]: Array.from({ length: { F: 1, S: 2, Q: 4 }[round] }, (_, index) => ({
         id: "match-" + index, players: [null, null],
@@ -47,10 +45,6 @@ function manualDraw(round = drawRound.value) {
     });
   }
   return manualDraws.get(round);
-}
-
-function updateManualDrawControls() {
-  if (isManualDraw()) drawDesign.value = manualDraw().design;
 }
 
 function selectManualDrawPlayer(index) {
@@ -65,7 +59,6 @@ function selectManualDrawPlayer(index) {
   openPlayerPicker(previous, "Select Player " + (index + 1), player => {
     if (!isManualDraw() || drawRound.value !== round) return;
     match.players[side] = { ...player, manual: true, rank: typeof player.rank === "number" ? player.rank : null };
-    updateManualDrawControls();
     renderDrawCard();
   }, previous.placeholder ? null : () => {
     if (!isManualDraw() || drawRound.value !== round) return;
@@ -78,11 +71,6 @@ function selectManualDrawPlayer(index) {
 function currentDrawTournaments() {
   const today = new Date().toISOString().slice(0, 10);
   return (drawFeed?.tournaments || []).filter(t => t.start_date.slice(0, 10) <= today && today <= t.end_date.slice(0, 10));
-}
-
-function drawDesignFor(tournament) {
-  if (isManualDraw()) return tournament.design === "125" ? "125" : "tour";
-  return tournament.category === "WTA 125" ? "125" : "tour";
 }
 
 function drawPlayer(person) {
@@ -152,81 +140,6 @@ function drawPlayerSlot(person, geometry, index) {
   return slot;
 }
 
-function draw125PlayerSlot(person, geometry, index) {
-  const manual = isManualDraw();
-  const player = drawPlayer(person);
-  const panel = document.createElement(manual && !player ? "button" : "div");
-  panel.className = "draw-slot draw-125-player";
-  positionDrawSlot(panel, geometry);
-  if (!player) {
-    panel.classList.add("draw-tbd");
-    panel.setAttribute("aria-label", "Opponent not yet confirmed");
-    if (manual) {
-      panel.type = "button"; panel.dataset.drawSlot = index; panel.classList.add("draw-player-choice");
-      panel.setAttribute("aria-label", "Select Player " + (index + 1));
-    }
-    return panel;
-  }
-  panel.dataset.playerId = player.id;
-  const frame = document.createElement("div");
-  frame.className = "draw-125-photo";
-  const photo = drawPhotos.get(player.id) || savedPlayerPhoto(player);
-  if (photo) {
-    const image = document.createElement("img"); image.src = photo; image.alt = player.name;
-    frame.append(image);
-  } else {
-    const initials = document.createElement("span");
-    initials.textContent = playerDisplayName(player).split(/\s+/).map(part => part[0]).slice(0, 2).join("");
-    frame.append(initials);
-  }
-  const upload = document.createElement("button");
-  upload.type = "button"; upload.className = "draw-photo-button";
-  upload.setAttribute("aria-label", "Upload " + player.name + " portrait");
-  upload.title = "Click to upload a portrait";
-  if (manual) {
-    upload.dataset.drawSlot = index;
-    upload.setAttribute("aria-label", "Select Player " + (index + 1) + ": " + player.name);
-    upload.title = "Click to select a player or upload a portrait";
-  }
-  frame.append(upload); panel.append(frame);
-  const name = document.createElement("div");
-  name.className = "draw-125-name";
-  const text = document.createElement("div"); text.className = "draw-125-name-text";
-  const label = document.createElement("span"); label.textContent = playerDisplayName(player).toLocaleUpperCase();
-  text.append(label); name.append(text);
-  if (player.country) {
-    const flag = document.createElement("img"); flag.className = "draw-125-flag";
-    flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg"; flag.alt = player.country + " flag";
-    name.append(flag);
-  }
-  if (manual) {
-    const choose = document.createElement("button");
-    choose.type = "button"; choose.className = "draw-select-player"; choose.dataset.drawSlot = index;
-    choose.setAttribute("aria-label", "Change Player " + (index + 1) + ": " + player.name);
-    name.append(choose);
-  }
-  panel.append(name);
-  const badge = document.createElement("div"); badge.className = "draw-125-rank";
-  const rank = document.createElement("span"); rank.textContent = player.rank ?? "NR";
-  badge.append(rank);
-  if (typeof player.rank === "number") {
-    const ordinal = document.createElement("sup"); ordinal.textContent = player.rank === 1 ? "er" : "ème";
-    badge.append(ordinal);
-  }
-  panel.append(badge);
-  return panel;
-}
-
-function fit125PlayerNames() {
-  drawMatches.querySelectorAll(".draw-125-name-text").forEach(box => {
-    const label = box.firstElementChild;
-    const flag = box.parentElement.querySelector(".draw-125-flag");
-    const available = box.parentElement.clientWidth - 12 - (flag ? flag.offsetWidth + 16 : 0);
-    if (available <= 0) return;
-    box.style.width = fitPlayerName(label, available) + "px";
-  });
-}
-
 function updateDrawH2hColors(h2h) {
   const values = [...h2h.querySelectorAll("[data-h2h-side]")];
   const scores = values.map(value => value.textContent.trim());
@@ -273,7 +186,7 @@ function renderDrawHeading(tournament) {
       for (const attribute of ["contenteditable", "data-draw-field", "tabindex", "role", "aria-label", "aria-haspopup", "aria-controls"]) node.removeAttribute(attribute);
     }
   }
-  drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: tournament.category, name })?.color || (drawDesignFor(tournament) === "125" ? "#7ed957" : "#699694");
+  drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: tournament.category, name })?.color || "#699694";
   fitTournamentName(nameNode, 78 * headingScale + "px");
   if (manual) fitTournamentName(roundLabel, 80 * headingScale + "px");
 }
@@ -284,11 +197,9 @@ function renderDrawCard() {
   const tournament = manual ? manualDraw() : currentDrawTournaments().find(t => t.id === drawTournament.value);
   if (!tournament) { card.hidden = true; return; }
   const round = drawRound.value;
-  const design = drawDesignFor(tournament);
   const matches = tournament.rounds[round] || [];
   card.dataset.type = "draw";
   card.dataset.drawRound = round;
-  card.dataset.drawStyle = design;
   card.removeAttribute("data-tier");
   cardDesign.querySelector(".card-content").hidden = true;
   document.getElementById("card-title-details").hidden = true;
@@ -312,7 +223,7 @@ function renderDrawCard() {
   setTourArtwork("draw-round-art", artwork, 88 * headingScale, "assets/draws", round === "F" ? "finale-title" : artwork);
   layout.slots.forEach((geometry, index) => {
     const person = matches[Math.floor(index / 2)]?.players[index % 2] || null;
-    drawMatches.append(design === "125" ? draw125PlayerSlot(person, geometry, index) : drawPlayerSlot(person, geometry, index));
+    drawMatches.append(drawPlayerSlot(person, geometry, index));
   });
   if (round === "F") {
     const key = tournament.id + ":" + (matches[0]?.id || "pending-0");
@@ -335,17 +246,6 @@ function renderDrawCard() {
     }
     updateDrawH2hColors(h2h);
     drawMatches.append(h2h);
-  } else if (design === "125" && round === "S") {
-    for (const x of [375, 1500]) {
-      const versus = document.createElement("div");
-      versus.className = "draw-vs-crop";
-      versus.style.cssText = `left:${x - 71}px;top:763px;`;
-      const image = document.createElement("img");
-      image.src = "assets/draws/vs-quarters.png";
-      image.alt = "";
-      versus.append(image);
-      drawMatches.append(versus);
-    }
   }
   document.getElementById("svg-title").textContent = (manual ? tournament.header : drawRound.selectedOptions[0].textContent) + " · " + tournament.name;
   document.getElementById("svg-description").textContent = manual ? "Manually composed draw." : "WTA singles draw. Unfilled image placeholders indicate opponents not yet confirmed.";
@@ -353,7 +253,6 @@ function renderDrawCard() {
   scaleCardDesign();
   renderDrawHeading(tournament);
   fitCardPlayerNames(drawMatches);
-  fit125PlayerNames();
   drawMatches.querySelectorAll("#last-title-value").forEach(fitLastTitleValue);
   visibleDrawPlayers = [...new Map(matches.flatMap(match => match.players).filter(Boolean).map(person => {
     const player = drawPlayer(person); return [player.id, player];
@@ -367,7 +266,6 @@ function renderDrawCard() {
   });
   if (visibleDrawPlayers.some(player => player.id === previous)) formPlayer.value = previous;
   document.getElementById("edit-draw-form").disabled = !visibleDrawPlayers.length;
-  document.getElementById("edit-draw-form").hidden = design === "125";
   if (document.getElementById("draw-form-dialog").open) renderDrawFormEditor();
 }
 
@@ -461,11 +359,9 @@ async function refreshDraws(force = false) {
 
 function updateDrawModeControls() {
   const active = isDrawCard(), manual = isManualDraw();
-  document.getElementById("draw-design-picker").hidden = !manual;
   document.getElementById("draw-tournament-picker").hidden = !active;
   for (const id of ["draw-options", "draw-status"]) document.getElementById(id).hidden = !active;
   document.getElementById("refresh-draws").hidden = manual;
-  updateManualDrawControls();
   for (const option of drawRound.options) {
     const label = { F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE" }[option.value];
     option.textContent = label + (manual ? " · " + { F: 2, S: 4, Q: 8 }[option.value] + " players" : "");
@@ -486,12 +382,7 @@ drawTournament.addEventListener("change", () => {
   renderDrawCard();
   if (isDrawCard() && !isManualDraw() && (!drawFeed || Date.now() - drawLastRefresh >= 300000)) refreshDraws();
 });
-drawRound.addEventListener("change", () => { updateManualDrawControls(); renderDrawCard(); });
-drawDesign.addEventListener("change", () => {
-  if (!isManualDraw() || !["tour", "125"].includes(drawDesign.value)) return;
-  manualDraw().design = drawDesign.value;
-  renderDrawCard();
-});
+drawRound.addEventListener("change", renderDrawCard);
 function openDrawCategoryPicker() {
   if (!isManualDraw()) return;
   const round = drawRound.value, draft = manualDraw();
@@ -515,7 +406,7 @@ drawContent.addEventListener("input", event => {
   if (node.textContent !== draft[field]) node.textContent = draft[field];
   if (field === "name") draft.city = draft.name;
   fitTournamentName(node, (node.id === "draw-event-name" ? 78 : 80) * drawLayouts[drawRound.value].width / 1600 + "px");
-  drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: draft.category, name: draft.name })?.color || (draft.design === "125" ? "#7ed957" : "#699694");
+  drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: draft.category, name: draft.name })?.color || "#699694";
 });
 drawContent.addEventListener("keydown", event => {
   if (event.target.matches('[data-draw-field="category"]') && ["Enter", " "].includes(event.key)) {
@@ -533,7 +424,7 @@ setInterval(refreshDrawsIfStale, 300000);
 drawMatches.addEventListener("click", event => {
   const choice = event.target.closest("[data-draw-slot]");
   if (choice && isManualDraw()) { selectManualDrawPlayer(Number(choice.dataset.drawSlot)); return; }
-  const artwork = event.target.closest(".draw-player-card, .draw-125-player");
+  const artwork = event.target.closest(".draw-player-card");
   if (!artwork) return;
   const id = artwork.dataset.playerId;
   const button = event.target.closest(".form-result");

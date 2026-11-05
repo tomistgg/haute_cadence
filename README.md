@@ -40,23 +40,23 @@ Long player names reduce their font size to fit their space while keeping the le
 also applies to both Result Card layouts and WTA 125 draw names; shorter names retain their normal font size.
 
 Draw lists current WTA tournaments (including WTA 125) and FINALE, DEMI-FINALES, and QUARTS DE FINALE.
-Tour and Grand Slam draws use two, four, or eight Form cards. WTA 125 draws automatically use the separate portrait
-design: large photos, white names, round flags, VS panels, and final-ranking tags. Draw frames, brackets, placeholders,
+WTA Tour, Grand Slam, and WTA 125 draws all use the same two, four, or eight Form cards with each player's
+ranking/prospect artwork. Draw frames, brackets, placeholders,
 VS graphics, and round banners use the supplied PNGs in `assets/draws/`. Player panels follow the positions and angles
 of those placeholders; unresolved opponents retain the PNG's image placeholder. Players fill automatically from the official
 singles bracket. Click a portrait to upload its photo. Click the ten form results on a
 card, or use Player form for larger controls, to cycle blank, win, loss from oldest to newest. Form edits share the
 same per-player draft as the main Form card. Final H2H values are edited inside the supplied image's H2H frame.
 Photos, form, H2H, background choice, and selected round are included in the saved PNG. Uploads and edits reset
-on reload. Both designs export at the templates' native sizes: finals 1600 × 900, semifinals 1880 × 1576, and
-quarterfinals 3200 × 1800. WTA 125 keeps its photo/name/flag panels instead of the Tour Form cards; both styles use
-the same supplied layout artwork and editable final H2H frame.
+on reload. Draws export at the templates' native sizes: finals 1600 × 900, semifinals 1880 × 1576, and
+quarterfinals 3200 × 1800. All categories use the same supplied layout artwork and editable final H2H frame.
 The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
+The tournament box leaves a small background gap above it; overlapping player cards appear in front of the box.
 
 Choose Draw, then MANUAL at the bottom of its tournament selector to build a draw without the WTA feed. Choose FINALE (2 players),
 DEMI-FINALES (4), or QUARTS DE FINALE (8), then click the round header or tournament name on the image to type.
-Click the category to choose from the same ten categories as manual Result Cards. Choose the
-WTA Tour / Grand Slam or WTA 125 design independently of the selected category. Click an empty player space, portrait,
+Click the category to choose from the same ten categories as manual Result Cards. All categories share one draw design.
+Click an empty player space, portrait,
 or player name to search the full two-year directory or use custom names, rankings and flags. For a selected player,
 click the portrait and choose Upload portrait in the dialog. The Player form editor, backgrounds, and final H2H editing
 work as in Draw. Each layout keeps its own manual draft until reload; automatic draw updates do not change it.

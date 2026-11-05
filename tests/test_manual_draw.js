@@ -22,7 +22,7 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "draw-card.js"), "utf8"), context);
-vm.runInContext("renderDrawCard = () => {}; updateManualDrawControls = () => {}", context);
+vm.runInContext("renderDrawCard = () => {}", context);
 elements.get("draw-tournament").value = "manual";
 assert.equal(context.isManualDraw(), true);
 
@@ -41,17 +41,9 @@ assert.equal(quarter.name, "");
 assert.equal(context.manualDraw("bad"), null);
 elements.get("draw-tournament").value = "event";
 assert.equal(context.isManualDraw(), false);
-assert.equal(context.drawDesignFor({ category: "WTA 125" }), "125");
-for (const category of ["Grand Slam", "WTA 250", "WTA 500", "WTA 1000", "Finals"]) {
-  assert.equal(context.drawDesignFor({ category }), "tour");
-}
 elements.get("draw-tournament").value = "manual";
-assert.equal(context.drawDesignFor({ design: "tour", category: "WTA 125" }), "tour");
-final.design = "125";
-assert.equal(context.drawDesignFor(final), "125");
 assert.equal(final.name, "Saved final");
 assert.equal(final.header, "My round");
-assert.equal(semi.design, "tour", "changing one draft's design must not overwrite another layout");
 
 context.selectManualDrawPlayer(1);
 choose(context.players[0]);
@@ -78,4 +70,4 @@ assert.equal(context.players[0].rank, 10, "manual edits must not mutate the shar
 assert.equal(context.players[0].country, "FRA");
 context.selectManualDrawPlayer(99);
 assert.equal(final.rounds.F[0].players[0].rank, null);
-console.log("Automatic/manual designs, layout drafts, slot selection, stale-picker guards, NR and directory isolation passed.");
+console.log("Manual round drafts, slot selection, stale-picker guards, NR and directory isolation passed.");

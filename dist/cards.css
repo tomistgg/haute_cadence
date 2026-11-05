@@ -217,12 +217,13 @@
 .player-card[data-type="draw"] .card-design, .draw-content { width: calc(var(--draw-width, 1600) * 1px); height: calc(var(--draw-height, 900) * 1px); }
 .draw-content, #draw-matches { position: absolute; inset: 0; }
 .draw-layout-art, .draw-versus-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.draw-versus-art { z-index: 2; }
-#draw-round-art { z-index: 3; left: 50%; top: 0; transform: translateX(-50%); }
-.draw-event { position: absolute; z-index: 3; top: 0; right: calc(16px * var(--draw-heading-scale, 1)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(2px * var(--draw-heading-scale, 1)); width: calc(234px * var(--draw-heading-scale, 1)); height: calc(96px * var(--draw-heading-scale, 1)); padding: calc(6px * var(--draw-heading-scale, 1)); border-radius: calc(6px * var(--draw-heading-scale, 1)); color: #fff; }
+.draw-versus-art { z-index: 3; }
+#draw-round-art { z-index: 4; left: 50%; top: 0; transform: translateX(-50%); }
+.draw-event { position: absolute; z-index: 1; top: calc(14px * var(--draw-heading-scale, 1)); right: calc(16px * var(--draw-heading-scale, 1)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(2px * var(--draw-heading-scale, 1)); width: calc(234px * var(--draw-heading-scale, 1)); height: calc(96px * var(--draw-heading-scale, 1)); padding: calc(6px * var(--draw-heading-scale, 1)); border-radius: calc(6px * var(--draw-heading-scale, 1)); color: #fff; }
 .draw-event strong { width: 100%; text-align: center; transform: translateY(2px) scaleX(var(--tournament-name-scale, 1)); font: 400 calc(78px * var(--draw-heading-scale, 1))/.82 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
 .draw-event > span { font: 400 calc(20px * var(--draw-heading-scale, 1))/1 "Chunk Five", serif; white-space: nowrap; }
-.draw-slot { position: absolute; transform-origin: top left; filter: drop-shadow(0 8px 8px #00112370); }
+.draw-slot { position: absolute; z-index: 2; transform-origin: top left; filter: drop-shadow(0 8px 8px #00112370); }
+.draw-slot:not(.draw-tbd) { background: #132b3e; box-shadow: 0 0 0 4px #132b3e; pointer-events: auto; }
 .draw-player-card.player-card { position: absolute; left: 0; top: 0; width: 1440px !important; height: 1800px; margin: 0; box-shadow: none; transform: scale(var(--draw-player-scale-x), var(--draw-player-scale-y)); transform-origin: top left; }
 .draw-content [data-draw-field] { position: relative; pointer-events: auto; cursor: text; -webkit-user-select: text; user-select: text; text-transform: uppercase; }
 .draw-content [data-draw-field="category"] { cursor: pointer; }
@@ -230,39 +231,20 @@
 .draw-player-portrait { margin-top: 12px; padding: 10px 14px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
 .draw-select-player { position: absolute; left: 27%; top: .6%; width: 59%; height: 8.8%; padding: 0; border: 0; background: transparent; pointer-events: auto; cursor: pointer; }
 .draw-player-choice { padding: 0; pointer-events: auto; cursor: pointer; }
-.draw-select-player:focus-visible, .draw-player-choice:focus-visible { outline: 5px solid #ffd400; outline-offset: -5px; }
+.draw-select-player:focus-visible, .draw-player-choice:focus-visible { outline: 5px solid #fff; outline-offset: -5px; }
 #draw-round-art[data-manual="true"]::before { content: ""; position: absolute; z-index: 1; inset: calc(4px * var(--draw-heading-scale, 1)); border-radius: calc(10px * var(--draw-heading-scale, 1)); background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
 #draw-round-art .manual-draw-logo { z-index: 2; left: calc(5px * var(--draw-heading-scale, 1)); top: calc(4px * var(--draw-heading-scale, 1)); width: calc(90px * var(--draw-heading-scale, 1)); height: calc(80px * var(--draw-heading-scale, 1)); object-fit: contain; }
 .manual-draw-round-text { position: absolute; z-index: 2; left: calc(105px * var(--draw-heading-scale, 1)); right: calc(7px * var(--draw-heading-scale, 1)); top: calc(5px * var(--draw-heading-scale, 1)); bottom: calc(5px * var(--draw-heading-scale, 1)); display: flex; align-items: center; justify-content: center; }
 .manual-draw-round-text strong { display: block; text-align: center; color: #fff; font: 400 calc(80px * var(--draw-heading-scale, 1))/.82 "Bebas Neue", sans-serif; transform: scaleX(var(--tournament-name-scale, 1)); text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
 .manual-draw-round-text strong:empty::before, .draw-content[data-manual="true"] .draw-event [data-placeholder]:empty::before { content: attr(data-placeholder); opacity: .7; }
 .draw-photo-button { position: absolute; left: 5.42%; top: 18.5%; width: 89.17%; height: 62.6%; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
-.draw-photo-button:focus-visible { outline: 5px solid #ffd400; outline-offset: -5px; }
+.draw-photo-button:focus-visible { outline: 5px solid #fff; outline-offset: -5px; }
 .draw-tbd { padding: 0; border: 0; background: transparent; filter: none; }
-.draw-h2h { position: absolute; z-index: 2; left: 706px; top: 605px; width: 194px; height: 105px; color: #fff; font: 800 80px/1 "TT Bluescreens Upright", sans-serif; }
+.draw-h2h { position: absolute; z-index: 3; left: 706px; top: 605px; width: 194px; height: 105px; color: #fff; font: 800 80px/1 "TT Bluescreens Upright", sans-serif; }
 .draw-h2h span { position: absolute; top: 0; bottom: 0; width: 70px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: text; color: #b8b8b8; }
 .draw-h2h span:first-child { left: 5px; }
 .draw-h2h span:last-child { right: 5px; }
 .draw-h2h span:empty::before { content: attr(data-placeholder); opacity: .6; }
 .draw-h2h span:focus { outline: 3px solid #ffd400; }
-.draw-vs-crop { position: absolute; z-index: 2; width: 142px; height: 155px; overflow: hidden; pointer-events: none; }
-.draw-vs-crop img { position: absolute; left: -637px; top: -539px; width: 3200px; height: 1800px; max-width: none; }
-.draw-design-picker { display: flex; flex: 0 1 220px; min-width: 0; flex-direction: column; gap: 6px; color: #b9d7df; font-size: .8rem; }
-#draw-design { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #051b31; color: #fff; font-size: 1rem; }
-.draw-options:has(.draw-design-picker:not([hidden])) { align-items: flex-end; }
 .draw-options #draw-round { flex: 1; }
-.draw-125-player:not(.draw-tbd) { background: #132b3e; }
-.draw-125-photo { position: absolute; inset: 0 0 94px; overflow: hidden; border: 6px solid #00cba8; background: #132b3e; }
-.draw-125-photo > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
-.draw-125-photo > span { display: flex; align-items: center; justify-content: center; height: 100%; color: #d2f9f4; font: italic 800 160px/1 "TT Bluescreens", sans-serif; }
-.draw-125-photo .draw-photo-button { inset: 0; width: 100%; height: 100%; }
-.draw-125-name { position: absolute; left: 0; bottom: 0; width: 100%; height: 94px; display: flex; align-items: center; justify-content: center; gap: 16px; padding: 0 6px; color: #fff; font: italic 800 80px/1 "TT Bluescreens", sans-serif; }
-.draw-125-name-text { flex: none; min-width: 0; }
-.draw-125-name-text > span { display: block; white-space: nowrap; }
-.draw-125-flag { flex: none; width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
-.draw-125-name .draw-select-player { inset: 0; width: 100%; height: 100%; }
-.draw-125-rank { position: absolute; left: -10px; top: -10px; display: flex; align-items: center; justify-content: center; gap: 4px; width: 200px; height: 108px; border: 4px solid #006b69; border-radius: 10px; box-shadow: 0 8px 12px #0006; background: linear-gradient(120deg, #4cc6c0, #96dceb); color: #000; font: italic 800 88px/1 "TT Bluescreens", sans-serif; }
-.draw-125-rank sup { align-self: flex-start; margin-top: 9px; font-size: 38px; }
-.player-card[data-draw-style="125"][data-draw-round="F"] .draw-125-player:nth-child(2) .draw-125-rank { background: linear-gradient(120deg, #1bd5b6, #a2f3e6); }
-.player-card[data-draw-style="125"]:not([data-draw-round="F"]) .draw-125-rank { display: none; }
-@media (max-width: 480px) { .draw-tournament-picker { flex-basis: 100%; } .draw-options { flex-wrap: wrap; } #draw-round { flex: 1 1 100%; } #refresh-draws, #edit-draw-form { flex: 1; } .draw-design-picker { flex: 1 1 100%; } .draw-options #draw-round { flex-basis: 100%; } }
+@media (max-width: 480px) { .draw-tournament-picker { flex-basis: 100%; } .draw-options { flex-wrap: wrap; } #draw-round { flex: 1 1 100%; } #refresh-draws, #edit-draw-form { flex: 1; } .draw-options #draw-round { flex-basis: 100%; } }
