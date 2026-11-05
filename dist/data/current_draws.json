@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-05T13:16:03.167263+00:00",
+  "updated_at": "2026-11-05T14:52:56.127716+00:00",
   "date": "2026-11-05",
   "tournaments": [
     {
@@ -244,8 +244,20 @@
             "id": "LS007",
             "position": 3,
             "players": [
-              null,
-              null
+              {
+                "id": "323677",
+                "first_name": "Justina",
+                "last_name": "Mikulskyte",
+                "name": "Justina Mikulskyte",
+                "country": "LTU"
+              },
+              {
+                "id": "328631",
+                "first_name": "Noma",
+                "last_name": "Noha Akugue",
+                "name": "Noma Noha Akugue",
+                "country": "GER"
+              }
             ],
             "state": "U"
           }
@@ -363,7 +375,13 @@
             "id": "LS007",
             "position": 3,
             "players": [
-              null,
+              {
+                "id": "327367",
+                "first_name": "Anastasia",
+                "last_name": "Zakharova",
+                "name": "Anastasia Zakharova",
+                "country": "RUS"
+              },
               {
                 "id": "323149",
                 "first_name": "Lucrezia",

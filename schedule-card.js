@@ -20,12 +20,12 @@ const scheduleFrames = {
   top_1: [216, 571], top_10: [216, 619], top_20: [183, 622],
   top_100: [216, 619], "top_100+": [216, 589], prospect: [240, 589],
 };
-// Visible bounds and crop-edge colors from the PNGs, without their transparent canvas padding.
+// Visible bounds and round-text width, excluding each PNG's transparent canvas padding.
 const scheduleBanners = {
-  premiers: [160, 327, 1178, 167, 851, "#5fc9b4"], deuxiemes: [120, 304, 1228, 167, 901, "#60c9b3"],
-  quarts: [158, 341, 1223, 167, 897, "#60c9b4"], demi: [209, 366, 1060, 168, 737, "#79d3c0"],
-  finale: [354, 342, 798, 167, 475, "#b9e6dd"], qualy1: [90, 335, 1284, 167, 955, "#5fc3ae"],
-  qualy2: [98, 373, 1284, 168, 963, "#62cab4"], qualy3: [135, 366, 1284, 168, 963, "#60c6b1"],
+  premiers: [160, 327, 1178, 167, 851], deuxiemes: [120, 304, 1228, 167, 901],
+  quarts: [158, 341, 1223, 167, 897], demi: [209, 366, 1060, 168, 737],
+  finale: [354, 342, 798, 167, 475], qualy1: [90, 335, 1284, 167, 955],
+  qualy2: [98, 373, 1284, 168, 963], qualy3: [135, 366, 1284, 168, 963],
 };
 
 function schedulePlayerFrame(player) {
@@ -113,12 +113,12 @@ function schedulePlayerSlot(matchIndex, side, geometry) {
 function scheduleGeometry(count, index) {
   if (count === 4) {
     return {
-      left: [276, 789], width: 380, height: 212,
+      left: [276, 789], width: 376, height: 376 * 547 / 991,
       top: [343, 731, 1118, 1505][index], time: [280, 668, 1055, 1442][index],
     };
   }
   return {
-    left: [324, 781], width: 340, height: 190,
+    left: [324, 781], width: 336, height: 336 * 547 / 991,
     top: [251, 573, 898, 1222, 1546][index], time: [195, 517, 842, 1166, 1490][index],
   };
 }
@@ -141,7 +141,8 @@ function renderScheduleCard() {
   scheduleContent.dataset.matchCount = String(scheduleState.count);
   document.getElementById("schedule-layout-art").src = "assets/schedule/" + scheduleState.count + "_matches.png";
   const tournament = tournaments.find(item => item.id === scheduleState.tournamentId);
-  document.getElementById("schedule-tournament-button").style.backgroundColor = tournament?.color || "#699694";
+  const tournamentButton = document.getElementById("schedule-tournament-button");
+  tournamentButton.style.backgroundColor = tournament?.color || "#699694";
   document.getElementById("schedule-tournament-name").textContent = tournament
     ? tournamentName(tournament).toLocaleUpperCase() : "TOURNAMENT";
   document.getElementById("schedule-tournament-category").textContent = tournament
@@ -150,17 +151,21 @@ function renderScheduleCard() {
   const banner = scheduleState.round === "troisiemes" ? "deuxiemes" : scheduleState.round;
   roundArt.src = "assets/schedule/" + banner + ".png";
   roundArt.alt = scheduleRounds[scheduleState.round];
-  const [x, y, width, height, contentWidth, tailColor] = scheduleBanners[banner];
-  document.getElementById("schedule-round-button").style.background = tailColor;
-  const bannerScaleY = 134 / height, bannerScaleX = Math.min(bannerScaleY, 680 / contentWidth);
-  roundArt.parentElement.style.width = Math.min(680, (width - 30) * bannerScaleX) + "px";
-  roundArt.style.cssText = `left:${-x * bannerScaleX}px;top:${-y * bannerScaleY}px;width:${1600 * bannerScaleX}px;height:${900 * bannerScaleY}px;`;
+  const [x, y, width, height, contentWidth] = scheduleBanners[banner];
+  const bannerScale = 134 / height;
+  const bannerWidth = width * bannerScale;
+  const roundButton = document.getElementById("schedule-round-button");
+  roundButton.dataset.round = scheduleState.round;
+  roundButton.style.width = bannerWidth + "px";
+  roundArt.parentElement.style.width = "100%";
+  roundArt.style.cssText = `left:${-x * bannerScale}px;top:${-y * bannerScale}px;width:${1600 * bannerScale}px;height:${900 * bannerScale}px;`;
+  tournamentButton.style.right = (1440 - bannerWidth) / 2 + 14 + "px";
+  tournamentButton.style.maxWidth = (width - contentWidth) * bannerScale - 28 + "px";
   const roundLabel = document.getElementById("schedule-round-label");
   roundLabel.hidden = scheduleState.round !== "troisiemes";
   if (!roundLabel.hidden) {
     // No third-round PNG was supplied; retain its logo and paint the label over the shared strip.
     roundArt.parentElement.style.width = "150px";
-    document.getElementById("schedule-round-button").style.background = "linear-gradient(90deg, #0bb999 150px, #b9e6dd)";
     roundLabel.textContent = scheduleRounds.troisiemes;
   }
   scheduleMatches.replaceChildren();

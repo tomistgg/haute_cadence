@@ -101,11 +101,28 @@ let visiblePlayers = [];
 
 const TOURNAMENT_NAME_OVERRIDES = {
   "WTA 500 Perth + Sydney": "United Cup",
-  "Grand Slam Melbourne": "Australian Open",
+  "Grand Slam Melbourne": "Open d'Australie",
   "Grand Slam Paris": "Roland Garros",
   "Grand Slam Wimbledon": "Wimbledon",
   "Grand Slam Flushing Meadows": "US Open",
-  "Grand Slam New York": "US Open"
+  "Grand Slam New York": "US Open",
+  "Finals Indian Wells": "WTA Finals",
+  "WTA Finals Indian Wells": "WTA Finals",
+  "Parma": "Parme",
+  "Modena": "Modène",
+  "Manila": "Manille",
+  "London": "Queen's",
+  "Athens": "Athènes",
+  "Warsaw": "Varsovie",
+  "Philadelphia": "Philadelphie",
+  "Valencia": "Valence",
+  "Singapore": "Singapour",
+  "Beijing": "Pékin",
+  "Lisbon": "Lisbonne",
+  "Mallorca": "Majorque",
+  "Palermo": "Palerme",
+  "Hamburg": "Hambourg",
+  "'s-Hertogenbosch": "Bois-le-duc"
 };
 
 const photoByName = new Map([
@@ -256,20 +273,25 @@ function fitCardPlayerNames(root = cardDesign) {
 }
 
 function fitTournamentName(name, fontSize) {
+  name.dataset.tournamentFontSize = fontSize;
   name.style.fontSize = fontSize;
+  name.style.removeProperty("--tournament-name-scale");
   const boxStyle = getComputedStyle(name.parentElement);
   const available = name.parentElement.clientWidth - parseFloat(boxStyle.paddingLeft) - parseFloat(boxStyle.paddingRight);
-  if (!available) return;
+  if (available <= 0) return;
   const measure = document.createElement("canvas").getContext("2d");
-  measure.font = getComputedStyle(name).font;
+  const style = getComputedStyle(name);
+  measure.font = style.font;
   const width = measure.measureText(name.textContent || name.dataset.placeholder || "TOURNAMENT").width + 2;
-  name.style.width = Math.max(available, width) + "px";
-  name.style.setProperty("--tournament-name-scale", Math.min(1, available / width));
+  name.style.width = available + "px";
+  name.style.fontSize = parseFloat(style.fontSize) * Math.min(1, available / width) + "px";
 }
 
 function fitTournamentHeadings() {
   document.querySelectorAll(".title-event strong, .result-event strong, .draw-event strong, .manual-draw-round-text strong").forEach(name => {
-    if (name.getClientRects().length) fitTournamentName(name, name.style.fontSize || getComputedStyle(name).fontSize);
+    if (name.getClientRects().length) {
+      fitTournamentName(name, name.dataset.tournamentFontSize || name.style.fontSize || getComputedStyle(name).fontSize);
+    }
   });
 }
 
@@ -398,9 +420,22 @@ function yearTournaments(data, year = new Date().getFullYear()) {
 }
 
 function tournamentName(item) {
-  const lookup = normalize((item.category || item.level) + " " + (item.city || "")).replace(/\s/g, "");
-  const override = Object.entries(TOURNAMENT_NAME_OVERRIDES).find(([key]) => normalize(key).replace(/\s/g, "") === lookup);
-  return override ? override[1] : item.city || item.name.replace(/^WTA\s*125\s*/i, "");
+  const category = item.category || item.level;
+  const city = item.city || item.name.replace(/^WTA\s*125\s*/i, "");
+  const cityKey = normalize(city).replace(/[\s'-]/g, "");
+  const lookup = normalize(category || "").replace(/\s/g, "") + cityKey;
+  const override = Object.entries(TOURNAMENT_NAME_OVERRIDES).find(([key]) =>
+    [lookup, cityKey].includes(normalize(key).replace(/[\s'-]/g, "")));
+  const name = override ? override[1] : city;
+  if (category !== "WTA 125") return name;
+  const date = item.startDate || item.start_date;
+  const year = String(item.year || date?.slice(0, 4) || "");
+  const editions = tournaments.filter(event => event.category === category && normalize(event.city || "") === normalize(city)
+    && (!year || String(event.year || event.startDate.slice(0, 4)) === year));
+  const id = String(item.tournamentId || item.wta_id || item.id || "").replace(/^wta:/, "").split(":")[0];
+  const index = editions.findIndex(event => (item.id && event.id === item.id)
+    || (id && String(event.tournamentId) === id) || (date && event.startDate === date));
+  return editions.length > 1 && index >= 0 ? name + " " + (index + 1) : name;
 }
 
 function tournamentCategoryLabel(category) {

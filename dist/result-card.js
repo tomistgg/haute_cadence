@@ -544,7 +544,8 @@ function currentWeekResultTournaments(data, tour, today = new Intl.DateTimeForma
     const id = String(item.calendarKey || [item.level, item.name, first].join("|")).replace(/\|qualifying$/, "");
     const parent = qualifying ? parents.get(id) : null;
     const nameSource = parent || { ...item, name: item.name.replace(/\s+Qualifying\b/i, "") };
-    const city = tour ? tournamentName({ ...nameSource, category }) : item.city || item.name.replace(/^W\d+\s+/i, "");
+    const city = tournamentName({ ...nameSource, category,
+      city: tour ? nameSource.city : item.city || item.name.replace(/^W\d+\s+/i, "") });
     if (!found.has(id) || !qualifying) found.set(id, { ...item, id, category, city, qualifying });
   }
   return [...found.values()].sort((a, b) => (tour

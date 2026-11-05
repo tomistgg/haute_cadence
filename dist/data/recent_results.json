@@ -1,7 +1,89 @@
 {
-  "updated_at": "2026-11-05T13:20:10.170733+00:00",
-  "window_start": "2026-11-04T13:20:10.170733+00:00",
+  "updated_at": "2026-11-05T14:42:27.965100+00:00",
+  "window_start": "2026-11-04T14:42:27.965100+00:00",
   "matches": [
+    {
+      "id": "1176:2026:LS015",
+      "completed_at": "2026-11-05T14:16:55.380000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "328631",
+        "first_name": "Noma",
+        "last_name": "Noha Akugue",
+        "name": "Noma Noha Akugue",
+        "country": "GER"
+      },
+      "loser": {
+        "id": "333108",
+        "first_name": "Madhurima",
+        "last_name": "Sawant",
+        "name": "Madhurima Sawant",
+        "country": "IND"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 0,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1176:2026:LS014",
+      "completed_at": "2026-11-05T13:15:29.550000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "323677",
+        "first_name": "Justina",
+        "last_name": "Mikulskyte",
+        "name": "Justina Mikulskyte",
+        "country": "LTU"
+      },
+      "loser": {
+        "id": "324972",
+        "first_name": "Tiphanie",
+        "last_name": "Lemaitre",
+        "name": "Tiphanie Lemaitre",
+        "country": "FRA"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1148:2026:LS015",
       "completed_at": "2026-11-05T12:56:19.090000+00:00",
@@ -842,47 +924,6 @@
         {
           "winner": 6,
           "loser": 1,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1176:2026:LS011",
-      "completed_at": "2026-11-04T13:36:47.820000+00:00",
-      "round": "2nd Round",
-      "round_art": "deuxieme",
-      "round_heading": "",
-      "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "331290",
-        "first_name": "Gina",
-        "last_name": "Feistel",
-        "name": "Gina Feistel",
-        "country": "POL"
-      },
-      "loser": {
-        "id": "316588",
-        "first_name": "Isabella",
-        "last_name": "Shinikova",
-        "name": "Isabella Shinikova",
-        "country": "BUL"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 2,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 3,
           "tiebreak": ""
         }
       ],

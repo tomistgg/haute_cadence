@@ -48,6 +48,7 @@ Google credentials stay in the Worker's secrets. Deployment and folder-sharing i
 The local server detects changes to the shared name file; reload to rebuild and load the updated labels.
 Long player names reduce their font size to fit their space while keeping the letters' natural proportions. This
 also applies to both Result Card layouts and WTA 125 draw names; shorter names retain their normal font size.
+Long tournament names also reduce their font size to fit, preserving the letters' natural proportions.
 
 Draw lists current WTA tournaments (including WTA 125) and FINALE, DEMI-FINALES, and QUARTS DE FINALE.
 WTA Tour, Grand Slam, and WTA 125 draws all use the same two, four, or eight Form cards with each player's
@@ -178,7 +179,7 @@ Form cards use locally bundled circular country flags, with the CSV's three-lett
 
 The 2026 calendar was completed from the official WTA tournaments API for January 1 through December 31 (both API pages), with cancelled tournaments excluded. Search uses each event's season year, so December warm-up events for the following season do not appear in the wrong year. Qualifying rows are not listed as separate title events.
 
-Tournament display-name overrides apply to both search results and card headings: United Cup, Australian Open, Roland Garros, Wimbledon, and US Open. Searches also match the original city and tournament name. Overrides are scoped by category, so the WTA 125 in Paris keeps its city label.
+Tournament display-name overrides apply to search results and card headings, including French city names, Queen's, Open d'Australie, and WTA Finals. Repeat WTA 125 events in the same city are numbered in calendar date order within each year, such as Antalya 1–4 and Oeiras 1–4. Searches also match the original city and tournament name. Grand Slam overrides are scoped by category, so the WTA 125 in Paris keeps its city label.
 
 ## GitHub Pages
 
