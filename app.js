@@ -112,6 +112,87 @@ const photoByName = new Map([
   ["elsa jacquemot", "assets/players/elsa-jacquemot.png"],
   ["diana shnaider", "assets/players/diana-shnaider.png"]
 ]);
+const PLAYER_PHOTOS_API = "https://tennis-wta-api.schiter-tomas.workers.dev";
+let drivePhotos = new Map();
+let photosLastRefresh = 0;
+let photosUpdating = false;
+const portraitPlayers = new WeakMap();
+
+function photoNameKey(name) {
+  return normalize(name).replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+async function refreshPlayerPhotos() {
+  if (photosUpdating || Date.now() - photosLastRefresh < 300000) return;
+  photosUpdating = true;
+  try {
+    const response = await fetch(PLAYER_PHOTOS_API + "/photos", { cache: "no-store", signal: AbortSignal.timeout(20000) });
+    if (!response.ok) throw new Error("Player photo library unavailable");
+    const data = await response.json();
+    if (!Array.isArray(data.photos)) throw new Error("Invalid player photo library");
+    const next = new Map();
+    for (const photo of data.photos) {
+      if (typeof photo.name !== "string" || !/\.(png|jpe?g|webp)$/i.test(photo.name) ||
+          typeof photo.path !== "string" || !/^\/photos\/[A-Za-z0-9_-]+\?v=[A-Za-z0-9%_.:-]+$/.test(photo.path)) {
+        throw new Error("Invalid player photo entry");
+      }
+      const key = photoNameKey(photo.name.replace(/\.[^.]+$/, ""));
+      if (!next.has(key)) next.set(key, PLAYER_PHOTOS_API + photo.path);
+    }
+    drivePhotos = next;
+    photosLastRefresh = Date.now();
+    card.querySelectorAll("img[data-player-portrait]").forEach(image => {
+      const binding = portraitPlayers.get(image);
+      if (binding) setPlayerPortrait(image, binding.initials, binding.player, binding.override);
+    });
+  } catch {
+    console.warn("Drive player photos are unavailable; keeping the existing portraits.");
+  } finally {
+    photosUpdating = false;
+  }
+}
+
+function setPlayerPortrait(image, initials, player, override) {
+  portraitPlayers.get(image)?.loaded();
+  let loaded;
+  const ready = new Promise(resolve => { loaded = resolve; });
+  portraitPlayers.set(image, { initials, player, override, ready, loaded });
+  image.dataset.playerPortrait = String(player.id || "");
+  const photo = override || savedPlayerPhoto(player);
+  const show = visible => {
+    image.hidden = !visible;
+    image.style.display = visible ? "block" : "none";
+    initials.hidden = visible;
+    initials.style.display = visible ? "none" : "flex";
+  };
+  initials.textContent = playerDisplayName(player).split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
+  image.crossOrigin = "anonymous";
+  image.onload = loaded;
+  image.onerror = () => {
+    const fallback = bundledPlayerPhoto(player);
+    if (!override && photo?.startsWith(PLAYER_PHOTOS_API + "/photos/") && fallback && image.getAttribute("src") !== fallback) {
+      image.src = fallback;
+      return;
+    }
+    image.onerror = null;
+    image.removeAttribute("src");
+    show(false);
+    loaded();
+  };
+  show(!!photo);
+  image.alt = photo ? playerDisplayName(player) + " portrait" : "";
+  if (photo) {
+    if (image.getAttribute("src") !== photo) image.src = photo;
+    if (image.complete && image.naturalWidth) loaded();
+  } else {
+    image.removeAttribute("src");
+    loaded();
+  }
+}
+
+refreshPlayerPhotos();
+window.addEventListener("focus", refreshPlayerPhotos);
+setInterval(refreshPlayerPhotos, 300000);
 
 function playerForm(player) {
   if (!manualForms.has(player.id)) manualForms.set(player.id, { results: Array(10).fill("") });
@@ -239,6 +320,15 @@ function playerMatchesSearch(player, query) {
 }
 
 function savedPlayerPhoto(player) {
+  const byId = drivePhotos.get(String(player.id));
+  if (byId) return byId;
+  const names = [player.name, playerDisplayName(player), ...(player.aliases || [])];
+  // This is the abbreviated filename already used in the shared photo collection.
+  if (names.some(name => photoNameKey(name) === "jessica bouzas maneiro")) names.push("Jessica Bouzas");
+  return names.map(name => drivePhotos.get(photoNameKey(name))).find(Boolean) || bundledPlayerPhoto(player);
+}
+
+function bundledPlayerPhoto(player) {
   return [player.name, playerDisplayName(player), ...(player.aliases || [])]
     .map(name => photoByName.get(normalize(name))).find(Boolean);
 }
@@ -505,19 +595,7 @@ function renderPlayerArtwork(root, player, type = "form") {
 
   const image = node("card-photo");
   const initials = node("card-initials");
-  const photoPath = savedPlayerPhoto(player);
-  if (photoPath) {
-    image.src = photoPath;
-    image.alt = name + " portrait";
-    image.style.display = "block";
-    initials.style.display = "none";
-  } else {
-    image.removeAttribute("src");
-    image.alt = "";
-    image.style.display = "none";
-    initials.textContent = playerDisplayName(player).split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
-    initials.style.display = "flex";
-  }
+  setPlayerPortrait(image, initials, player);
   node("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + (player.rank ?? "NR");
   node("svg-description").textContent = name + ", WTA singles rank " + (player.rank ?? "NR") + ", " + player.country + ", " + age + " years old.";
   renderPlayerForm(player, root);

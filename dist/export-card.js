@@ -16,6 +16,12 @@ function scheduleCardExport() {
   exportTimer = setTimeout(renderCardExport, 150);
 }
 
+async function waitForCardImage(image) {
+  const portrait = portraitPlayers.get(image);
+  if (portrait) await portrait.ready;
+  if (image.getAttribute("src") && !image.hidden) await image.decode();
+}
+
 async function renderCardExport() {
   if (card.hidden || exportRunning) return;
   exportRunning = true;
@@ -26,7 +32,7 @@ async function renderCardExport() {
     await document.fonts.ready;
     await Promise.all([...card.querySelectorAll("img")]
       .filter(image => image !== cardSaveImage && image.getAttribute("src") && image.getClientRects().length)
-      .map(image => image.decode()));
+      .map(waitForCardImage));
     const width = cardDesign.offsetWidth;
     const height = cardDesign.offsetHeight;
     copy = card.cloneNode(true);
@@ -69,8 +75,10 @@ async function renderCardExport() {
       savedExportVersion = version;
     }
   } catch (error) {
-    console.error("Could not prepare the complete card image", error);
-    status.textContent = "The complete card image could not be prepared. Please reload and try again.";
+    if (version === exportVersion) {
+      console.error("Could not prepare the complete card image", error);
+      status.textContent = "The complete card image could not be prepared. Please reload and try again.";
+    }
   } finally {
     if (copy) copy.remove();
     exportRunning = false;

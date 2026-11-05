@@ -151,10 +151,6 @@ function updateResultOutcome(match) {
   document.getElementById("svg-description").textContent = match.tournament.name + ", " + match.round + ", " + match.sets.map(set => set.winner + "-" + set.loser).join(" ");
 }
 
-function resultPhoto(player) {
-  return uploadedResultPhotos.get(player.id) || savedPlayerPhoto(player);
-}
-
 function resultPlayerName(player) {
   const name = playerDisplayName(player);
   const given = stripAccents(player.first_name || "");
@@ -177,16 +173,7 @@ function fitResultNames() {
 function setResultPhoto(side, player) {
   const image = document.getElementById("result-" + side + "-photo");
   const initials = document.getElementById("result-" + side + "-initials");
-  const photo = resultPhoto(player);
-  image.hidden = !photo;
-  initials.hidden = !!photo;
-  if (photo) {
-    if (image.getAttribute("src") !== photo) image.src = photo;
-    image.alt = player.name;
-  } else {
-    image.removeAttribute("src");
-    initials.textContent = playerDisplayName(player).split(/\s+/).map(part => part[0]).slice(0, 2).join("");
-  }
+  setPlayerPortrait(image, initials, player, uploadedResultPhotos.get(player.id));
 }
 
 function setTourArtwork(id, artwork, height, directory = "assets/wtatour_result", filename = artwork, artworkBounds = tourArtwork) {

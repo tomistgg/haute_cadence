@@ -106,8 +106,9 @@ function drawPlayerSlot(person, geometry, index) {
   const artwork = document.createElement("div");
   artwork.className = "player-card draw-player-card";
   artwork.dataset.playerId = player.id;
-  artwork.style.setProperty("--draw-player-scale-x", geometry[2] / 1440);
-  artwork.style.setProperty("--draw-player-scale-y", geometry[3] / 1800);
+  // Cover the template's colored edge strips with the card artwork itself.
+  artwork.style.setProperty("--draw-player-scale-x", (geometry[2] + 8) / 1440);
+  artwork.style.setProperty("--draw-player-scale-y", (geometry[3] + 8) / 1800);
   for (const selector of [".title-event", ".card-content", "#card-title-details", ".tour-title-number"]) {
     artwork.append(cardDesign.querySelector(selector).cloneNode(true));
   }
@@ -115,9 +116,7 @@ function drawPlayerSlot(person, geometry, index) {
   renderPlayerArtwork(artwork, player, "form");
   const photo = drawPhotos.get(player.id);
   if (photo) {
-    artwork.querySelector("#card-photo").src = photo;
-    artwork.querySelector("#card-photo").style.display = "block";
-    artwork.querySelector("#card-initials").style.display = "none";
+    setPlayerPortrait(artwork.querySelector("#card-photo"), artwork.querySelector("#card-initials"), player, photo);
   }
   const upload = document.createElement("button");
   upload.type = "button";
@@ -152,10 +151,12 @@ function updateDrawH2hColors(h2h) {
 function renderDrawHeading(tournament) {
   const manual = isManualDraw();
   document.getElementById("draw-round-art").dataset.manual = String(manual);
-  document.getElementById("manual-draw-logo").hidden = !manual;
-  document.getElementById("manual-draw-round-text").hidden = !manual;
+  document.getElementById("manual-draw-logo").hidden = false;
+  document.getElementById("manual-draw-round-text").hidden = false;
   const roundLabel = document.getElementById("manual-draw-round-label");
-  roundLabel.textContent = manual ? tournament.header.toLocaleUpperCase() : "";
+  roundLabel.textContent = (manual ? tournament.header : {
+    F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE",
+  }[drawRound.value]).toLocaleUpperCase();
   roundLabel.dataset.placeholder = "ROUND";
   const name = manual ? tournament.name.toLocaleUpperCase() : tournamentName(tournament).toLocaleUpperCase();
   const nameNode = document.getElementById("draw-event-name");
@@ -188,7 +189,7 @@ function renderDrawHeading(tournament) {
   }
   drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: tournament.category, name })?.color || "#699694";
   fitTournamentName(nameNode, 78 * headingScale + "px");
-  if (manual) fitTournamentName(roundLabel, 80 * headingScale + "px");
+  fitTournamentName(roundLabel, 80 * headingScale + "px");
 }
 
 function renderDrawCard() {

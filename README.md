@@ -35,6 +35,15 @@ display names, and aliases remain searchable. The original ranking and match nam
 The complete name index also covers live match players outside the two-year ranking list. Name-only fallback is
 used only for unambiguous aliases. Explicit custom names in manual cards take precedence over the shared label.
 Portrait uploads remain attached to player IDs, and saved portraits can still match the original name or aliases.
+Player portraits also load automatically from the Google Drive photo folder through the existing Cloudflare Worker.
+Name files by WTA ID (`330332.png`) or full player name (`leylah_fernandez.png`); JPG, PNG and WebP are supported.
+ID matches take priority, followed by player names and aliases, then the bundled portraits or initials.
+Manual uploads keep priority when the library updates. Only portrait images are changed, preserving card edits;
+the Tour Result match-background photo remains separate. Drive images are included in PNG exports.
+The library checks on page load and every five minutes, including when a stale tab regains focus.
+With the Worker's five-minute cache, folder changes can take up to ten minutes in an open tab.
+Google credentials stay in the Worker's secrets. Deployment and folder-sharing instructions are in
+`../wta-tracker/cloudflare/SETUP.md`. Check the client with `node tests/test_player_photos.js`.
 The local server detects changes to the shared name file; reload to rebuild and load the updated labels.
 Long player names reduce their font size to fit their space while keeping the letters' natural proportions. This
 also applies to both Result Card layouts and WTA 125 draw names; shorter names retain their normal font size.
