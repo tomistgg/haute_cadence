@@ -398,11 +398,14 @@ document.getElementById("draw-form-buttons").addEventListener("click", event => 
   document.querySelector('#draw-form-buttons [data-index="' + index + '"]').focus();
 });
 
+let drawRefreshCooldown;
 async function refreshDraws(force = false) {
   if (drawsLoading) return;
+  drawRefreshCooldown ||= createRefreshCooldown("refresh-draws");
+  if (!drawRefreshCooldown.begin(force)) return;
   drawsLoading = true;
   drawLastRefresh = Date.now();
-  document.getElementById("refresh-draws").disabled = true;
+  let refreshed = false;
   if (force) drawStatus.textContent = "Updating…";
   else if (!drawFeed) drawStatus.textContent = "Loading current WTA draws...";
   try {
@@ -447,11 +450,12 @@ async function refreshDraws(force = false) {
         .filter(Boolean).join(" ");
       if (isDrawCard() && (changed || !current.some(t => t.id === previous))) renderDrawCard();
     }
+    refreshed = !data.refresh_error;
   } catch (error) {
     if (!isManualDraw()) drawStatus.textContent = error.message;
   } finally {
     drawsLoading = false;
-    document.getElementById("refresh-draws").disabled = false;
+    drawRefreshCooldown.finish(refreshed);
   }
 }
 

@@ -631,3 +631,54 @@ function refreshCalendar() {
 }
 
 refreshCalendar();
+
+function createRefreshCooldown(buttonId) {
+  const button = document.getElementById(buttonId);
+  const key = "haute-cadence:" + buttonId + ":next-refresh";
+  let until = 0, pending = false, manual = false;
+
+  function read() {
+    try {
+      const stored = Number(localStorage.getItem(key));
+      until = Number.isFinite(stored) ? stored : 0;
+    } catch {
+      // Keep the countdown in memory when browser storage is unavailable.
+    }
+  }
+
+  function save(value) {
+    until = value;
+    try { localStorage.setItem(key, String(value)); } catch { /* In-memory cooldown still applies. */ }
+  }
+
+  function update() {
+    const seconds = Math.max(0, Math.ceil((until - Date.now()) / 1000));
+    button.disabled = pending || seconds > 0;
+    button.textContent = seconds && !pending
+      ? `Refresh (${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")})` : "Refresh";
+  }
+
+  read();
+  update();
+  setInterval(update, 1000);
+  window.addEventListener("storage", event => {
+    if (event.key === key || event.key === null) { read(); update(); }
+  });
+
+  return {
+    begin(force) {
+      read();
+      if (pending || (force && until > Date.now())) { update(); return false; }
+      pending = true;
+      manual = force;
+      if (manual) save(Date.now() + 120000);
+      update();
+      return true;
+    },
+    finish(success) {
+      if (manual) save(success ? Date.now() + 120000 : 0);
+      pending = false;
+      update();
+    },
+  };
+}

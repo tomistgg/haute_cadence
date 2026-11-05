@@ -31,6 +31,8 @@ const context = {
   setInterval() {},
 };
 vm.createContext(context);
+const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+vm.runInContext(appSource.slice(appSource.indexOf("function createRefreshCooldown(")), context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "draw-card.js"), "utf8"), context);
 vm.runInContext("renderDrawCard = countRender", context);
 
@@ -55,6 +57,7 @@ async function main() {
   await manualRefresh;
   context.fetch = originalFetch;
   assert.match(elements.get("draw-status").textContent, /^Updated at /);
+  assert.equal(elements.get("refresh-draws").disabled, true);
   context.cardType.value = "draw";
   assert.match(requestedUrl, /^data\/current_draws\.json\?refresh=1&t=\d+$/);
   assert.equal(renders, 1, "unchanged brackets must not rebuild the card");

@@ -14,8 +14,10 @@ let renders = 0;
 let requests = 0;
 let requestedUrl;
 let changeCard;
+let timeOffset = 0;
 let payload = { updated_at: new Date().toISOString(), matches: [] };
 const context = {
+  Date: class extends Date { static now() { return Date.now() + timeOffset; } },
   document: {
     getElementById(id) {
       if (!elements.has(id)) elements.set(id, element());
@@ -33,6 +35,8 @@ const context = {
   fetch: async url => { requestedUrl = url; requests += 1; return { ok: true, json: async () => payload }; },
 };
 vm.createContext(context);
+const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+vm.runInContext(appSource.slice(appSource.indexOf("function createRefreshCooldown(")), context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "result-card.js"), "utf8"), context);
 vm.runInContext("renderResultCard = countRender", context);
 
@@ -49,6 +53,10 @@ async function main() {
   assert.equal(renders, 1, "manual refresh must preserve an unchanged card");
   assert.match(elements.get("result-status").textContent, /^Updated at /);
   const completedStatus = elements.get("result-status").textContent;
+  assert.equal(elements.get("refresh-results").disabled, true);
+  const completedRequests = requests;
+  await context.refreshResults(true);
+  assert.equal(requests, completedRequests, "manual clicks during cooldown must not fetch");
 
   let finishFetch;
   context.fetch = () => new Promise(resolve => { finishFetch = resolve; });
@@ -58,6 +66,7 @@ async function main() {
   await refresh;
   assert.equal(renders, 1, "an unchanged feed must not rebuild the card");
 
+  timeOffset += 121000;
   const manualRefresh = context.refreshResults(true);
   assert.equal(elements.get("result-status").textContent, "Updating…");
   finishFetch({ ok: true, json: async () => payload });
@@ -79,7 +88,8 @@ async function main() {
   context.updateResultOptions();
   assert.equal(renders, 4, "changing layout must redraw even with the same match list");
   context.fetch = async () => { throw new Error("Refresh failed"); };
-  await context.refreshResults();
+  timeOffset += 121000;
+  await context.refreshResults(true);
   assert.equal(elements.get("result-status").textContent, "Refresh failed");
   assert.equal(renders, 4);
   assert.equal(elements.get("refresh-results").disabled, false);

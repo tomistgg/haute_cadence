@@ -424,12 +424,14 @@ function updateResultOptions() {
   renderResultCard();
 }
 
+let resultRefreshCooldown;
 async function refreshResults(force = false) {
   if (resultsLoading) return;
+  resultRefreshCooldown ||= createRefreshCooldown("refresh-results");
+  if (!resultRefreshCooldown.begin(force)) return;
   resultsLoading = true;
   lastResultsRefresh = Date.now();
-  const button = document.getElementById("refresh-results");
-  button.disabled = true;
+  let refreshed = false;
   if (force) resultStatus.textContent = "Updating…";
   else if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
   try {
@@ -449,12 +451,13 @@ async function refreshResults(force = false) {
     if (force && !resultStatus.textContent) {
       resultStatus.textContent = "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ".";
     }
+    refreshed = !data.refresh_error;
   } catch (error) {
     updateResultOptions();
     resultStatus.textContent = error.message;
   } finally {
     resultsLoading = false;
-    button.disabled = false;
+    resultRefreshCooldown.finish(refreshed);
   }
 }
 

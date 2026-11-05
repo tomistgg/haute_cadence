@@ -103,6 +103,8 @@
 .result-match-picker { display: flex; gap: 8px; }
 #result-match { flex: 1; width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; color: #f5fbff; background: #051b31; font: inherit; }
 #refresh-results { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
+#refresh-results, #refresh-draws { white-space: nowrap; }
+#refresh-results:disabled, #refresh-draws:disabled { opacity: .65; cursor: default; }
 #result-status { margin: 8px 0; color: #b9d7df; font-size: .8rem; }
 #result-status:empty { display: none; }
 .result-photo-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
