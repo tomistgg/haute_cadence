@@ -234,6 +234,7 @@
 .draw-event { position: absolute; z-index: 1; top: calc(14px * var(--draw-heading-scale, 1)); right: calc(16px * var(--draw-heading-scale, 1)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(2px * var(--draw-heading-scale, 1)); width: calc(234px * var(--draw-heading-scale, 1)); height: calc(96px * var(--draw-heading-scale, 1)); padding: calc(6px * var(--draw-heading-scale, 1)); border-radius: calc(6px * var(--draw-heading-scale, 1)); color: #fff; }
 .draw-event strong { width: 100%; text-align: center; transform: translateY(2px); font: 400 calc(78px * var(--draw-heading-scale, 1))/.82 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
 .draw-event > span { font: 400 calc(20px * var(--draw-heading-scale, 1))/1 "Chunk Five", serif; white-space: nowrap; }
+.player-card[data-type="draw"][data-draw-round="Q"] .draw-event { display: grid; grid-template-rows: minmax(0, 1fr) calc(20px * var(--draw-heading-scale, 1)); justify-items: center; padding-bottom: calc(12px * var(--draw-heading-scale, 1)); }
 .draw-slot { position: absolute; z-index: 2; transform-origin: top left; filter: drop-shadow(0 8px 8px #00112370); }
 .draw-slot:not(.draw-tbd) { pointer-events: auto; }
 .draw-player-card.player-card { position: absolute; left: -4px; top: -4px; width: 1440px !important; height: 1800px; margin: 0; box-shadow: none; transform: scale(var(--draw-player-scale-x), var(--draw-player-scale-y)); transform-origin: top left; }
