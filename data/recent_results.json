@@ -1,7 +1,89 @@
 {
-  "updated_at": "2026-11-05T14:42:27.965100+00:00",
-  "window_start": "2026-11-04T14:42:27.965100+00:00",
+  "updated_at": "2026-11-05T15:19:12.027674+00:00",
+  "window_start": "2026-11-04T15:19:12.027674+00:00",
   "matches": [
+    {
+      "id": "1074:2026:LS008",
+      "completed_at": "2026-11-05T14:56:59.170000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1074",
+        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
+        "city": "HONG KONG",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "312469",
+        "first_name": "Sorana",
+        "last_name": "Cirstea",
+        "name": "Sorana Cirstea",
+        "country": "ROU"
+      },
+      "loser": {
+        "id": "330265",
+        "first_name": "Mary",
+        "last_name": "Stoiana",
+        "name": "Mary Stoiana",
+        "country": "USA"
+      },
+      "sets": [
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1148:2026:LS014",
+      "completed_at": "2026-11-05T14:36:41.270000+00:00",
+      "round": "2nd Round",
+      "round_art": "deuxieme",
+      "round_heading": "",
+      "tournament": {
+        "id": "1148",
+        "name": "Chennai Open - Chennai, IND",
+        "city": "CHENNAI",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "327367",
+        "first_name": "Anastasia",
+        "last_name": "Zakharova",
+        "name": "Anastasia Zakharova",
+        "country": "RUS"
+      },
+      "loser": {
+        "id": "333018",
+        "first_name": "Vaishnavi",
+        "last_name": "Adkar",
+        "name": "Vaishnavi Adkar",
+        "country": "IND"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 0,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1176:2026:LS015",
       "completed_at": "2026-11-05T14:16:55.380000+00:00",
@@ -883,47 +965,6 @@
         {
           "winner": 6,
           "loser": 3,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1148:2026:LS008",
-      "completed_at": "2026-11-04T14:44:04.060000+00:00",
-      "round": "2nd Round",
-      "round_art": "deuxieme",
-      "round_heading": "",
-      "tournament": {
-        "id": "1148",
-        "name": "Chennai Open - Chennai, IND",
-        "city": "CHENNAI",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "328818",
-        "first_name": "Janice",
-        "last_name": "Tjen",
-        "name": "Janice Tjen",
-        "country": "INA"
-      },
-      "loser": {
-        "id": "326512",
-        "first_name": "Joanna",
-        "last_name": "Garland",
-        "name": "Joanna Garland",
-        "country": "TPE"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 6,
-          "tiebreak": "1"
-        },
-        {
-          "winner": 6,
-          "loser": 1,
           "tiebreak": ""
         }
       ],

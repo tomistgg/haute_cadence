@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-05T15:09:53.210062+00:00",
+  "updated_at": "2026-11-05T15:19:11.077794+00:00",
   "date": "2026-11-05",
   "tournaments": [
     {
@@ -443,7 +443,13 @@
             "id": "LS004",
             "position": 0,
             "players": [
-              null,
+              {
+                "id": "312469",
+                "first_name": "Sorana",
+                "last_name": "Cirstea",
+                "name": "Sorana Cirstea",
+                "country": "ROU"
+              },
               {
                 "id": "332168",
                 "first_name": "Alexandra",

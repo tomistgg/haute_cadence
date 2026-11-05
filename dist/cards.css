@@ -191,7 +191,7 @@
 .player-card[data-type="tour-result"] .result-score-row[data-side="loser"] { --row-top: 842px; }
 .player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
 .player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
-.player-card[data-type="tour-result"] .result-score-name { left: 66px; top: var(--row-top); width: 438px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
+.player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
 .player-card[data-type="tour-result"] .result-score-sets { left: 518px; top: var(--row-top); width: 94px; height: 58px; transform: none; font-size: 43px; -webkit-text-stroke-width: 1.6px; }
 .player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 520px; width: 134px; }
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 29px; }
