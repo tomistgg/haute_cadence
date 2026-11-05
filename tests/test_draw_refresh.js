@@ -42,7 +42,20 @@ async function main() {
   await context.refreshDraws();
   assert.equal(requestedUrl, "data/current_draws.json");
   assert.equal(renders, 1);
-  await elements.get("refresh-draws").listeners.click();
+  const originalFetch = context.fetch;
+  let finishFetch;
+  context.fetch = url => {
+    requestedUrl = url;
+    return new Promise(resolve => { finishFetch = resolve; });
+  };
+  const manualRefresh = elements.get("refresh-draws").listeners.click();
+  assert.equal(elements.get("draw-status").textContent, "Updating…");
+  context.cardType.value = "form";
+  finishFetch({ ok: true, json: async () => payload });
+  await manualRefresh;
+  context.fetch = originalFetch;
+  assert.match(elements.get("draw-status").textContent, /^Updated at /);
+  context.cardType.value = "draw";
   assert.match(requestedUrl, /^data\/current_draws\.json\?refresh=1&t=\d+$/);
   assert.equal(renders, 1, "unchanged brackets must not rebuild the card");
   elements.get("draw-tournament").value = "manual";

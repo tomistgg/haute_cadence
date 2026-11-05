@@ -47,14 +47,22 @@ async function main() {
   assert.match(requestedUrl, /^data\/recent_results\.json\?refresh=1&t=\d+$/,
     "the Refresh button must bypass the server's fresh cache");
   assert.equal(renders, 1, "manual refresh must preserve an unchanged card");
+  assert.match(elements.get("result-status").textContent, /^Updated at /);
+  const completedStatus = elements.get("result-status").textContent;
 
   let finishFetch;
   context.fetch = () => new Promise(resolve => { finishFetch = resolve; });
   const refresh = context.refreshResults();
-  assert.equal(elements.get("result-status").textContent, "", "background loading must not insert a line above the card");
+  assert.equal(elements.get("result-status").textContent, completedStatus, "background loading must preserve the current status");
   finishFetch({ ok: true, json: async () => ({ ...payload, updated_at: new Date().toISOString() }) });
   await refresh;
   assert.equal(renders, 1, "an unchanged feed must not rebuild the card");
+
+  const manualRefresh = context.refreshResults(true);
+  assert.equal(elements.get("result-status").textContent, "Updating…");
+  finishFetch({ ok: true, json: async () => payload });
+  await manualRefresh;
+  assert.match(elements.get("result-status").textContent, /^Updated at /);
 
   payload.matches = [{
     id: "tour", completed_at: new Date(Date.now() - 3600000).toISOString(), round: "Final",

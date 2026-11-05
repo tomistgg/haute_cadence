@@ -430,7 +430,8 @@ async function refreshResults(force = false) {
   lastResultsRefresh = Date.now();
   const button = document.getElementById("refresh-results");
   button.disabled = true;
-  if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
+  if (force) resultStatus.textContent = "Updating…";
+  else if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
   try {
     let data;
     if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
@@ -445,6 +446,9 @@ async function refreshResults(force = false) {
     if (!Array.isArray(data.matches)) throw new Error("The completed-match feed is invalid.");
     resultFeed = data;
     updateResultOptions();
+    if (force && !resultStatus.textContent) {
+      resultStatus.textContent = "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ".";
+    }
   } catch (error) {
     updateResultOptions();
     resultStatus.textContent = error.message;

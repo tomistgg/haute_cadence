@@ -403,7 +403,8 @@ async function refreshDraws(force = false) {
   drawsLoading = true;
   drawLastRefresh = Date.now();
   document.getElementById("refresh-draws").disabled = true;
-  if (!drawFeed) drawStatus.textContent = "Loading current WTA draws...";
+  if (force) drawStatus.textContent = "Updating…";
+  else if (!drawFeed) drawStatus.textContent = "Loading current WTA draws...";
   try {
     let data;
     if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
@@ -439,12 +440,15 @@ async function refreshDraws(force = false) {
       updateDrawModeControls();
       renderDrawCard();
     }
-    if (isDrawCard() && !isManualDraw()) {
-      drawStatus.textContent = data.refresh_error || (!current.length ? "No current WTA tournaments available." : "");
-      if (changed || !current.some(t => t.id === previous)) renderDrawCard();
+    if (!isManualDraw()) {
+      const updated = force && !data.refresh_error
+        ? "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "";
+      drawStatus.textContent = [updated, data.refresh_error || (!current.length ? "No current WTA tournaments available." : "")]
+        .filter(Boolean).join(" ");
+      if (isDrawCard() && (changed || !current.some(t => t.id === previous))) renderDrawCard();
     }
   } catch (error) {
-    if (isDrawCard() && !isManualDraw()) drawStatus.textContent = error.message;
+    if (!isManualDraw()) drawStatus.textContent = error.message;
   } finally {
     drawsLoading = false;
     document.getElementById("refresh-draws").disabled = false;

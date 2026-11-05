@@ -128,6 +128,7 @@ the browser transforms them into the same singles-result/bracket format without 
 Automatic five-minute refreshes use this live path too. A failed or incomplete response retains the current card/feed
 and shows an error. Rankings and player display names still use the shared WTARG files. The scheduled Python updaters
 continue maintaining the saved feeds and champion history; browser refreshes do not write to that history.
+Clicking Refresh shows a small "Updating…" message, followed by "Updated at HH:MM." when it finishes successfully.
 
 Use the selector next to player search to switch between Player Form Card, WTA 125 Title Card, and WTA Tour Title Card. The selected player is preserved when changing card types. The layouts follow the three references in `examples/` using supplied PNG layers and CSS. Title cards layer `assets/details/wta125_title_details.png` or `assets/details/wtatour_title_details.png` over the complete card; the Tour overlay includes its trophy and laurels. No AI image generation is used.
 
