@@ -464,22 +464,6 @@
       [
         "itf",
         "",
-        "W15 Hurghada (cancelled)",
-        "W15",
-        "Hard",
-        "EGY",
-        "2026-01-19",
-        "2026-01-25",
-        "ITF",
-        "w-itf-egy-2026-005",
-        "",
-        "itf:w-itf-egy-2026-005",
-        "Hurghada",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W35 Petit-Bourg (Guadeloupe)",
         "W35",
         "Hard",
@@ -1680,22 +1664,6 @@
         "itf:w-itf-tun-2026-010",
         "Monastir",
         2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Antalya (CANCELLED)",
-        "W15",
-        "Clay",
-        "TUR",
-        "2026-03-02",
-        "2026-03-08",
-        "ITF",
-        "w-itf-tur-2026-009",
-        "",
-        "itf:w-itf-tur-2026-009",
-        "ANTALYA",
-        2026
       ]
     ],
     "2026-03-03": [
@@ -1877,22 +1845,6 @@
         "",
         "itf:w-itf-tun-2026-011",
         "Monastir",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Antalya (CANCELLED)",
-        "W15",
-        "Clay",
-        "TUR",
-        "2026-03-09",
-        "2026-03-15",
-        "ITF",
-        "w-itf-tur-2026-010",
-        "",
-        "itf:w-itf-tur-2026-010",
-        "ANTALYA",
         2026
       ],
       [
@@ -2106,22 +2058,6 @@
         "itf:w-itf-tun-2026-012",
         "Monastir",
         2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Antalya (CANCELLED)",
-        "W15",
-        "Clay",
-        "TUR",
-        "2026-03-16",
-        "2026-03-22",
-        "ITF",
-        "w-itf-tur-2026-011",
-        "",
-        "itf:w-itf-tur-2026-011",
-        "ANTALYA",
-        2026
       ]
     ],
     "2026-03-17": [
@@ -2304,22 +2240,6 @@
         2026
       ],
       [
-        "itf",
-        "",
-        "W15 Antalya (CANCELLED)",
-        "W15",
-        "Clay",
-        "TUR",
-        "2026-03-23",
-        "2026-03-29",
-        "ITF",
-        "w-itf-tur-2026-012",
-        "",
-        "itf:w-itf-tur-2026-012",
-        "ANTALYA",
-        2026
-      ],
-      [
         "wta_125",
         "",
         "Dubrovnik Open - Dubrovnik, CRO",
@@ -2452,22 +2372,6 @@
       [
         "itf",
         "",
-        "W15 Antalya (CANCELLED)",
-        "W15",
-        "Clay",
-        "TUR",
-        "2026-03-30",
-        "2026-04-05",
-        "ITF",
-        "w-itf-tur-2026-013",
-        "",
-        "itf:w-itf-tur-2026-013",
-        "ANTALYA",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W35 Jackson, MS",
         "W35",
         "Clay",
@@ -2479,22 +2383,6 @@
         "",
         "itf:w-itf-usa-2026-009",
         "Jackson, MS",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Tashkent (Cancelled)",
-        "W15",
-        "Hard",
-        "UZB",
-        "2026-03-30",
-        "2026-04-05",
-        "ITF",
-        "w-itf-uzb-2026-001",
-        "",
-        "itf:w-itf-uzb-2026-001",
-        "Tashkent",
         2026
       ],
       [
@@ -2676,22 +2564,6 @@
         2026
       ],
       [
-        "itf",
-        "",
-        "W15 Tashkent (Cancelled)",
-        "W15",
-        "Hard",
-        "UZB",
-        "2026-04-06",
-        "2026-04-12",
-        "ITF",
-        "w-itf-uzb-2026-004",
-        "",
-        "itf:w-itf-uzb-2026-004",
-        "Tashkent",
-        2026
-      ],
-      [
         "wta_125",
         "",
         "Grand Prix Open Villa de Madrid by Silverway - Madrid, ESP",
@@ -2851,22 +2723,6 @@
         "",
         "itf:w-itf-slo-2026-003",
         "Portorož",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W75 Bellinzona (Cancelled)",
-        "W75",
-        "Clay",
-        "SUI",
-        "2026-04-13",
-        "2026-04-19",
-        "ITF",
-        "w-itf-sui-2026-001",
-        "",
-        "itf:w-itf-sui-2026-001",
-        "Bellinzona",
         2026
       ],
       [
@@ -3547,22 +3403,6 @@
         "",
         "itf:w-itf-chn-2026-011",
         "Luan",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W50 Prague (Cancelled)",
-        "W50",
-        "Clay",
-        "CZE",
-        "2026-05-04",
-        "2026-05-10",
-        "ITF",
-        "w-itf-cze-2026-002",
-        "",
-        "itf:w-itf-cze-2026-002",
-        "Prague (Cancelled)",
         2026
       ],
       [
@@ -5672,22 +5512,6 @@
       [
         "itf",
         "",
-        "W35 Perigueux (CANCELLED)",
-        "W35",
-        "Clay",
-        "FRA",
-        "2026-06-22",
-        "2026-06-28",
-        "ITF",
-        "w-itf-fra-2026-014",
-        "",
-        "itf:w-itf-fra-2026-014",
-        "Perigueux",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Kamen",
         "W15",
         "Clay",
@@ -5989,22 +5813,6 @@
         "",
         "itf:w-itf-hun-2026-002",
         "Mogyoród",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W35 Rome (CANCELLED)",
-        "W35",
-        "Clay",
-        "ITA",
-        "2026-06-29",
-        "2026-07-05",
-        "ITF",
-        "w-itf-ita-2026-027",
-        "",
-        "itf:w-itf-ita-2026-027",
-        "Rome",
         2026
       ],
       [
@@ -6316,22 +6124,6 @@
       [
         "itf",
         "",
-        "W15 Nakhon Pathom  (CANCELLED)",
-        "W15",
-        "Hard",
-        "THA",
-        "2026-07-06",
-        "2026-07-12",
-        "ITF",
-        "w-itf-tha-2026-006",
-        "",
-        "itf:w-itf-tha-2026-006",
-        "Nakhon Pathom",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Monastir",
         "W15",
         "Hard",
@@ -6638,22 +6430,6 @@
       [
         "itf",
         "",
-        "W15 Nakhon Pathom (CANCELLED)",
-        "W15",
-        "Hard",
-        "THA",
-        "2026-07-13",
-        "2026-07-19",
-        "ITF",
-        "w-itf-tha-2026-007",
-        "",
-        "itf:w-itf-tha-2026-007",
-        "Nakhon Pathom",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Monastir",
         "W15",
         "Hard",
@@ -6955,22 +6731,6 @@
         "",
         "itf:w-itf-srb-2026-012",
         "KURSUMLIJSKA BANJA",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Nakhon Pathom  (CANCELLED)",
-        "W15",
-        "Hard",
-        "THA",
-        "2026-07-20",
-        "2026-07-26",
-        "ITF",
-        "w-itf-tha-2026-008",
-        "",
-        "itf:w-itf-tha-2026-008",
-        "Nakhon Pathom",
         2026
       ],
       [
@@ -7578,22 +7338,6 @@
       [
         "itf",
         "",
-        "W15 Brisbane (Cancelled)",
-        "W15",
-        "Hard",
-        "AUS",
-        "2026-08-10",
-        "2026-08-16",
-        "ITF",
-        "w-itf-aus-2026-010",
-        "",
-        "itf:w-itf-aus-2026-010",
-        "Brisbane (Cancelled)",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Campos do Jordao",
         "W15",
         "Hard",
@@ -7954,22 +7698,6 @@
       [
         "itf",
         "",
-        "W15 Tsaghkadzor (Cancelled)",
-        "W15",
-        "Clay",
-        "ARM",
-        "2026-08-24",
-        "2026-08-29",
-        "ITF",
-        "w-itf-arm-2026-004",
-        "",
-        "itf:w-itf-arm-2026-004",
-        "Tsaghkadzor (Cancelled)",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W35 Barueri",
         "W35",
         "Hard",
@@ -8177,22 +7905,6 @@
         "",
         "itf:w-itf-arg-2026-009",
         "Luján",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Tsaghkadzor (Cancelled)",
-        "W15",
-        "Clay",
-        "ARM",
-        "2026-08-31",
-        "2026-09-05",
-        "ITF",
-        "w-itf-arm-2026-005",
-        "",
-        "itf:w-itf-arm-2026-005",
-        "Tsaghkadzor (Cancelled)",
         2026
       ],
       [
@@ -8616,22 +8328,6 @@
       [
         "itf",
         "",
-        "W35 Nakhon Pathom (CANCELLED)",
-        "W35",
-        "Hard",
-        "THA",
-        "2026-09-07",
-        "2026-09-13",
-        "ITF",
-        "w-itf-tha-2026-010",
-        "",
-        "itf:w-itf-tha-2026-010",
-        "Nakhon Pathom",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Monastir",
         "W15",
         "Hard",
@@ -8780,22 +8476,6 @@
       [
         "itf",
         "",
-        "W15 Ceuta (Cancelled)",
-        "W15",
-        "Hard",
-        "ESP",
-        "2026-09-14",
-        "2026-09-20",
-        "ITF",
-        "w-itf-esp-2026-040",
-        "",
-        "itf:w-itf-esp-2026-040",
-        "Ceuta",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W75 Le Neubourg",
         "W75",
         "Hard",
@@ -8807,22 +8487,6 @@
         "",
         "itf:w-itf-fra-2026-020",
         "Le Neubourg",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W50 Ismaning (Cancelled)",
-        "W50",
-        "Clay",
-        "GER",
-        "2026-09-14",
-        "2026-09-20",
-        "ITF",
-        "w-itf-ger-2026-014",
-        "",
-        "itf:w-itf-ger-2026-014",
-        "Ismaning (Cancelled)",
         2026
       ],
       [
@@ -8855,22 +8519,6 @@
         "",
         "itf:w-itf-jpn-2026-009",
         "Kyoto",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W35 Nakhon Pathom (Cancelled)",
-        "W35",
-        "Hard",
-        "THA",
-        "2026-09-14",
-        "2026-09-20",
-        "ITF",
-        "w-itf-tha-2026-011",
-        "",
-        "itf:w-itf-tha-2026-011",
-        "Nakhon Pathom",
         2026
       ],
       [
@@ -8969,22 +8617,6 @@
         "",
         "itf:w-itf-bra-2026-009",
         "Belem",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W50 Burgas CANCELLED",
-        "W50",
-        "Clay",
-        "BUL",
-        "2026-09-21",
-        "2026-09-27",
-        "ITF",
-        "w-itf-bul-2026-002",
-        "",
-        "itf:w-itf-bul-2026-002",
-        "Burgas",
         2026
       ],
       [
@@ -9328,22 +8960,6 @@
       [
         "itf",
         "",
-        "W35 Santa Margherita di Pula (Cancelled)",
-        "W35",
-        "Clay",
-        "ITA",
-        "2026-09-28",
-        "2026-10-04",
-        "ITF",
-        "w-itf-ita-2026-034",
-        "",
-        "itf:w-itf-ita-2026-034",
-        "Santa Margherita di Pula",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W75 Quinta do Lago",
         "W75",
         "Hard",
@@ -9387,22 +9003,6 @@
         "",
         "itf:w-itf-usa-2026-044",
         "Templeton",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W35 San Rafael, CA (CANCELLED)",
-        "W35",
-        "Hard",
-        "USA",
-        "2026-09-28",
-        "2026-10-04",
-        "ITF",
-        "w-itf-usa-2026-045",
-        "",
-        "itf:w-itf-usa-2026-045",
-        "San Rafael",
         2026
       ],
       [
@@ -9503,22 +9103,6 @@
         "",
         "itf:w-itf-aus-2026-012",
         "Wagga Wagga",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W50 Plovdiv CANCELLED",
-        "W50",
-        "Clay",
-        "BUL",
-        "2026-10-05",
-        "2026-10-11",
-        "ITF",
-        "w-itf-bul-2026-005",
-        "",
-        "itf:w-itf-bul-2026-005",
-        "Plovdiv",
         2026
       ],
       [
@@ -10490,22 +10074,6 @@
       [
         "itf",
         "",
-        "W35 Huamantla (Cancelled)",
-        "W35",
-        "Hard",
-        "MEX",
-        "2026-10-26",
-        "2026-11-01",
-        "ITF",
-        "w-itf-mex-2026-009",
-        "",
-        "itf:w-itf-mex-2026-009",
-        "Huamantla",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W50 Morelia",
         "W50",
         "Hard",
@@ -10533,22 +10101,6 @@
         "",
         "itf:w-itf-mlt-2026-001",
         "Marsa",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W35 Lagos (Cancelled)",
-        "W35",
-        "Hard",
-        "NGR",
-        "2026-10-26",
-        "2026-10-31",
-        "ITF",
-        "w-itf-ngr-2026-004",
-        "",
-        "itf:w-itf-ngr-2026-004",
-        "Lagos ",
         2026
       ],
       [
@@ -10908,22 +10460,6 @@
       [
         "itf",
         "",
-        "W35 Lagos (Cancelled)",
-        "W35",
-        "Hard",
-        "NGR",
-        "2026-11-02",
-        "2026-11-07",
-        "ITF",
-        "w-itf-ngr-2026-001",
-        "",
-        "itf:w-itf-ngr-2026-001",
-        "Lagos ",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Monastir",
         "W15",
         "Hard",
@@ -11083,22 +10619,6 @@
         "",
         "itf:w-itf-aus-2026-015",
         "Brisbane",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Feira de Santana (CANCELLED)",
-        "W15",
-        "Hard",
-        "BRA",
-        "2026-11-09",
-        "2026-11-15",
-        "ITF",
-        "w-itf-bra-2026-013",
-        "",
-        "itf:w-itf-bra-2026-013",
-        "Feira de Santana",
         2026
       ],
       [
