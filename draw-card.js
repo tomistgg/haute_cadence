@@ -148,11 +148,19 @@ function updateDrawH2hColors(h2h) {
   });
 }
 
+function updateDrawHeaderArtwork() {
+  const label = { F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE" }[drawRound.value];
+  document.getElementById("draw-round-art").dataset.customHeader = String(
+    isManualDraw() && manualDraw().header.trim().toLocaleUpperCase() !== label
+  );
+}
+
 function renderDrawHeading(tournament) {
   const manual = isManualDraw();
   document.getElementById("draw-round-art").dataset.manual = String(manual);
-  document.getElementById("manual-draw-logo").hidden = false;
-  document.getElementById("manual-draw-round-text").hidden = false;
+  document.getElementById("manual-draw-logo").hidden = !manual;
+  document.getElementById("manual-draw-round-text").hidden = !manual;
+  updateDrawHeaderArtwork();
   const roundLabel = document.getElementById("manual-draw-round-label");
   roundLabel.textContent = (manual ? tournament.header : {
     F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE",
@@ -165,7 +173,8 @@ function renderDrawHeading(tournament) {
   const headingScale = drawLayouts[drawRound.value].width / 1600;
   nameNode.style.fontSize = 78 * headingScale + "px";
   const category = document.getElementById("draw-event-category");
-  category.textContent = tournament.category === "Finals" ? "WTA FINALS" : tournament.category.toLocaleUpperCase();
+  category.textContent = tournament.category === "Finals" ? "WTA FINALS"
+    : tournamentCategoryLabel(tournament.category).toLocaleUpperCase();
   category.dataset.placeholder = "CATEGORY";
   for (const [node, field] of [[nameNode, "name"], [category, "category"], [roundLabel, "header"]]) {
     if (manual) {
@@ -330,7 +339,7 @@ async function refreshDraws(force = false) {
     for (const tournament of current) {
       const option = document.createElement("option");
       option.value = tournament.id;
-      option.textContent = tournament.category + " " + tournamentName(tournament);
+      option.textContent = tournamentCategoryLabel(tournament.category) + " " + tournamentName(tournament);
       drawTournament.append(option);
     }
     const manualOption = document.createElement("option");
@@ -406,6 +415,7 @@ drawContent.addEventListener("input", event => {
   draft[field] = node.textContent.replace(/[\r\n]/g, " ").slice(0, 80);
   if (node.textContent !== draft[field]) node.textContent = draft[field];
   if (field === "name") draft.city = draft.name;
+  if (field === "header") updateDrawHeaderArtwork();
   fitTournamentName(node, (node.id === "draw-event-name" ? 78 : 80) * drawLayouts[drawRound.value].width / 1600 + "px");
   drawContent.querySelector(".draw-event").style.backgroundColor = tournamentStyle({ level: draft.category, name: draft.name })?.color || "#699694";
 });

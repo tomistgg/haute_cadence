@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-05T11:28:29.337765+00:00",
+  "updated_at": "2026-11-05T13:48:50.228122+00:00",
   "date": "2026-11-05",
   "tournaments": [
     {
@@ -244,7 +244,13 @@
             "id": "LS007",
             "position": 3,
             "players": [
-              null,
+              {
+                "id": "323677",
+                "first_name": "Justina",
+                "last_name": "Mikulskyte",
+                "name": "Justina Mikulskyte",
+                "country": "LTU"
+              },
               null
             ],
             "state": "U"
@@ -342,7 +348,13 @@
             "id": "LS006",
             "position": 2,
             "players": [
-              null,
+              {
+                "id": "324750",
+                "first_name": "Mai",
+                "last_name": "Hontama",
+                "name": "Mai Hontama",
+                "country": "JPN"
+              },
               {
                 "id": "315130",
                 "first_name": "Magda",
@@ -358,7 +370,13 @@
             "position": 3,
             "players": [
               null,
-              null
+              {
+                "id": "323149",
+                "first_name": "Lucrezia",
+                "last_name": "Stefanini",
+                "name": "Lucrezia Stefanini",
+                "country": "ITA"
+              }
             ],
             "state": "U"
           }
@@ -477,7 +495,13 @@
                 "name": "Antonia Ruzic",
                 "country": "CRO"
               },
-              null
+              {
+                "id": "330332",
+                "first_name": "Alexandra",
+                "last_name": "Eala",
+                "name": "Alexandra Eala",
+                "country": "PHI"
+              }
             ],
             "state": "U"
           }

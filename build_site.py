@@ -20,7 +20,7 @@ ASSETS = {
     "wta-live.mjs": ROOT / "wta-live.mjs",
     "draw-card.js": ROOT / "draw-card.js",
     "result-card.js": ROOT / "result-card.js",
-    "assets/result-court.svg": ROOT / "assets" / "result-court.svg",
+    "assets/result-court.svg": ROOT / "assets" / "backgrounds" / "result-court.svg",
     "assets/cards/prospect_card.png": ROOT / "assets" / "cards" / "prospect_card.png",
     "assets/details/prospect_details.png": ROOT / "assets" / "details" / "prospect_details.png",
     "assets/fonts/chunk-five-regular.otf": ROOT / "assets" / "fonts" / "Chunk_Five" / "ChunkFive-Regular.otf",
@@ -35,16 +35,16 @@ ASSETS = {
     "assets/fonts/poppins-OFL.txt": ROOT / "assets" / "fonts" / "Poppins" / "OFL.txt",
     "assets/details/wtatour_title_details.png": ROOT / "assets" / "details" / "wtatour_title_details.png",
     "assets/details/wta125_title_details.png": ROOT / "assets" / "details" / "wta125_title_details.png",
-    "assets/players/alina-charaeva.jpg": ROOT / "assets" / "Alina Charaeva.jpg",
-    "assets/title-court.svg": ROOT / "assets" / "title-court.svg",
-    "assets/tour-court.svg": ROOT / "assets" / "tour-court.svg",
+    "assets/players/alina-charaeva.jpg": ROOT / "assets" / "players" / "alina-charaeva.jpg",
+    "assets/title-court.svg": ROOT / "assets" / "backgrounds" / "title-court.svg",
+    "assets/tour-court.svg": ROOT / "assets" / "backgrounds" / "tour-court.svg",
     "assets/fonts/tt-bluescreens-extra-bold.ttf": (
         ROOT / "assets" / "fonts" / "tt_bluescreens" / "TT Bluescreens Trial ExtraBold.ttf"
     ),
     "assets/haute-cadence-logo.png": ROOT / "assets" / "Design sans titre (2).png",
-    "assets/players/leylah-fernandez.png": ROOT / "assets" / "Fernandez (1).png",
-    "assets/players/elsa-jacquemot.png": ROOT / "assets" / "Jacquemot.png",
-    "assets/players/diana-shnaider.png": ROOT / "assets" / "Shnaider (2).png",
+    "assets/players/leylah-fernandez.png": ROOT / "assets" / "players" / "leylah-fernandez.png",
+    "assets/players/elsa-jacquemot.png": ROOT / "assets" / "players" / "elsa-jacquemot.png",
+    "assets/players/diana-shnaider.png": ROOT / "assets" / "players" / "diana-shnaider.png",
     "assets/fonts/barriecito-regular.ttf": ROOT / "assets" / "fonts" / "Barriecito" / "Barriecito-Regular.ttf",
     "assets/cards/top_1_card.png": ROOT / "assets" / "cards" / "top_1_card.png",
     "assets/details/top_1_details.png": ROOT / "assets" / "details" / "top_1_details_blank_caption.png",
@@ -112,6 +112,11 @@ ASSETS.update({
         "premier", "deuxieme", "troisieme", "quartdefinale", "demifinale", "finale",
         "deux_sets", "trois_sets", "opponent",
     )
+})
+ASSETS.update({
+    f"assets/schedule/{asset.name}": asset
+    for asset in sorted((ROOT / "assets" / "schedule").glob("*.png"))
+    if asset.name != "preview.png"
 })
 
 
@@ -206,17 +211,18 @@ def main() -> None:
 
     for destination, source in ASSETS.items():
         if not source.is_file():
-            raise SystemExit(f"Missing site asset: {source}")
+            raise FileNotFoundError(f"Missing site asset: {source}")
         target = DIST / destination
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
 
     page = (ROOT / "index.html").read_text(encoding="utf-8")
-    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js"):
+    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js", "schedule-card.js"):
         version = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:12]
         page = page.replace(f'"{filename}"', f'"{filename}?v={version}"')
     (DIST / "index.html").write_text(page, encoding="utf-8")
     shutil.copy2(ROOT / "app.js", DIST / "app.js")
+    shutil.copy2(ROOT / "schedule-card.js", DIST / "schedule-card.js")
     shutil.copy2(ROOT / "cards.css", DIST / "cards.css")
     data_dir = DIST / "data"
     data_dir.mkdir(parents=True, exist_ok=True)

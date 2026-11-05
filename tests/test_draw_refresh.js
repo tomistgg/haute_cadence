@@ -32,6 +32,7 @@ const context = {
 };
 vm.createContext(context);
 const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+vm.runInContext(appSource.slice(appSource.indexOf("function tournamentCategoryLabel("), appSource.indexOf("function tournamentLabel(")), context);
 vm.runInContext(appSource.slice(appSource.indexOf("function createRefreshCooldown(")), context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "draw-card.js"), "utf8"), context);
 vm.runInContext("renderDrawCard = countRender", context);

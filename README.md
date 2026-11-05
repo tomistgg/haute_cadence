@@ -41,6 +41,7 @@ ID matches take priority, followed by player names and aliases, then the bundled
 Manual uploads keep priority when the library updates. Only portrait images are changed, preserving card edits;
 the Tour Result match-background photo remains separate. Drive images are included in PNG exports.
 The library checks on page load and every five minutes, including when a stale tab regains focus.
+Local previews use the server's `/photos` relay; hosted pages contact the Worker directly.
 With the Worker's five-minute cache, folder changes can take up to ten minutes in an open tab.
 Google credentials stay in the Worker's secrets. Deployment and folder-sharing instructions are in
 `../wta-tracker/cloudflare/SETUP.md`. Check the client with `node tests/test_player_photos.js`.
@@ -69,6 +70,11 @@ Click an empty player space, portrait,
 or player name to search the full two-year directory or use custom names, rankings and flags. For a selected player,
 click the portrait and choose Upload portrait in the dialog. The Player form editor, backgrounds, and final H2H editing
 work as in Draw. Each layout keeps its own manual draft until reload; automatic draw updates do not change it.
+
+Choose Schedule to make a four- or five-match image. Choose a court background, then click the round banner to select
+the round or the tournament heading to search the current WTA Calendar. Click either player slot in a match to select
+a player; their photo, ranking frame, ranking, and name load automatically. Click each time/court line to edit it.
+Round banners, rank frames, and match layouts come from `assets/schedule/`; the completed image is included in PNG export.
 
 `python update_wta_draws.py` saves current tournaments and their singles brackets to `data/current_draws.json`.
 The matches endpoint is requested without a completed-only filter, and `LS` match numbers preserve bracket

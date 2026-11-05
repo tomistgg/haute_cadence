@@ -9,7 +9,7 @@ let choose;
 const context = {
   document: {
     getElementById(id) {
-      if (!elements.has(id)) elements.set(id, { value: "F", addEventListener() {} });
+      if (!elements.has(id)) elements.set(id, { value: "F", dataset: {}, addEventListener() {} });
       return elements.get(id);
     },
     fonts: { ready: { then() {} } },
@@ -70,4 +70,18 @@ assert.equal(context.players[0].rank, 10, "manual edits must not mutate the shar
 assert.equal(context.players[0].country, "FRA");
 context.selectManualDrawPlayer(99);
 assert.equal(final.rounds.F[0].players[0].rank, null);
+for (const [round, label] of [["F", "FINALE"], ["S", "DEMI-FINALES"], ["Q", "QUARTS DE FINALE"]]) {
+  elements.get("draw-round").value = round;
+  elements.get("draw-tournament").value = "manual";
+  const draft = context.manualDraw(round);
+  draft.header = label;
+  context.updateDrawHeaderArtwork();
+  assert.equal(elements.get("draw-round-art").dataset.customHeader, "false", "standard headings must show the supplied PNG");
+  draft.header = "Custom heading";
+  context.updateDrawHeaderArtwork();
+  assert.equal(elements.get("draw-round-art").dataset.customHeader, "true", "custom manual headings must remain editable");
+  elements.get("draw-tournament").value = "event";
+  context.updateDrawHeaderArtwork();
+  assert.equal(elements.get("draw-round-art").dataset.customHeader, "false", "live draws must always use the PNG");
+}
 console.log("Manual round drafts, slot selection, stale-picker guards, NR and directory isolation passed.");

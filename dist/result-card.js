@@ -287,7 +287,8 @@ function renderResultCard() {
   eventName.style.fontSize = "84px";
   makeResultEditable(eventName, match.manual, "tournament");
   const eventCategory = document.getElementById("result-event-category");
-  eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS" : match.tournament.category.toLocaleUpperCase();
+  eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS"
+    : tournamentCategoryLabel(match.tournament.category).toLocaleUpperCase();
   eventCategory.style.fontSize = match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
@@ -369,7 +370,7 @@ function updateResultOptions() {
   for (const group of orderedGroups) {
     const optgroup = document.createElement("optgroup");
     const category = group.tournament.category === "Finals" ? "WTA Finals" : group.tournament.category;
-    optgroup.label = category + " " + tournamentName(group.tournament);
+    optgroup.label = tournamentCategoryLabel(category) + " " + tournamentName(group.tournament);
     group.matches.sort((a, b) => resultRoundOrder(a) - resultRoundOrder(b)
       || Date.parse(a.completed_at) - Date.parse(b.completed_at) || a.id.localeCompare(b.id));
     for (const match of group.matches) {
@@ -573,7 +574,7 @@ async function openResultTournamentPicker() {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "suggestion";
-    button.textContent = item.category + " " + item.city + (item.qualifying ? " · Qualifying" : "")
+    button.textContent = tournamentCategoryLabel(item.category) + " " + item.city + (item.qualifying ? " · Qualifying" : "")
       + (item.country ? " · " + item.country : "");
     button.setAttribute("aria-pressed", String(match.tournament.id === item.id));
     button.addEventListener("click", () => selectResultTournament(item));

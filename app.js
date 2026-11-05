@@ -30,7 +30,9 @@ function updateBackgroundControls() {
   document.getElementById("result-match-picker").hidden = !isResultCard();
   backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
-  const original = isDrawCard() ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
+  card.dataset.scheduleGrass = String(type === "schedule" && (!selected || selected === "assets/surfaces/grass_1.png"));
+  const original = isDrawCard() ? "assets/surfaces/hard_4.png" : type === "schedule" ? "assets/surfaces/grass_1.png"
+    : isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
   card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;
@@ -112,7 +114,8 @@ const photoByName = new Map([
   ["elsa jacquemot", "assets/players/elsa-jacquemot.png"],
   ["diana shnaider", "assets/players/diana-shnaider.png"]
 ]);
-const PLAYER_PHOTOS_API = "https://tennis-wta-api.schiter-tomas.workers.dev";
+const PLAYER_PHOTOS_API = ["localhost", "127.0.0.1", "[::1]"].includes(window.location?.hostname)
+  ? "" : "https://tennis-wta-api.schiter-tomas.workers.dev";
 let drivePhotos = new Map();
 let photosLastRefresh = 0;
 let photosUpdating = false;
@@ -224,7 +227,7 @@ const formButtons = Array.from({ length: 10 }, (_, index) => {
 });
 
 function lastTitleLabel(item) {
-  const category = { "125K": "WTA 125", "Finals": "WTA Finals" }[item.category] || item.category;
+  const category = tournamentCategoryLabel({ "125K": "WTA 125", "Finals": "WTA Finals" }[item.category] || item.category);
   const title = item.category === "Grand Slam" ? tournamentName(item) : category + " " + tournamentName(item);
   return (title + " " + item.year).toLocaleUpperCase();
 }
@@ -400,8 +403,12 @@ function tournamentName(item) {
   return override ? override[1] : item.city || item.name.replace(/^WTA\s*125\s*/i, "");
 }
 
+function tournamentCategoryLabel(category) {
+  return category.replace("Grand Slam", "Grand Chelem");
+}
+
 function tournamentLabel(item) {
-  return tournamentName(item) + " (" + item.category + ")";
+  return tournamentName(item) + " (" + tournamentCategoryLabel(item.category) + ")";
 }
 
 function titleTournaments() {
@@ -434,7 +441,8 @@ function showTournamentOptions(query) {
   tournamentQuery = query;
   const needle = normalize(query.trim());
   visibleTournaments = titleTournaments().filter(item => normalize(
-    [tournamentName(item), item.city, item.name, item.category, item.country, item.startDate].join(" ")
+    [tournamentName(item), item.city, item.name, item.category, tournamentCategoryLabel(item.category),
+      item.country, item.startDate].join(" ")
   ).includes(needle));
   tournamentActiveIndex = -1;
   tournamentInput.removeAttribute("aria-activedescendant");
@@ -526,6 +534,7 @@ function selectPlayer(player) {
 }
 
 function renderCard(player) {
+  if (cardType.value === "schedule") return renderScheduleCard();
   if (isDrawCard()) return renderDrawCard();
   if (isResultCard()) return renderResultCard();
   document.querySelector(".card-content").hidden = false;
@@ -558,7 +567,7 @@ function renderPlayerArtwork(root, player, type = "form") {
   const category = tournament ? tournament.category : type === "wta-125" ? "WTA 125" : "WTA TOUR";
   eventBox.style.width = Math.max(18, Math.min(48, eventName.length * 2.9 + 3), Math.min(48, category.length * 1.35 + 3)) + "%";
   node("card-event-category").textContent = tournament
-    ? tournament.category.toLocaleUpperCase()
+    ? tournamentCategoryLabel(tournament.category).toLocaleUpperCase()
     : type === "wta-125" ? "WTA 125" : "WTA TOUR";
   node("card-age").textContent = age + " ANS";
   node("card-country").textContent = player.country ? player.country + "." : "—";
@@ -612,16 +621,17 @@ function moveActive(direction) {
 cardType.addEventListener("change", () => {
   updateBackgroundControls();
   const playerSearchWrap = document.getElementById("player-search-wrap");
-  playerSearchWrap.style.visibility = isResultCard() || isDrawCard() ? "hidden" : "";
-  playerSearchWrap.inert = isResultCard() || isDrawCard();
+  const noPlayerSearch = isResultCard() || isDrawCard() || cardType.value === "schedule";
+  playerSearchWrap.style.visibility = noPlayerSearch ? "hidden" : "";
+  playerSearchWrap.inert = noPlayerSearch;
   updateTournamentSearch();
   if (selectedPlayer) renderCard(selectedPlayer);
   else if (!isResultCard()) card.hidden = true;
-  if (["wta-125", "wta-tour"].includes(cardType.value)) refreshCalendar();
+  if (["wta-125", "wta-tour", "schedule"].includes(cardType.value)) refreshCalendar();
 });
 
 window.addEventListener("focus", () => {
-  if (["wta-125", "wta-tour"].includes(cardType.value)) refreshCalendar();
+  if (["wta-125", "wta-tour", "schedule"].includes(cardType.value)) refreshCalendar();
 });
 
 tournamentInput.addEventListener("focus", () => {
@@ -699,6 +709,7 @@ function refreshCalendar() {
       if (!changed) return;
       updateTournamentSearch();
       if (selectedPlayer) renderCard(selectedPlayer);
+      else if (cardType.value === "schedule") renderScheduleCard();
     })
     .catch(error => {
       calendarFailed = true;

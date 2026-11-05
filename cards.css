@@ -121,7 +121,7 @@
 .result-winner-portrait > span, .result-opponent-portrait > span { display: flex; align-items: center; justify-content: center; height: 100%; color: #d2f9f4; font: 800 180px/1 "TT Bluescreens Upright", sans-serif; }
 .result-opponent-portrait { position: absolute; left: 865px; top: 853px; width: 507px; height: 507px; overflow: hidden; border-radius: 50%; background: #333; }
 .result-opponent-portrait img { filter: grayscale(1); }
-.result-event { position: absolute; top: 49px; width: 278px; height: 124px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: 5px; border-radius: 17px; color: #fff; }
+.result-event { position: absolute; top: 53px; width: 278px; height: 124px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px; padding: 5px; border-radius: 17px; color: #fff; }
 .result-event > strong, .result-event > span { flex: none; }
 .result-event strong { width: 100%; text-align: center; transform: translateY(2px) scaleX(var(--tournament-name-scale, 1)); white-space: nowrap; font: 400 84px/.82 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; }
 .result-event span { font: 400 22px/1 "Chunk Five", serif; white-space: nowrap; }
@@ -135,16 +135,16 @@
 .result-score-flag { object-fit: cover; }
 .result-flag-fallback { display: flex; align-items: center; justify-content: center; background: #123e58; font: 800 25px/1 Arial, sans-serif; }
 .result-score-rank { display: flex; align-items: center; justify-content: center; transform: translateY(1px); color: #fff; -webkit-text-stroke: 4px #000; paint-order: stroke fill; font: italic 700 82px/1 "TT Bluescreens", sans-serif; }
-.result-score-name { position: absolute; left: 212px; top: var(--row-top); width: 898px; height: 110px; display: flex; align-items: center; color: #fff; font: 400 84.4px/1 "Chunk Five", serif; -webkit-text-stroke: 4.25px #000; paint-order: stroke fill; }
+.result-score-name { position: absolute; left: 215px; top: var(--row-top); width: 898px; height: 110px; display: flex; align-items: center; color: #fff; font: 400 84.4px/1 "Chunk Five", serif; -webkit-text-stroke: 4.25px #000; paint-order: stroke fill; }
 .result-score-name > span { display: block; flex: none; white-space: nowrap; }
-.result-score-row[data-side="loser"] .result-score-name { left: 220px; top: calc(var(--row-top) - 3px); width: 890px; }
+.result-score-row[data-side="loser"] .result-score-name { top: calc(var(--row-top) - 3px); }
 .result-score-row.is-match-winner .result-score-name { color: #ffd400; }
-.result-score-sets { position: absolute; left: 1149px; top: var(--row-top); width: 171px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 95px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
-.result-content[data-sets="3"] .result-score-sets { left: 1155px; width: 231px; grid-template-columns: repeat(3, 1fr); }
+.result-score-sets { position: absolute; left: 1155px; top: var(--row-top); width: 160px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 110px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
+.result-content[data-sets="3"] .result-score-sets { left: 1163px; width: 216px; grid-template-columns: repeat(3, 1fr); }
 .result-score-sets > span { position: relative; display: flex; align-items: center; justify-content: center; }
 .result-score-sets .set-won { color: #ffd400; }
 .result-score-sets sup { align-self: flex-start; margin-top: 10px; font-size: 24px; -webkit-text-stroke: 3px #000; }
-.result-score-sets > .two-digit-score { font-size: 60px; }
+.result-score-sets > .two-digit-score { font-size: 68px; }
 .result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
 .result-content[data-manual="true"] :is([data-itf-field="player"], [data-itf-field="category"], [data-itf-field="tournament"]) { cursor: pointer; }
 .result-content[data-manual="true"] .result-round-heading { cursor: pointer; }
@@ -184,8 +184,8 @@
 #tour-score-art { left: 0; bottom: 0; clip-path: inset(0 0 0 57px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
-.player-card[data-type="tour-result"] .result-event { top: 14px; right: 16px; width: 234px; height: 112px; padding: 6px; border-radius: 6px; }
-.player-card[data-type="tour-result"] .result-event span { font-size: 20px; }
+.player-card[data-type="tour-result"] .result-event { top: 14px; right: 16px; width: 234px; height: 96px; gap: 3px; padding: 4px; border-radius: 6px; }
+.player-card[data-type="tour-result"] .result-event span { min-height: 20px; font-size: 20px; }
 .player-card[data-type="tour-result"] .result-score-row { --row-top: 781px; }
 .player-card[data-type="tour-result"] .result-score-row[data-side="loser"] { --row-top: 842px; }
 .player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
@@ -218,8 +218,11 @@
 .draw-content, #draw-matches { position: absolute; inset: 0; }
 .draw-layout-art, .draw-versus-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .draw-versus-art { z-index: 3; }
-#draw-round-art { z-index: 4; left: 50%; top: 0; transform: translateX(-50%); border-radius: calc(10px * var(--draw-heading-scale, 1)); background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
-#draw-round-art > img:first-child { display: none; }
+#draw-round-art { z-index: 4; left: 50%; top: 0; transform: translateX(-50%); border-radius: calc(10px * var(--draw-heading-scale, 1)); }
+#draw-round-art:is([data-custom-header="true"], :has([data-draw-field="header"]:focus)) { background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
+#draw-round-art:is([data-custom-header="true"], :has([data-draw-field="header"]:focus)) > img:first-child { visibility: hidden; }
+#draw-round-art:not([data-custom-header="true"]):not(:has([data-draw-field="header"]:focus)) .manual-draw-logo { display: none; }
+#draw-round-art:not([data-custom-header="true"]):not(:has([data-draw-field="header"]:focus)) .manual-draw-round-text strong { opacity: 0; }
 .draw-event { position: absolute; z-index: 1; top: calc(14px * var(--draw-heading-scale, 1)); right: calc(16px * var(--draw-heading-scale, 1)); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(2px * var(--draw-heading-scale, 1)); width: calc(234px * var(--draw-heading-scale, 1)); height: calc(96px * var(--draw-heading-scale, 1)); padding: calc(6px * var(--draw-heading-scale, 1)); border-radius: calc(6px * var(--draw-heading-scale, 1)); color: #fff; }
 .draw-event strong { width: 100%; text-align: center; transform: translateY(2px) scaleX(var(--tournament-name-scale, 1)); font: 400 calc(78px * var(--draw-heading-scale, 1))/.82 "Bebas Neue", sans-serif; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
 .draw-event > span { font: 400 calc(20px * var(--draw-heading-scale, 1))/1 "Chunk Five", serif; white-space: nowrap; }
@@ -240,11 +243,53 @@
 .draw-photo-button { position: absolute; left: 5.42%; top: 18.5%; width: 89.17%; height: 62.6%; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
 .draw-photo-button:focus-visible { outline: 5px solid #fff; outline-offset: -5px; }
 .draw-tbd { padding: 0; border: 0; background: transparent; filter: none; }
-.draw-h2h { position: absolute; z-index: 3; left: 706px; top: 605px; width: 194px; height: 105px; color: #fff; font: 800 80px/1 "TT Bluescreens Upright", sans-serif; }
+.draw-h2h { position: absolute; z-index: 3; left: 706px; top: 605px; width: 194px; height: 105px; color: #fff; font: 800 88px/1 "TT Bluescreens Upright", sans-serif; }
 .draw-h2h span { position: absolute; top: 0; bottom: 0; width: 70px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: text; color: #b8b8b8; }
-.draw-h2h span:first-child { left: 5px; }
-.draw-h2h span:last-child { right: 5px; }
+.draw-h2h span:first-child { left: 9px; }
+.draw-h2h span:last-child { right: 9px; }
 .draw-h2h span:empty::before { content: attr(data-placeholder); opacity: .6; }
 .draw-h2h span:focus { outline: 3px solid #ffd400; }
 .draw-options #draw-round { flex: 1; }
 @media (max-width: 480px) { .draw-tournament-picker { flex-basis: 100%; } .draw-options { flex-wrap: wrap; } #draw-round { flex: 1 1 100%; } #refresh-draws, #edit-draw-form { flex: 1; } .draw-options #draw-round { flex-basis: 100%; } }
+
+.schedule-options { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.schedule-options > span { color: #b9d7df; font-size: .85rem; }
+.schedule-count-buttons { display: flex; gap: 8px; }
+.schedule-count-buttons button { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 10px; color: #f5fbff; background: #123e58; cursor: pointer; }
+.schedule-count-buttons button[aria-pressed="true"] { border-color: #81da57; background: #12644f; }
+#schedule-tournament-search { min-width: 0; padding: 10px 12px; border: 1px solid #5cd5bf99; border-radius: 10px; color: #f5fbff; background: #051b31; }
+.schedule-dialog[open] { display: grid; gap: 12px; }
+.schedule-round-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.schedule-round-options button { min-height: 42px; padding: 8px; border: 1px solid #5cd5bf99; border-radius: 8px; color: #fff; background: #123e58; cursor: pointer; }
+.schedule-tournament-option { width: 100%; text-align: left; }
+.schedule-content { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.schedule-layout-art { position: absolute; inset: 0; width: 100%; height: 100%; }
+.schedule-round-button { position: absolute; z-index: 2; left: 180px; top: 18px; width: 1080px; height: 134px; overflow: hidden; padding: 0; border: 0; border-radius: 28px; background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); cursor: pointer; pointer-events: auto; }
+.schedule-round-button::before { content: ""; position: absolute; inset: 0; border: 8px solid #fff; border-radius: inherit; }
+.schedule-round-crop { position: absolute; left: 0; top: 0; height: 134px; overflow: hidden; pointer-events: none; }
+.schedule-round-crop img { position: absolute; max-width: none; }
+.schedule-round-label { position: absolute; left: 180px; top: 14px; width: 500px; color: #fff; font: 400 96px/1 "Bebas Neue", sans-serif; text-align: left; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
+.schedule-tournament-button { position: absolute; z-index: 3; right: 194px; top: 30px; width: max-content; max-width: 384px; height: 110px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 8px 20px; border: 0; border-radius: 23px; color: #fff; background: #699694; cursor: pointer; pointer-events: auto; }
+.schedule-tournament-button strong { width: 100%; font: 400 79px/.88 "Bebas Neue", sans-serif; text-align: center; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
+.schedule-tournament-button span { font: 400 26px/1 "Chunk Five", serif; white-space: nowrap; }
+.schedule-match-time { position: absolute; z-index: 1; left: 20%; width: 60%; height: 55px; color: #050505; font: 700 49px/1 "Bebas Neue", sans-serif; text-align: center; text-transform: uppercase; white-space: nowrap; cursor: text; pointer-events: auto; }
+.schedule-match-time:empty::before { content: attr(data-placeholder); color: #050505a8; }
+.schedule-player { position: absolute; z-index: 2; padding: 0; border: 0; color: #fff; background: transparent; text-align: left; cursor: pointer; pointer-events: auto; }
+.schedule-photo-wrap { position: relative; display: block; width: 100%; height: var(--schedule-photo-height); }
+.schedule-player-photo, .schedule-player-initials { position: absolute; left: 1.81635%; top: 3.29068%; width: 96.3673%; height: 93.4186%; }
+.schedule-player-photo { object-fit: cover; object-position: center 18%; background: #132b39; }
+.schedule-player-initials { display: flex; align-items: center; justify-content: center; color: #b7fff0; background: #132b39; font: italic 800 75px/1 "TT Bluescreens", sans-serif; }
+.schedule-player-frame { position: absolute; z-index: 2; max-width: none; pointer-events: none; }
+.schedule-player-rank { position: absolute; z-index: 3; left: -1%; top: -3%; width: 28%; height: 29%; display: flex; align-items: center; justify-content: center; gap: 2px; color: #050505; font: italic 800 48px/1 "TT Bluescreens", sans-serif; pointer-events: none; }
+.schedule-player-rank sup { align-self: flex-start; margin-top: 2px; font-size: .55em; }
+.schedule-player-rank.schedule-rank-wide { font-size: 38px; }
+.schedule-player-name { display: block; width: calc(100% - 12px); height: 42px; margin: -8px 0 0 6px; color: #fff; font: italic 700 40px/1 "TT Bluescreens", sans-serif; text-shadow: 1px 2px 3px #00112399; text-transform: uppercase; white-space: nowrap; }
+.schedule-content[data-match-count="4"] .schedule-player-name { height: 48px; }
+.schedule-content[data-match-count="4"] .schedule-player-rank { font-size: 54px; }
+.schedule-content[data-match-count="4"] .schedule-rank-wide { font-size: 43px; }
+.schedule-player:focus-visible, .schedule-round-button:focus-visible, .schedule-tournament-button:focus-visible, .schedule-count-buttons button:focus-visible { outline: 4px solid #fff; outline-offset: -4px; }
+.player-card[data-type="schedule"] { aspect-ratio: 4 / 5; background: url("assets/surfaces/grass_1.png") center / cover; }
+.player-card[data-type="schedule"][data-schedule-grass="true"] { background-size: 250% 159%; background-position: center top; }
+.player-card[data-type="schedule"] .card-design { height: 1800px; }
+.schedule-content [contenteditable="plaintext-only"]:focus { outline: 2px dashed #071e36a8; }
+@media (max-width: 480px) { .schedule-options { flex-wrap: wrap; } .schedule-round-options { grid-template-columns: 1fr; } }

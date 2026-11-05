@@ -75,6 +75,7 @@
           <option value="result">Non-Tour Result Card</option>
           <option value="tour-result">Tour Result Card</option>
           <option value="draw">Draw</option>
+          <option value="schedule">Schedule</option>
         </select>
       </div>
     </header>
@@ -95,6 +96,13 @@
           <label class="sr-only" for="draw-round">Draw round</label><select id="draw-round"><option value="F">FINALE</option><option value="S">DEMI-FINALES</option><option value="Q">QUARTS DE FINALE</option></select>
           <button id="edit-draw-form" type="button" aria-haspopup="dialog" aria-controls="draw-form-dialog">Player form</button>
           <button id="refresh-draws" type="button">Refresh</button>
+        </div>
+        <div id="schedule-options" class="schedule-options" hidden>
+          <span id="schedule-count-label">Matches</span>
+          <div class="schedule-count-buttons" role="group" aria-labelledby="schedule-count-label">
+            <button type="button" data-schedule-count="4" aria-pressed="false">4 matches</button>
+            <button type="button" data-schedule-count="5" aria-pressed="true">5 matches</button>
+          </div>
         </div>
         <p id="draw-status" role="status" hidden></p>
         <div class="result-controls" id="result-controls" hidden>
@@ -167,6 +175,17 @@
           <div class="draw-event"><strong id="draw-event-name"></strong><span id="draw-event-category"></span></div>
           <div id="draw-matches"></div>
         </div>
+        <div id="schedule-card-content" class="schedule-content" hidden>
+          <img id="schedule-layout-art" class="schedule-layout-art" alt="">
+          <button id="schedule-round-button" class="schedule-round-button" type="button" aria-label="Choose schedule round">
+            <span class="schedule-round-crop"><img id="schedule-round-art" alt=""></span>
+            <span id="schedule-round-label" class="schedule-round-label" hidden></span>
+          </button>
+          <button id="schedule-tournament-button" class="schedule-tournament-button" type="button" aria-label="Choose tournament">
+            <strong id="schedule-tournament-name">TOURNAMENT</strong><span id="schedule-tournament-category">WTA TOUR</span>
+          </button>
+          <div id="schedule-matches"></div>
+        </div>
         </div>
       </div>
     </section>
@@ -182,6 +201,26 @@
     <form method="dialog" class="background-dialog-heading"><h2 id="background-heading">Choose a background</h2><button type="submit">Close</button></form>
     <div id="background-options" class="background-options"><button type="button" data-background="" aria-pressed="true"><img id="default-background-thumbnail" src="assets/title-court.svg" alt=""><span>Original</span></button></div>
     <p id="background-status" role="status">Loading backgrounds...</p>
+  </dialog>
+  <dialog id="schedule-round-dialog" class="background-dialog schedule-dialog" aria-labelledby="schedule-round-heading">
+    <form method="dialog" class="background-dialog-heading"><h2 id="schedule-round-heading">Choose a round</h2><button type="submit">Close</button></form>
+    <div id="schedule-round-options" class="schedule-round-options">
+      <button type="button" data-schedule-round="premiers">PREMIERS TOURS</button>
+      <button type="button" data-schedule-round="deuxiemes">DEUXIÈMES TOURS</button>
+      <button type="button" data-schedule-round="troisiemes">TROISIÈMES TOURS</button>
+      <button type="button" data-schedule-round="quarts">QUARTS DE FINALE</button>
+      <button type="button" data-schedule-round="demi">DEMI-FINALES</button>
+      <button type="button" data-schedule-round="finale">FINALE</button>
+      <button type="button" data-schedule-round="qualy1">QUALIFICATIONS - T1</button>
+      <button type="button" data-schedule-round="qualy2">QUALIFICATIONS - T2</button>
+      <button type="button" data-schedule-round="qualy3">QUALIFICATIONS - T3</button>
+    </div>
+  </dialog>
+  <dialog id="schedule-tournament-dialog" class="background-dialog schedule-dialog" aria-labelledby="schedule-tournament-heading">
+    <form method="dialog" class="background-dialog-heading"><h2 id="schedule-tournament-heading">Choose a tournament</h2><button type="submit">Close</button></form>
+    <label class="sr-only" for="schedule-tournament-search">Search tournaments</label>
+    <input id="schedule-tournament-search" type="search" placeholder="Search this year's WTA Calendar" autocomplete="off">
+    <div id="schedule-tournament-options" class="itf-player-options" role="listbox" aria-label="WTA Calendar tournaments"></div>
   </dialog>
   <dialog id="itf-round-dialog" class="itf-player-dialog" aria-labelledby="itf-round-heading">
     <form method="dialog" class="itf-player-dialog-heading"><strong id="itf-round-heading">Select a round</strong><button type="submit">Close</button></form>
@@ -205,7 +244,7 @@
   <dialog id="result-category-dialog" class="itf-player-dialog" aria-labelledby="result-category-heading">
     <form method="dialog" class="itf-player-dialog-heading"><strong id="result-category-heading">Select tournament category</strong><button type="submit">Close</button></form>
     <div class="itf-round-options">
-      <button type="button" class="suggestion" data-category="Grand Slam">GRAND SLAM</button>
+      <button type="button" class="suggestion" data-category="Grand Slam">GRAND CHELEM</button>
       <button type="button" class="suggestion" data-category="WTA 1000">WTA 1000</button>
       <button type="button" class="suggestion" data-category="WTA 500">WTA 500</button>
       <button type="button" class="suggestion" data-category="WTA 250">WTA 250</button>
@@ -235,6 +274,7 @@
   <script src="app.js" defer></script>
   <script src="result-card.js" defer></script>
   <script src="draw-card.js" defer></script>
+  <script src="schedule-card.js" defer></script>
   <script src="export-card.js" defer></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-04T22:41:16.197805+00:00",
-  "date": "2026-11-04",
+  "updated_at": "2026-11-05T13:16:03.167263+00:00",
+  "date": "2026-11-05",
   "tournaments": [
     {
       "id": "1110:2026",
@@ -78,7 +78,13 @@
                 "name": "Luisina Giovannini",
                 "country": "ARG"
               },
-              null
+              {
+                "id": "325088",
+                "first_name": "Bianca",
+                "last_name": "Andreescu",
+                "name": "Bianca Andreescu",
+                "country": "CAN"
+              }
             ],
             "state": "U"
           },
@@ -175,7 +181,13 @@
             "id": "LS004",
             "position": 0,
             "players": [
-              null,
+              {
+                "id": "324267",
+                "first_name": "Anna",
+                "last_name": "Blinkova",
+                "name": "Anna Blinkova",
+                "country": "FRA"
+              },
               {
                 "id": "330733",
                 "first_name": "Yasmine",
@@ -190,7 +202,13 @@
             "id": "LS005",
             "position": 1,
             "players": [
-              null,
+              {
+                "id": "331039",
+                "first_name": "Ksenia",
+                "last_name": "Zaytseva",
+                "name": "Ksenia Zaytseva",
+                "country": "RUS"
+              },
               {
                 "id": "331290",
                 "first_name": "Gina",
@@ -324,8 +342,20 @@
             "id": "LS006",
             "position": 2,
             "players": [
-              null,
-              null
+              {
+                "id": "324750",
+                "first_name": "Mai",
+                "last_name": "Hontama",
+                "name": "Mai Hontama",
+                "country": "JPN"
+              },
+              {
+                "id": "315130",
+                "first_name": "Magda",
+                "last_name": "Linette",
+                "name": "Magda Linette",
+                "country": "POL"
+              }
             ],
             "state": "U"
           },
@@ -334,7 +364,13 @@
             "position": 3,
             "players": [
               null,
-              null
+              {
+                "id": "323149",
+                "first_name": "Lucrezia",
+                "last_name": "Stefanini",
+                "name": "Lucrezia Stefanini",
+                "country": "ITA"
+              }
             ],
             "state": "U"
           }
@@ -390,7 +426,13 @@
             "position": 0,
             "players": [
               null,
-              null
+              {
+                "id": "332168",
+                "first_name": "Alexandra",
+                "last_name": "Shubladze",
+                "name": "Alexandra Shubladze",
+                "country": "RUS"
+              }
             ],
             "state": "U"
           },
@@ -398,7 +440,13 @@
             "id": "LS005",
             "position": 1,
             "players": [
-              null,
+              {
+                "id": "326907",
+                "first_name": "Zeynep",
+                "last_name": "Sonmez",
+                "name": "Zeynep Sonmez",
+                "country": "TUR"
+              },
               {
                 "id": "323966",
                 "first_name": "Claire",
@@ -434,8 +482,20 @@
             "id": "LS007",
             "position": 3,
             "players": [
-              null,
-              null
+              {
+                "id": "329505",
+                "first_name": "Antonia",
+                "last_name": "Ruzic",
+                "name": "Antonia Ruzic",
+                "country": "CRO"
+              },
+              {
+                "id": "330332",
+                "first_name": "Alexandra",
+                "last_name": "Eala",
+                "name": "Alexandra Eala",
+                "country": "PHI"
+              }
             ],
             "state": "U"
           }

@@ -16,7 +16,10 @@ class SiteBuildTest(unittest.TestCase):
             dist.mkdir()
             data_dir = root / "data"
             data_dir.mkdir()
-            for name in ("index.html", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js"):
+            for name in (
+                "index.html", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js",
+                "schedule-card.js",
+            ):
                 (root / name).write_text("", encoding="utf-8")
             calendar = data_dir / "calendar_snapshot.json"
             calendar.write_text("{}", encoding="utf-8")
@@ -62,6 +65,11 @@ class SiteBuildTest(unittest.TestCase):
                 patch.object(build_site, "load_player_names", return_value=({}, {})),
                 patch.object(build_site, "merged_calendar", return_value={}),
             ):
+                with (
+                    patch.object(build_site, "ASSETS", {"missing.png": root / "missing.png"}),
+                    self.assertRaisesRegex(FileNotFoundError, "Missing site asset"),
+                ):
+                    build_site.main()
                 build_site.main()
             data = json.loads((dist / "data" / "players.json").read_text(encoding="utf-8"))
             players = {player["id"]: player for player in data["players"]}
