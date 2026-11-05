@@ -225,6 +225,13 @@ function renderDrawCard() {
     root.style.setProperty("--draw-heading-scale", headingScale);
   }
   document.getElementById("draw-layout-art").src = "assets/draws/" + layout.artwork + ".png";
+  // The PNG's empty player cards need their own foreground layer above the tournament box.
+  const placeholders = document.getElementById("draw-placeholder-art");
+  placeholders.hidden = round === "Q";
+  placeholders.src = "assets/draws/" + layout.artwork + ".png";
+  placeholders.style.clipPath = 'path("' + layout.slots.map(([x, y, width, height, top, left]) =>
+    `M${x} ${y}L${x + width} ${y + top}L${x + width + left} ${y + height + top}L${x + left} ${y + height}Z`
+  ).join(" ") + '")';
   const versus = document.getElementById("draw-versus-art");
   versus.hidden = round !== "Q";
   if (round === "Q") versus.src = "assets/draws/vs-quarters.png";

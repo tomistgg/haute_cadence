@@ -197,7 +197,8 @@
 .player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
 .player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
 .player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-.player-card[data-type="tour-result"] .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: none; font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="tour-result"] .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="tour-result"] .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
 .player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 532px; width: 110px; }
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
 .player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
@@ -222,7 +223,8 @@
 .card-stage:has(> .player-card:is([data-type="tour-result"], [data-type="draw"]:not([data-draw-round="S"])):not([hidden])) > .preview-controls { width: 100%; }
 .player-card[data-type="draw"] .card-design, .draw-content { width: calc(var(--draw-width, 1600) * 1px); height: calc(var(--draw-height, 900) * 1px); }
 .draw-content, #draw-matches { position: absolute; inset: 0; }
-.draw-layout-art, .draw-versus-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.draw-layout-art, .draw-placeholder-art, .draw-versus-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.draw-placeholder-art { z-index: 2; }
 .draw-versus-art { z-index: 3; }
 #draw-round-art { z-index: 4; left: 50%; top: 0; transform: translateX(-50%); border-radius: calc(10px * var(--draw-heading-scale, 1)); }
 #draw-round-art:is([data-custom-header="true"], :has([data-draw-field="header"]:focus)) { background: linear-gradient(90deg, #00ad91, #10c6a5 50%, #c4ece4); }
@@ -250,7 +252,7 @@
 .draw-photo-button:focus-visible { outline: 5px solid #fff; outline-offset: -5px; }
 .draw-tbd { padding: 0; border: 0; background: transparent; filter: none; }
 .draw-h2h { position: absolute; z-index: 3; left: 706px; top: 605px; width: 194px; height: 105px; color: #fff; font: 800 88px/1 "TT Bluescreens Upright", sans-serif; }
-.draw-h2h span { position: absolute; top: 0; bottom: 0; width: 70px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: text; color: #b8b8b8; }
+.draw-h2h span { position: absolute; top: 0; bottom: 0; width: 70px; display: flex; align-items: center; justify-content: center; pointer-events: auto; cursor: text; color: #b8b8b8; text-shadow: 2px 3px 5px #0009; }
 .draw-h2h span:first-child { left: 9px; }
 .draw-h2h span:last-child { right: 9px; }
 .draw-h2h span:empty::before { content: attr(data-placeholder); opacity: .6; }
