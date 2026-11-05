@@ -144,12 +144,13 @@
 .result-score-name > span { display: block; flex: none; white-space: nowrap; }
 .result-score-row[data-side="loser"] .result-score-name { top: calc(var(--row-top) - 3px); }
 .result-score-row.is-match-winner .result-score-name { color: #ffd400; }
-.result-score-sets { position: absolute; left: 1155px; top: var(--row-top); width: 160px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 110px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
+.result-score-sets { position: absolute; left: 1155px; top: var(--row-top); width: 160px; height: 110px; display: grid; grid-template-columns: repeat(2, 1fr); transform: translateY(6px); color: #fff; font: italic 700 104px/1 "Poppins", sans-serif; -webkit-text-stroke: 5px #000; paint-order: stroke fill; }
 .result-content[data-sets="3"] .result-score-sets { left: 1163px; width: 216px; grid-template-columns: repeat(3, 1fr); }
 .result-score-sets > span { position: relative; display: flex; align-items: center; justify-content: center; }
+.result-score-row[data-side="loser"] .result-score-sets > span { top: -2px; }
 .result-score-sets .set-won { color: #ffd400; }
 .result-score-sets sup { align-self: flex-start; margin-top: 10px; font-size: 24px; -webkit-text-stroke: 3px #000; }
-.result-score-sets > .two-digit-score { font-size: 68px; }
+.result-score-sets > .two-digit-score { font-size: 62px; }
 .result-content[data-manual="true"] .itf-editable { pointer-events: auto; cursor: text; outline: 2px dashed #ffffff60; outline-offset: -3px; -webkit-user-select: text; user-select: text; }
 .result-content[data-manual="true"] :is([data-itf-field="player"], [data-itf-field="category"], [data-itf-field="tournament"]) { cursor: pointer; }
 .result-content[data-manual="true"] .result-round-heading { cursor: pointer; }
@@ -196,9 +197,9 @@
 .player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
 .player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
 .player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-.player-card[data-type="tour-result"] .result-score-sets { left: 518px; top: var(--row-top); width: 94px; height: 58px; transform: none; font-size: 43px; -webkit-text-stroke-width: 1.6px; }
-.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 520px; width: 134px; }
-.player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 29px; }
+.player-card[data-type="tour-result"] .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: none; font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 532px; width: 110px; }
+.player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
 .player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
 
