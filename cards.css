@@ -38,8 +38,8 @@
 .card-rank { left: 4%; top: 3.6%; width: 22%; height: 9%; font-size: 12cqw; gap: 1.2cqw; }
 .card-rank sup { align-self: flex-start; padding-top: .1em; transform: translateX(.35cqw); font-size: .43em; line-height: 1; }
 .card-previous { top: 13.6%; height: 3.5%; font-size: 3.6cqw; text-align: center; white-space: nowrap; }
-/* Use the Form card's typography without inheriting the inset title-card container size. */
-.career-best-label { display: block; max-width: 100%; padding: 2.88px 10.08px; white-space: pre; font: normal 800 25.92px/28.512px "TT Bluescreens Upright", sans-serif; font-kerning: normal; letter-spacing: 0; word-spacing: 0; }
+/* Fit both lines inside the smaller title-card badge with padding on every side. */
+.career-best-label { box-sizing: border-box; display: block; max-width: 100%; padding: 4px 10px; white-space: pre; font: normal 800 22px/23px "TT Bluescreens Upright", sans-serif; font-kerning: normal; letter-spacing: 0; word-spacing: 0; }
 .best-rank-label { box-sizing: border-box; display: flex; align-items: center; justify-content: space-around; gap: .25cqw; width: 100%; height: 100%; padding: 0 1.2cqw; color: #050505; }
 .best-position { display: inline-flex; align-items: flex-start; gap: .5cqw; font: italic 800 4.3cqw/1 "TT Bluescreens", sans-serif; }
 #best-rank-value { color: #fff; -webkit-text-stroke: .25cqw #000; paint-order: stroke fill; }
@@ -71,6 +71,7 @@
 .title-event strong { display: block; flex: none; width: 100%; text-align: center; transform: translateY(calc(.7cqw + 2px)); font: 400 8.3cqw/.7 "Bebas Neue", sans-serif; white-space: nowrap; text-shadow: .1cqw .3cqw .5cqw #16392355; }
 .title-event span { display: block; flex: none; width: 100%; text-align: center; font: 400 2cqw/1 "Chunk Five", serif; }
 .title-event > span, .result-event > span, .draw-event > span { letter-spacing: .08em; }
+.title-event > span, .result-event > span, .draw-event > span, .schedule-tournament-button > span { position: relative; top: 4px; }
 .title-event strong, .result-event strong, .draw-event strong, .schedule-tournament-button strong { position: relative; top: 1px; }
 .player-card[data-type="wta-tour"] .title-event { background: #699694; }
 .player-card[data-type="wta-125"] .card-form, .player-card[data-type="wta-125"] .card-title-value, .player-card[data-type="wta-125"] .card-age, .player-card[data-type="wta-125"] .card-nationality,
@@ -82,12 +83,15 @@
 
 .player-card[data-tier="top_1"] .card-rank { display: none; }
 .player-card[data-tier="top_1"] .card-previous { width: 13.7%; }
-.player-card[data-tier="top_1"] .career-best-label { padding: 3px 12px; font-size: 24px; line-height: 26px; }
 .player-card[data-tier="top_1"] .card-title-value { top: calc(93.1% - 2px); }
 /* The top-10 badge is baked into the base and extends over the portrait. */
 .card-base-badge { display: none; clip-path: polygon(85.42% 0, 100% 0, 100% 6.39%, 95.56% 18.06%, 94.58% 18.83%, 80.56% 18.83%, 79.24% 18.33%, 79.03% 17.39%); }
 .player-card[data-tier="top_10"] .card-base-badge { display: block; }
 .title-details { pointer-events: none; }
+/* Align the trophy badge over the rank badge while keeping the lower title artwork in place. */
+.player-card[data-type="wta-tour"] .title-details { clip-path: inset(25% 0 0); }
+.tour-title-badge { display: none; position: absolute; inset: 0; clip-path: inset(0 0 75% 0); transform: translate(8px, 4px); pointer-events: none; }
+.player-card[data-type="wta-tour"] .tour-title-badge { display: block; }
 
 .tour-title-number { display: none; position: absolute; left: 22.6%; top: 12.1%; height: 3.4%; transform: rotate(1.2deg); transform-origin: left center; color: #050505; font: 800 4.8cqw/1 "TT Bluescreens Upright", sans-serif; }
 .player-card[data-type="wta-tour"] .tour-title-number { display: flex; align-items: center; gap: .1cqw; }
