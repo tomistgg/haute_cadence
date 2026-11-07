@@ -108,4 +108,24 @@ assert.equal(context.currentResults().map(match => match.id).join(","), "tour,12
 context.cardType.value = "tour-result";
 assert.equal(context.currentResults().map(match => match.id).join(","), "tour,slam");
 
+context.cardType.value = "instagram-result";
+assert.equal(context.currentResults().map(match => match.id).join(","), "tour,125,slam",
+  "Instagram must include both Tour and WTA 125 matches, using the same last-24-hours window");
+assert.equal(context.isManualResultId("tour-manual"), false);
+assert.equal(context.isManualResultId("itf-2"), false);
+for (const sets of [2, 3]) {
+  const draft = vm.runInContext(`selectedResultId = 'instagram-${sets}'; selectedResultMatch()`, context);
+  assert.equal(draft.sets.length, sets);
+  assert.equal(draft.round_heading, "MANUAL MATCH");
+  draft.sets[0].winner = 7;
+  assert.equal(context.selectedResultMatch().sets[0].winner, 7, "Instagram draft edits must persist");
+}
+context.cardType.value = "result";
+assert.equal(context.isManualResultId("instagram-2"), false, "Instagram drafts must not leak into other result types");
+vm.runInContext(appSource.slice(appSource.indexOf("function isResultCard("), appSource.indexOf("function isDrawCard(")), context);
+for (const type of ["result", "tour-result", "instagram-result"]) {
+  context.cardType.value = type;
+  assert.equal(context.isResultCard(), true, type + " must use the shared result controls");
+}
+
 console.log("Winner calculation, draft and third-set retention, manual scope, and Tour/24-hour filtering passed.");

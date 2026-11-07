@@ -74,6 +74,7 @@
           <option value="wta-tour">WTA Tour Title Card</option>
           <option value="result">Non-Tour Result Card</option>
           <option value="tour-result">Tour Result Card</option>
+          <option value="instagram-result">Instagram Result</option>
           <option value="draw">Draw</option>
           <option value="schedule">Schedule</option>
         </select>
@@ -167,9 +168,11 @@
           <button type="button" id="result-round-heading" class="result-round-heading" aria-haspopup="dialog" aria-controls="itf-round-dialog" hidden></button>
           <div class="result-event" id="result-event"><strong id="result-event-name"></strong><span id="result-event-category"></span></div>
           <span id="result-retired" class="result-retired" hidden>RET.</span>
-          <img id="result-score-art" class="result-layer" alt="">
-          <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
-          <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+          <div class="result-scoreboard">
+            <img id="result-score-art" class="result-layer" alt="">
+            <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+            <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+          </div>
         </div>
         <div id="draw-card-content" class="draw-content" hidden>
           <img id="draw-layout-art" class="draw-layout-art" alt="">

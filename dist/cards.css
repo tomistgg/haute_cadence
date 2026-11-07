@@ -119,6 +119,7 @@
 .player-card:is([data-type="result"], [data-type="tour-result"]) { aspect-ratio: 9 / 10; background: url("assets/result-court.svg") center / cover; }
 .player-card:is([data-type="result"], [data-type="tour-result"]) .card-design { height: 1600px; }
 .result-content, .result-layer { position: absolute; inset: 0; width: 1440px; height: 1600px; }
+.result-scoreboard { position: absolute; inset: 0; }
 #result-round-art { clip-path: inset(210px 0 0); }
 #non-tour-round-art { left: 50%; top: 26px; transform: translateX(-50%); }
 .result-winner-portrait { position: absolute; left: 204px; top: 233px; width: 1033px; height: 1311px; overflow: hidden; background: #122b3e; }
@@ -203,6 +204,19 @@
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
 .player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
+
+.player-card[data-type="instagram-result"] { width: min(100%, 450px); aspect-ratio: 9 / 16; background: url("assets/surfaces/hard_4.png") center / cover; }
+.player-card[data-type="instagram-result"] .card-design, .player-card[data-type="instagram-result"] .result-content { width: 1080px; height: 1920px; }
+.player-card[data-type="instagram-result"] .result-content > .result-layer, .player-card[data-type="instagram-result"] .result-opponent-portrait { display: none; }
+.player-card[data-type="instagram-result"] .result-winner-portrait { left: 65px; top: 360px; width: 950px; height: 1260px; border: 10px solid #fff; }
+.player-card[data-type="instagram-result"] #non-tour-round-art { z-index: 2; top: 320px; }
+.player-card[data-type="instagram-result"] .result-round-heading { z-index: 3; top: 320px; height: 104px; padding: 0 10px; font-size: 62px; }
+.player-card[data-type="instagram-result"] .result-event { z-index: 3; top: 144px; left: 360px; width: 360px; height: 148px; gap: 4px; padding: 10px 16px; border-radius: 12px; }
+.player-card[data-type="instagram-result"] .result-event strong { font-size: 96px; }
+.player-card[data-type="instagram-result"] .result-event > span { font-size: 28px; }
+.player-card[data-type="instagram-result"] .result-scoreboard { z-index: 4; inset: 471.2px auto auto -48.8px; width: 1440px; height: 1600px; transform: scale(.8); transform-origin: top left; }
+.player-card[data-type="instagram-result"] .result-content[data-sets="2"] .result-scoreboard { left: -16.4px; }
+.player-card[data-type="instagram-result"] .result-retired { z-index: 5; left: 840px; top: 1460px; }
 
 .draw-tournament-picker { display: flex; flex: 1; min-width: 0; }
 #draw-tournament, #draw-round { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #051b31; color: #f5fbff; }

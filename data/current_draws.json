@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-05T17:13:18.345252+00:00",
-  "date": "2026-11-05",
+  "updated_at": "2026-11-07T18:27:35.664618+00:00",
+  "date": "2026-11-07",
   "tournaments": [
     {
       "id": "1110:2026",
@@ -19,10 +19,22 @@
             "id": "LS001",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "325088",
+                "first_name": "Bianca",
+                "last_name": "Andreescu",
+                "name": "Bianca Andreescu",
+                "country": "CAN"
+              },
+              {
+                "id": "326891",
+                "first_name": "Leyre",
+                "last_name": "Romero Gormaz",
+                "name": "Leyre Romero Gormaz",
+                "country": "ESP"
+              }
             ],
-            "state": "U"
+            "state": "P"
           }
         ],
         "S": [
@@ -30,19 +42,43 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "325406",
+                "first_name": "Alice",
+                "last_name": "Tubello",
+                "name": "Alice Tubello",
+                "country": "FRA"
+              },
+              {
+                "id": "325088",
+                "first_name": "Bianca",
+                "last_name": "Andreescu",
+                "name": "Bianca Andreescu",
+                "country": "CAN"
+              }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              null,
-              null
+              {
+                "id": "326891",
+                "first_name": "Leyre",
+                "last_name": "Romero Gormaz",
+                "name": "Leyre Romero Gormaz",
+                "country": "ESP"
+              },
+              {
+                "id": "327287",
+                "first_name": "Julia",
+                "last_name": "Riera",
+                "name": "Julia Riera",
+                "country": "ARG"
+              }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "Q": [
@@ -65,7 +101,7 @@
                 "country": "FRA"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS005",
@@ -86,7 +122,7 @@
                 "country": "CAN"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS006",
@@ -107,7 +143,7 @@
                 "country": "ESP"
               }
             ],
-            "state": "P"
+            "state": "F"
           },
           {
             "id": "LS007",
@@ -128,7 +164,7 @@
                 "country": "MEX"
               }
             ],
-            "state": "P"
+            "state": "F"
           }
         ]
       }
@@ -150,8 +186,20 @@
             "id": "LS001",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "324267",
+                "first_name": "Anna",
+                "last_name": "Blinkova",
+                "name": "Anna Blinkova",
+                "country": "FRA"
+              },
+              {
+                "id": "326481",
+                "first_name": "Sofya",
+                "last_name": "Lansere",
+                "name": "Sofya Lansere",
+                "country": "RUS"
+              }
             ],
             "state": "U"
           }
@@ -161,19 +209,43 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "324267",
+                "first_name": "Anna",
+                "last_name": "Blinkova",
+                "name": "Anna Blinkova",
+                "country": "FRA"
+              },
+              {
+                "id": "331290",
+                "first_name": "Gina",
+                "last_name": "Feistel",
+                "name": "Gina Feistel",
+                "country": "POL"
+              }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              null,
-              null
+              {
+                "id": "326481",
+                "first_name": "Sofya",
+                "last_name": "Lansere",
+                "name": "Sofya Lansere",
+                "country": "RUS"
+              },
+              {
+                "id": "328631",
+                "first_name": "Noma",
+                "last_name": "Noha Akugue",
+                "name": "Noma Noha Akugue",
+                "country": "GER"
+              }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "Q": [
@@ -196,7 +268,7 @@
                 "country": "MAR"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS005",
@@ -217,7 +289,7 @@
                 "country": "POL"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS006",
@@ -238,7 +310,7 @@
                 "country": "POL"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS007",
@@ -259,7 +331,7 @@
                 "country": "GER"
               }
             ],
-            "state": "U"
+            "state": "F"
           }
         ]
       }
@@ -281,8 +353,20 @@
             "id": "LS001",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "328818",
+                "first_name": "Janice",
+                "last_name": "Tjen",
+                "name": "Janice Tjen",
+                "country": "INA"
+              },
+              {
+                "id": "315130",
+                "first_name": "Magda",
+                "last_name": "Linette",
+                "name": "Magda Linette",
+                "country": "POL"
+              }
             ],
             "state": "U"
           }
@@ -292,19 +376,43 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "328818",
+                "first_name": "Janice",
+                "last_name": "Tjen",
+                "name": "Janice Tjen",
+                "country": "INA"
+              },
+              {
+                "id": "329408",
+                "first_name": "Robin",
+                "last_name": "Montgomery",
+                "name": "Robin Montgomery",
+                "country": "USA"
+              }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              null,
-              null
+              {
+                "id": "315130",
+                "first_name": "Magda",
+                "last_name": "Linette",
+                "name": "Magda Linette",
+                "country": "POL"
+              },
+              {
+                "id": "327367",
+                "first_name": "Anastasia",
+                "last_name": "Zakharova",
+                "name": "Anastasia Zakharova",
+                "country": "RUS"
+              }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "Q": [
@@ -327,7 +435,7 @@
                 "country": "UZB"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS005",
@@ -348,7 +456,7 @@
                 "country": "IND"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS006",
@@ -369,7 +477,7 @@
                 "country": "POL"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS007",
@@ -390,7 +498,7 @@
                 "country": "ITA"
               }
             ],
-            "state": "U"
+            "state": "F"
           }
         ]
       }
@@ -412,8 +520,20 @@
             "id": "LS001",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "323966",
+                "first_name": "Claire",
+                "last_name": "Liu",
+                "name": "Claire Liu",
+                "country": "USA"
+              },
+              {
+                "id": "330332",
+                "first_name": "Alexandra",
+                "last_name": "Eala",
+                "name": "Alexandra Eala",
+                "country": "PHI"
+              }
             ],
             "state": "U"
           }
@@ -423,19 +543,43 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              null,
-              null
+              {
+                "id": "332168",
+                "first_name": "Alexandra",
+                "last_name": "Shubladze",
+                "name": "Alexandra Shubladze",
+                "country": "RUS"
+              },
+              {
+                "id": "323966",
+                "first_name": "Claire",
+                "last_name": "Liu",
+                "name": "Claire Liu",
+                "country": "USA"
+              }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              null,
-              null
+              {
+                "id": "318312",
+                "first_name": "Maria",
+                "last_name": "Sakkari",
+                "name": "Maria Sakkari",
+                "country": "GRE"
+              },
+              {
+                "id": "330332",
+                "first_name": "Alexandra",
+                "last_name": "Eala",
+                "name": "Alexandra Eala",
+                "country": "PHI"
+              }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "Q": [
@@ -458,7 +602,7 @@
                 "country": "RUS"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS005",
@@ -479,7 +623,7 @@
                 "country": "USA"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS006",
@@ -500,7 +644,7 @@
                 "country": "GRE"
               }
             ],
-            "state": "U"
+            "state": "F"
           },
           {
             "id": "LS007",
@@ -521,7 +665,7 @@
                 "country": "PHI"
               }
             ],
-            "state": "U"
+            "state": "F"
           }
         ]
       }

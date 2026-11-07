@@ -2,6 +2,11 @@
 
 A local, static player card builder using rankings and calendars saved by `tenis-fem-arg`.
 
+The **Instagram Result** card uses the shared last-24-hours WTA match picker and exports a 1080×1920 PNG.
+It combines the existing round and scoreboard artwork with a tournament badge and one large winner portrait.
+Winner-photo uploads, background selection, scores, rankings, set highlighting, and tiebreaks use the existing result workflow.
+Manual two- and three-set matches have their own saved drafts within the current tab.
+
 ## Run locally
 
 From this folder:

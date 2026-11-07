@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=661bf3ae2a04">
+  <link rel="stylesheet" href="cards.css?v=1b0d8eeeb25a">
 </head>
 <body>
   <main class="page">
@@ -74,6 +74,7 @@
           <option value="wta-tour">WTA Tour Title Card</option>
           <option value="result">Non-Tour Result Card</option>
           <option value="tour-result">Tour Result Card</option>
+          <option value="instagram-result">Instagram Result</option>
           <option value="draw">Draw</option>
           <option value="schedule">Schedule</option>
         </select>
@@ -167,9 +168,11 @@
           <button type="button" id="result-round-heading" class="result-round-heading" aria-haspopup="dialog" aria-controls="itf-round-dialog" hidden></button>
           <div class="result-event" id="result-event"><strong id="result-event-name"></strong><span id="result-event-category"></span></div>
           <span id="result-retired" class="result-retired" hidden>RET.</span>
-          <img id="result-score-art" class="result-layer" alt="">
-          <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
-          <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+          <div class="result-scoreboard">
+            <img id="result-score-art" class="result-layer" alt="">
+            <div class="result-score-row" data-side="winner"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+            <div class="result-score-row" data-side="loser"><img class="result-score-flag" alt=""><span class="result-flag-fallback" hidden></span><span class="result-score-rank"></span><div class="result-score-name"><span></span></div><div class="result-score-sets"></div></div>
+          </div>
         </div>
         <div id="draw-card-content" class="draw-content" hidden>
           <img id="draw-layout-art" class="draw-layout-art" alt="">
@@ -275,8 +278,8 @@
     </form>
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
-  <script src="app.js?v=9d8905ce5d5e" defer></script>
-  <script src="result-card.js?v=c7cc973afff1" defer></script>
+  <script src="app.js?v=e18456124465" defer></script>
+  <script src="result-card.js?v=5898799bbbea" defer></script>
   <script src="draw-card.js?v=c745f63e80d8" defer></script>
   <script src="schedule-card.js?v=5824d5e8d05c" defer></script>
   <script src="export-card.js?v=a8f70927b629" defer></script>

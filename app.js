@@ -16,7 +16,7 @@ function scaleCardDesign() {
 new ResizeObserver(scaleCardDesign).observe(card);
 const cardType = document.getElementById("card-type");
 function isResultCard() {
-  return ["result", "tour-result"].includes(cardType.value);
+  return ["result", "tour-result", "instagram-result"].includes(cardType.value);
 }
 function isDrawCard() { return cardType.value === "draw"; }
 const backgroundButton = document.getElementById("choose-background");
@@ -32,7 +32,7 @@ function updateBackgroundControls() {
   const selected = selectedBackgrounds.get(type) || "";
   card.dataset.scheduleGrass = String(type === "schedule" && (!selected || selected === "assets/surfaces/grass_1.png"));
   const original = isDrawCard() ? "assets/surfaces/hard_4.png" : type === "schedule" ? "assets/surfaces/grass_1.png"
-    : isResultCard() ? "assets/result-court.svg"
+    : type === "instagram-result" ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
   card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;

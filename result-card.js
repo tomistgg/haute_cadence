@@ -63,6 +63,7 @@ function currentResults() {
 
 function isManualResultId(id) {
   return cardType.value === "tour-result" ? id === "tour-manual"
+    : cardType.value === "instagram-result" ? ["instagram-2", "instagram-3"].includes(id)
     : cardType.value === "result" && ["itf-2", "itf-3"].includes(id);
 }
 
@@ -70,10 +71,11 @@ function selectedResultMatch() {
   if (!isManualResultId(selectedResultId)) return currentResults().find(item => item.id === selectedResultId);
   if (!itfMatches.has(selectedResultId)) {
     const tour = selectedResultId === "tour-manual";
+    const label = tour || selectedResultId.startsWith("instagram-") ? "MANUAL MATCH" : "ITF MATCH";
     const player = number => ({ id: selectedResultId + "-player-" + number, name: "PLAYER " + number, country: "", placeholder: true });
     itfMatches.set(selectedResultId, {
-      id: selectedResultId, manual: true, round: tour ? "MANUAL MATCH" : "ITF MATCH", round_art: "premier",
-      round_heading: tour ? "MANUAL MATCH" : "ITF MATCH",
+      id: selectedResultId, manual: true, round: label, round_art: "premier",
+      round_heading: label,
       tournament: { id: selectedResultId, name: "", city: "", category: "" },
       winner: player(1), loser: player(2), status: "",
       sets: Array.from({ length: tour ? 2 : Number(selectedResultId.at(-1)) }, () => ({ winner: "", loser: "", tiebreak: "" })),
@@ -132,7 +134,7 @@ function updateResultOutcome(match) {
   const photoSide = winningSide || "winner";
   if (cardType.value !== "tour-result") {
     setResultPhoto("winner", match[photoSide]);
-    setResultPhoto("loser", match[photoSide === "winner" ? "loser" : "winner"]);
+    if (cardType.value !== "instagram-result") setResultPhoto("loser", match[photoSide === "winner" ? "loser" : "winner"]);
   }
   for (const side of ["winner", "loser"]) {
     const row = resultContent.querySelector('[data-side="' + side + '"]');
@@ -216,6 +218,24 @@ function renderNonTourHeader(match) {
   heading.style.fontSize = label === "ITF MATCH" ? "110px" : "70px";
 }
 
+function renderInstagramHeader(match) {
+  const { file, label } = nonTourHeader(match);
+  const artwork = match.round_art === "troisieme" ? "premier" : match.round_art;
+  const tourBanner = tourArtwork[artwork] && match.round_heading !== "QUALIFICATIONS";
+  const width = tourBanner ? setTourArtwork("non-tour-round-art", artwork, 104)
+    : setTourArtwork("non-tour-round-art", file, 104, "assets/match_types", file, nonTourArtwork);
+  const heading = document.getElementById("result-round-heading");
+  heading.hidden = !match.manual && !label;
+  heading.textContent = label || match.round;
+  heading.classList.toggle("has-round-art", !label);
+  heading.style.left = (1080 - width) / 2 + (label ? 110 : 0) + "px";
+  const labelWidth = width - (label ? 120 : 0);
+  heading.style.backgroundImage = label ? "linear-gradient(90deg, #20bca3, #a9e2d7)" : "";
+  fitPlayerName(heading, labelWidth, "62px");
+  heading.style.width = labelWidth + "px";
+  document.getElementById("result-event").style.left = "360px";
+}
+
 function renderTourResult(match) {
   const tour = cardType.value === "tour-result";
   document.getElementById("tour-round-art").hidden = !tour;
@@ -246,7 +266,9 @@ function renderResultCard() {
   document.getElementById("draw-card-content").hidden = true;
   const match = selectedResultMatch();
   const tour = cardType.value === "tour-result";
+  const instagram = cardType.value === "instagram-result";
   document.getElementById("non-tour-photo-controls").hidden = tour;
+  document.getElementById("result-loser-upload").closest("label").hidden = instagram;
   document.getElementById("tour-photo-controls").hidden = !tour;
   document.getElementById("tour-set-controls").hidden = !tour || !match?.manual;
   if (!match) {
@@ -280,7 +302,8 @@ function renderResultCard() {
   const event = document.getElementById("result-event");
   heading.style.backgroundImage = "";
   heading.style.fontSize = "";
-  if (!tour) renderNonTourHeader(match);
+  if (instagram) renderInstagramHeader(match);
+  else if (!tour) renderNonTourHeader(match);
   event.style.backgroundColor = tournamentStyle({ level: match.tournament.category, name: match.tournament.name })?.color || "#7ed957";
   const eventName = document.getElementById("result-event-name");
   eventName.textContent = match.manual ? match.tournament.name : tournamentName(match.tournament).toLocaleUpperCase();
@@ -289,7 +312,7 @@ function renderResultCard() {
   const eventCategory = document.getElementById("result-event-category");
   eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS"
     : tournamentCategoryLabel(match.tournament.category).toLocaleUpperCase();
-  eventCategory.style.fontSize = match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
+  eventCategory.style.fontSize = match.manual ? Math.min(instagram ? 28 : tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
   document.getElementById("result-retired").textContent = match.status;
@@ -310,7 +333,7 @@ function renderResultCard() {
     rank.style.fontSize = cardType.value === "tour-result"
       ? String(rank.textContent).length > 3 ? "28px" : "36px"
       : String(rank.textContent).length > 3 ? "62px" : "82px";
-    row.querySelector(".result-score-name > span").textContent = resultPlayerName(player);
+    row.querySelector(".result-score-name > span").textContent = instagram ? playerDisplayName(player) : resultPlayerName(player);
     makeResultEditable(row.querySelector(".result-score-name"), match.manual, "player", side);
     const scores = row.querySelector(".result-score-sets");
     scores.replaceChildren();
@@ -334,7 +357,7 @@ function renderResultCard() {
   updateResultOutcome(match);
   card.hidden = false;
   scaleCardDesign();
-  fitTournamentName(eventName, tour ? "78px" : "84px");
+  fitTournamentName(eventName, instagram ? "96px" : tour ? "78px" : "84px");
   fitResultNames();
 }
 
@@ -387,13 +410,14 @@ function updateResultOptions() {
     empty.textContent = "No completed singles matches in the last 24 hours";
     resultSelect.append(empty);
   }
-  if (cardType.value === "result") {
+  if (["result", "instagram-result"].includes(cardType.value)) {
+    const instagram = cardType.value === "instagram-result";
     const manual = document.createElement("optgroup");
-    manual.label = "ITF";
+    manual.label = instagram ? "Manual" : "ITF";
     for (const sets of [2, 3]) {
       const option = document.createElement("option");
-      option.value = "itf-" + sets;
-      option.textContent = "ITF MATCH " + sets + " SETS";
+      option.value = (instagram ? "instagram-" : "itf-") + sets;
+      option.textContent = (instagram ? "MANUAL MATCH " : "ITF MATCH ") + sets + " SETS";
       manual.append(option);
     }
     resultSelect.append(manual);
@@ -640,7 +664,7 @@ resultContent.addEventListener("input", event => {
     if (field.textContent !== value) field.textContent = value;
     match.tournament.name = value;
     match.tournament.city = value;
-    fitTournamentName(field, cardType.value === "tour-result" ? "78px" : "84px");
+    fitTournamentName(field, cardType.value === "instagram-result" ? "96px" : cardType.value === "tour-result" ? "78px" : "84px");
   }
   updateResultOutcome(match);
 });

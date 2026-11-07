@@ -28,7 +28,6 @@ const context = {
   },
   window: { location: { hostname: "localhost" }, addEventListener() {} },
   cardType: { value: "result", addEventListener(event, listener) { changeCard = listener; } },
-  isResultCard: () => ["result", "tour-result"].includes(context.cardType.value),
   tournamentName: tournament => tournament.name,
   countRender: () => { renders += 1; },
   setInterval() {},
@@ -36,6 +35,7 @@ const context = {
 };
 vm.createContext(context);
 const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+vm.runInContext(appSource.slice(appSource.indexOf("function isResultCard("), appSource.indexOf("function isDrawCard(")), context);
 vm.runInContext(appSource.slice(appSource.indexOf("function tournamentCategoryLabel("), appSource.indexOf("function tournamentLabel(")), context);
 vm.runInContext(appSource.slice(appSource.indexOf("function createRefreshCooldown(")), context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "result-card.js"), "utf8"), context);
@@ -100,6 +100,18 @@ async function main() {
   context.cardType.value = "tour-result";
   changeCard();
   assert.equal(renders, 5, "returning from Form must restore the result card even when its feed is unchanged");
+  context.cardType.value = "instagram-result";
+  changeCard();
+  assert.equal(renders, 6, "Instagram must use the same result refresh and layout-change handler");
+  assert.equal(elements.get("result-controls").hidden, false);
+  const instagramDraft = vm.runInContext("selectedResultId = 'instagram-3'; selectedResultMatch()", context);
+  instagramDraft.sets[0].winner = 7;
+  context.cardType.value = "form";
+  changeCard();
+  context.cardType.value = "instagram-result";
+  changeCard();
+  assert.equal(context.selectedResultMatch(), instagramDraft, "returning to Instagram must preserve its manual draft");
+  assert.equal(instagramDraft.sets[0].winner, 7);
   console.log("Quiet background refresh, focus throttling, unchanged feeds, expiry, layout changes, and error recovery passed.");
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });
