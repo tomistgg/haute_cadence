@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bracketRounds, collectResults, completedAt, parseMatch, requestJson } from "../wta-live.mjs";
+import { bracketRounds, collectPlayerForm, collectResults, completedAt, mergePlayerForm, parseMatch, requestJson } from "../wta-live.mjs";
 
 const now = Date.parse("2026-11-05T12:00:00Z");
 const tournament = { tournamentGroup: { id: 1110, name: "Cali" }, year: 2026,
@@ -82,4 +82,96 @@ test("partial calendars and failed match requests fail the whole refresh", async
 test("non-UTF8 WTA text is decoded without losing player names", async t => {
     t.mock.method(globalThis, "fetch", async () => new Response(Uint8Array.from([...Buffer.from('{"name":"'), 233, ...Buffer.from('"}')])));
     assert.deepEqual(await requestJson("tournaments/"), { name: "é" });
+});
+
+const historyMatch = (changes = {}) => ({
+    player_1: "1", player_2: "2", winner: 1, s_d_flag: "S", scores: "6-3 6-2", reason_code: "W",
+    StartDate: "2026-10-26T00:00:00Z", tourn_nbr: "1180", tourn_year: "2026", qpm_flag: "M",
+    round_name: "R32", tourn_round: "1", ...changes,
+});
+
+test("Form orders history by tournament and round, takes ten, and leaves older-than-year results out", () => {
+    const history = Array.from({ length: 12 }, (_, index) => historyMatch({
+        StartDate: new Date(now - (15 - index) * 86400000).toISOString(),
+        tourn_nbr: String(index), winner: index % 2 + 1,
+    }));
+    const expected = history.slice(-10).map(m => m.winner === 1 ? "win" : "loss");
+    assert.deepEqual(mergePlayerForm("1", history.reverse(), [], now), expected);
+    assert.deepEqual(mergePlayerForm("1", [
+        historyMatch({ round_name: "Q", tourn_round: "3", winner: 2 }), historyMatch(),
+        historyMatch({ round_name: "R16", tourn_round: "2" }), historyMatch(),
+        historyMatch({ StartDate: "2025-11-04", tourn_nbr: "old" }),
+        historyMatch({ StartDate: "2027-01-01", tourn_nbr: "future" }),
+        historyMatch({ s_d_flag: "D" }), historyMatch({ winner: 0 }),
+        historyMatch({ scores: "W/O" }), historyMatch({ scores: "" }),
+        historyMatch({ player_1: "999", player_2: "998" }),
+    ], [], now), [...Array(7).fill(""), "win", "win", "loss"]);
+    assert.equal(mergePlayerForm("2", [historyMatch()], [], now)[9], "loss");
+});
+
+test("active draws replace the same event's history and include this week's singles and retirements only", () => {
+    const history = [historyMatch(), historyMatch({ tourn_nbr: "1110" })];
+    const rows = [
+        match({ MatchID: "LS032", MatchTimeStamp: "2026-11-02T09:00:00Z" }),
+        match({ Winner: "5", DrawLevelType: "Q" }),
+        match({ Winner: "5", DrawLevelType: "Q" }),
+        match({ MatchID: "LS001", MatchState: "U" }),
+        match({ MatchID: "LS002", Winner: "6" }),
+        match({ MatchID: "LD001", DrawMatchType: "D" }),
+        match({ MatchID: "LS003", MatchTimeStamp: "2026-11-06T09:00:00Z" }),
+        match({ MatchID: "LS004", MatchTimeStamp: "2025-10-01T09:00:00Z" }),
+    ];
+    assert.deepEqual(mergePlayerForm("1", history, [{ tournament, matches: rows }], now),
+        [...Array(7).fill(""), "win", "win", "loss"]);
+    assert.deepEqual(mergePlayerForm("2", [], [{ tournament, matches: rows }], now),
+        [...Array(8).fill(""), "loss", "win"]);
+});
+
+test("Form fetches both calendar years, paginates history, and shares active draws across players", async t => {
+    const calls = [];
+    t.mock.method(globalThis, "fetch", async url => {
+        url = new URL(url); calls.push(url);
+        if (url.pathname.includes("/players/")) {
+            assert.equal(url.searchParams.get("type"), "S");
+            if (url.searchParams.get("year") === "2025") return Response.json({ matches: [] });
+            const rows = url.searchParams.get("page") === "0" ? Array(1000).fill(historyMatch())
+                : [historyMatch({ round_name: "Q", tourn_round: "3", winner: 2 })];
+            return Response.json({ matches: rows });
+        }
+        if (url.pathname.endsWith("/matches")) return Response.json({ matches: [match()] });
+        const other = { ...tournament, level: "ITF", tournamentGroup: { id: 999 } };
+        return Response.json({ pageInfo: { page: 0, numEntries: 3 }, content: [tournament, tournament, other] });
+    });
+    const [first, second] = await Promise.all([collectPlayerForm("1", now), collectPlayerForm("2", now)]);
+    assert.deepEqual(first.slice(-3), ["win", "loss", "win"]);
+    assert.equal(second[9], "loss");
+    assert.equal(calls.filter(url => url.pathname.endsWith("/tournaments/")).length, 1);
+    assert.equal(calls.filter(url => /tournaments\/1110\/2026\/matches/.test(url.pathname)).length, 1);
+    assert.equal(calls.filter(url => url.pathname.includes("/players/")).length, 6);
+    await assert.rejects(collectPlayerForm("manual:1", now), /WTA player ID/);
+});
+
+test("Form rejects incomplete player histories instead of erasing the existing draft", async t => {
+    t.mock.method(globalThis, "fetch", async () => Response.json({}));
+    await assert.rejects(collectPlayerForm("1", now), /history response is incomplete/);
+});
+
+test("Sunday Form still fetches Saturday's finished tournament and next week's qualifying draw", async t => {
+    const sunday = Date.parse("2026-11-08T12:00:00Z"), events = [];
+    t.mock.method(globalThis, "fetch", async url => {
+        url = new URL(url);
+        if (url.pathname.includes("/players/")) return Response.json({ matches: [] });
+        if (url.pathname.endsWith("/matches")) {
+            events.push(url.pathname);
+            return Response.json({ matches: [match({ MatchTimeStamp: "2026-11-07T09:00:00Z" })] });
+        }
+        assert.equal(url.searchParams.get("to"), "2026-11-10");
+        return Response.json({ pageInfo: { page: 0, numEntries: 3 }, content: [
+            { ...tournament, endDate: "2026-11-07" },
+            { ...tournament, startDate: "2026-11-09", endDate: "2026-11-14", tournamentGroup: { id: 1181 } },
+            { ...tournament, endDate: "2026-11-01", tournamentGroup: { id: 1180 } },
+        ] });
+    });
+    assert.deepEqual((await collectPlayerForm("1", sunday)).slice(-2), ["win", "win"]);
+    assert.deepEqual(events.sort(), ["/api/tennis/tournaments/1110/2026/matches", "/api/tennis/tournaments/1181/2026/matches"]);
 });

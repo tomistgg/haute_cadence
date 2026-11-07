@@ -216,8 +216,44 @@ window.addEventListener("focus", refreshPlayerPhotos);
 setInterval(refreshPlayerPhotos, 300000);
 
 function playerForm(player) {
-  if (!manualForms.has(player.id)) manualForms.set(player.id, { results: Array(10).fill("") });
+  if (!manualForms.has(player.id)) manualForms.set(player.id, { results: Array(10).fill(""), edited: new Set() });
   return manualForms.get(player.id);
+}
+
+function cyclePlayerForm(player, index) {
+  const form = playerForm(player), states = ["", "win", "loss"];
+  form.results[index] = states[(states.indexOf(form.results[index]) + 1) % states.length];
+  form.edited.add(index);
+}
+
+function refreshVisiblePlayerForms(player) {
+  if (selectedPlayer?.id === player.id && cardType.value === "form") renderPlayerForm(selectedPlayer);
+  document.querySelectorAll(".draw-player-card").forEach(root => {
+    if (root.dataset.playerId === player.id) renderPlayerForm(player, root);
+  });
+  if (document.getElementById("draw-form-dialog").open) renderDrawFormEditor();
+}
+
+async function loadPlayerForm(player) {
+  if (!/^[1-9]\d*$/.test(String(player.id))) return;
+  const form = playerForm(player);
+  if (form.loading || Date.now() < (form.nextLoad || 0)) return;
+  form.loading = true;
+  form.error = "";
+  try {
+    const { collectPlayerForm } = await import("./wta-live.mjs");
+    const results = await collectPlayerForm(player.id);
+    results.forEach((result, index) => { if (!form.edited.has(index)) form.results[index] = result; });
+    form.nextLoad = Date.now() + 300000;
+  } catch (error) {
+    form.error = "WTA Form could not be loaded. You can still edit the ten results manually.";
+    form.nextLoad = Date.now() + 60000;
+    console.warn("Player Form unavailable:", error);
+    if (selectedPlayer?.id === player.id && cardType.value === "form") status.textContent = form.error;
+  } finally {
+    form.loading = false;
+    refreshVisiblePlayerForms(player);
+  }
 }
 
 function renderTourTitleNumber(player, root = cardDesign) {
@@ -235,9 +271,7 @@ const formButtons = Array.from({ length: 10 }, (_, index) => {
   button.className = "form-result";
   button.addEventListener("click", () => {
     if (!selectedPlayer) return;
-    const form = playerForm(selectedPlayer);
-    const states = ["", "win", "loss"];
-    form.results[index] = states[(states.indexOf(form.results[index]) + 1) % states.length];
+    cyclePlayerForm(selectedPlayer, index);
     renderPlayerForm(selectedPlayer);
   });
   formResults.append(button);
@@ -312,7 +346,11 @@ document.fonts.ready.then(() => { fitLastTitleText(); fitCardPlayerNames(); });
 
 function renderPlayerForm(player, root = cardDesign) {
   const form = playerForm(player);
-  [...root.querySelector(".card-content").querySelectorAll(".form-result")].forEach((button, index) => {
+  const content = root.querySelector(".card-content");
+  const group = content.querySelector(".card-form");
+  group.setAttribute("aria-busy", String(Boolean(form.loading)));
+  group.title = form.error || (form.loading ? "Loading the last ten singles results from WTA…" : "Last ten singles results, oldest to newest. Click to edit.");
+  [...content.querySelectorAll(".form-result")].forEach((button, index) => {
     const result = form.results[index];
     const label = result === "win" ? "win" : result === "loss" ? "loss" : "not set";
     button.dataset.result = result;
@@ -643,6 +681,7 @@ function renderPlayerArtwork(root, player, type = "form") {
   setPlayerPortrait(image, initials, player);
   node("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + (player.rank ?? "NR");
   node("svg-description").textContent = name + ", WTA singles rank " + (player.rank ?? "NR") + ", " + player.country + ", " + age + " years old.";
+  if (type === "form") loadPlayerForm(player);
   renderPlayerForm(player, root);
   renderTourTitleNumber(player, root);
 }

@@ -307,8 +307,8 @@ document.getElementById("draw-form-buttons").addEventListener("click", event => 
   const button = event.target.closest("button[data-index]");
   const player = visibleDrawPlayers.find(p => p.id === document.getElementById("draw-form-player").value);
   if (!button || !player) return;
-  const index = Number(button.dataset.index), form = playerForm(player), states = ["", "win", "loss"];
-  form.results[index] = states[(states.indexOf(form.results[index]) + 1) % 3];
+  const index = Number(button.dataset.index);
+  cyclePlayerForm(player, index);
   renderDrawCard();
   document.querySelector('#draw-form-buttons [data-index="' + index + '"]').focus();
 });
@@ -449,9 +449,7 @@ drawMatches.addEventListener("click", event => {
   if (button) {
     const index = [...artwork.querySelectorAll(".form-result")].indexOf(button);
     const player = players.find(p => p.id === id) || { id };
-    const form = playerForm(player);
-    const states = ["", "win", "loss"];
-    form.results[index] = states[(states.indexOf(form.results[index]) + 1) % 3];
+    cyclePlayerForm(player, index);
     renderPlayerForm(player, artwork);
   } else if (event.target.closest(".draw-photo-button")) {
     drawPortraitPlayer = id;

@@ -13,6 +13,40 @@ from serve_site import CardHandler, NoPhotoRedirects
 
 
 class DataRequestsTest(unittest.TestCase):
+    def test_wta_relay_only_fetches_allowed_api_routes_and_preserves_query(self):
+        with (
+            patch("serve_site.fetch_json", return_value={"matches": []}) as fetch,
+            patch.object(CardHandler, "log_message"),
+            ThreadingHTTPServer(("127.0.0.1", 0), CardHandler) as server,
+        ):
+            worker = threading.Thread(target=server.serve_forever, daemon=True)
+            worker.start()
+            base = f"http://127.0.0.1:{server.server_port}"
+            try:
+                for path in (
+                    "/api/tennis/players/329081/matches?year=2026&type=S&page=0&pageSize=1000",
+                    "/api/tennis/tournaments/?from=2026-11-01&to=2026-11-08",
+                    "/api/tennis/tournaments/1110/2026/matches",
+                ):
+                    with urlopen(base + path, timeout=5) as response:
+                        self.assertEqual(json.load(response), {"matches": []})
+                        self.assertEqual(response.headers["Cache-Control"], "no-store")
+                    self.assertEqual(fetch.call_args.args[0], "https://api.wtatennis.com" + path.removeprefix("/api"))
+                for path in ("/api/tennis/players/1", "/api/https://example.com", "/api/tennis/players/../matches"):
+                    with self.assertRaises(HTTPError) as error:
+                        urlopen(base + path, timeout=5)
+                    self.assertEqual(error.exception.code, 404)
+                    error.exception.close()
+                self.assertEqual(fetch.call_count, 3)
+                fetch.side_effect = OSError("offline")
+                with self.assertRaises(HTTPError) as error:
+                    urlopen(base + "/api/tennis/players/329081/matches", timeout=5)
+                self.assertEqual(error.exception.code, 502)
+                error.exception.close()
+            finally:
+                server.shutdown()
+                worker.join(timeout=5)
+
     def test_photo_relay_is_limited_to_library_routes_types_and_size(self):
         self.assertIsNone(NoPhotoRedirects().redirect_request(None, None, 302, "", {}, "https://other.example"))
         with (

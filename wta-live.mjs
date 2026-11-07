@@ -1,4 +1,5 @@
-const BASE = "https://tennis-wta-api.schiter-tomas.workers.dev";
+const BASE = ["127.0.0.1", "localhost"].includes(globalThis.location?.hostname)
+    ? globalThis.location.origin : "https://tennis-wta-api.schiter-tomas.workers.dev";
 const DAY = 86400000;
 const LEVELS = new Set(["WTA 125", "WTA 250", "WTA 500", "WTA 1000", "Finals", "WTA Finals", "Grand Slam"]);
 const ROUNDS = {
@@ -159,4 +160,80 @@ export async function collectDraws(now = Date.now()) {
     }));
     tournaments.sort((a, b) => a.category.localeCompare(b.category) || a.city.localeCompare(b.city) || a.id.localeCompare(b.id));
     return { updated_at: new Date(now).toISOString(), date: today, tournaments };
+}
+
+let formDraws;
+function activeFormDraws(now) {
+    const today = new Date(now).toISOString().slice(0, 10);
+    if (formDraws?.day === today && Date.now() < formDraws.expires) return formDraws.promise;
+    const session = { day: today, expires: Date.now() + 300000 };
+    session.promise = (async () => {
+        const monday = new Date(now);
+        monday.setUTCDate(monday.getUTCDate() - (monday.getUTCDay() + 6) % 7);
+        const weekStart = monday.toISOString().slice(0, 10);
+        const qualifyingEnd = new Date(now + 2 * DAY).toISOString().slice(0, 10);
+        const rows = await calendar(new Date(now - 30 * DAY).toISOString().slice(0, 10), qualifyingEnd);
+        // Keep events that ended earlier this week, and next week's draws already playing qualifying.
+        const active = rows.filter(t => eligible(t) && t.startDate.slice(0, 10) <= qualifyingEnd && t.endDate.slice(0, 10) >= weekStart);
+        const unique = [...new Map(active.map(t => [t.tournamentGroup.id + ":" + t.year, t])).values()];
+        return Promise.all(unique.map(async tournament => {
+            const data = await requestJson(`tournaments/${tournament.tournamentGroup.id}/${tournament.year}/matches`);
+            if (!Array.isArray(data.matches)) throw new Error("The WTA match response is incomplete.");
+            return { tournament, matches: data.matches };
+        }));
+    })().catch(error => { session.expires = 0; throw error; });
+    formDraws = session;
+    return session.promise;
+}
+
+export function mergePlayerForm(playerId, history, draws, now = Date.now()) {
+    playerId = String(playerId);
+    const cutoff = new Date(now);
+    cutoff.setUTCFullYear(cutoff.getUTCFullYear() - 1);
+    cutoff.setUTCHours(0, 0, 0, 0);
+    const activeEvents = new Set(draws.map(({ tournament: t }) => t.tournamentGroup.id + ":" + t.year));
+    const matches = new Map();
+    for (const match of history) {
+        const event = match.tourn_nbr + ":" + match.tourn_year;
+        const side = String(match.player_1) === playerId ? 1 : String(match.player_2) === playerId ? 2 : 0;
+        const time = Date.parse(match.StartDate);
+        // History dates are tournament start dates; active draws supply actual completion times.
+        if (activeEvents.has(event) || match.s_d_flag !== "S" || !side || ![1, 2].includes(Number(match.winner)) ||
+            !Number.isFinite(time) || time < cutoff.getTime() || time > now ||
+            !/\d/.test(match.scores || "") || /w\s*\/\s*o|walkover|bye/i.test(match.scores || "")) continue;
+        const round = Number(match.tourn_round) || ({ Q: 90, S: 91, F: 92 }[match.round_name] || 0);
+        const order = (match.qpm_flag === "Q" ? 0 : 100) + round;
+        const key = [event, match.qpm_flag, match.round_name, match.tourn_round, match.player_1, match.player_2].join(":");
+        matches.set(key, { time, order, result: Number(match.winner) === side ? "win" : "loss" });
+    }
+    for (const { tournament, matches: rows } of draws) {
+        for (const match of rows) {
+            const side = String(match.PlayerIDA) === playerId ? "A" : String(match.PlayerIDB) === playerId ? "B" : "";
+            const code = String(match.Winner || ""), time = completedAt(match);
+            if (!side || match.DrawMatchType !== "S" || match.MatchState !== "F" ||
+                !["2", "3", "4", "5"].includes(code) || !match.MatchID ||
+                !Number.isFinite(time) || time < cutoff.getTime() || time > now) continue;
+            const key = tournament.tournamentGroup.id + ":" + tournament.year + ":" + match.MatchID;
+            matches.set(key, { time, order: 0, result: (["2", "4"].includes(code) ? "A" : "B") === side ? "win" : "loss" });
+        }
+    }
+    const results = [...matches.values()].sort((a, b) => a.time - b.time || a.order - b.order)
+        .slice(-10).map(match => match.result);
+    return [...Array(10 - results.length).fill(""), ...results];
+}
+
+export async function collectPlayerForm(playerId, now = Date.now()) {
+    if (!/^[1-9]\d*$/.test(String(playerId))) throw new Error("A WTA player ID is required for Form.");
+    const year = new Date(now).getUTCFullYear();
+    const historyForYear = async year => {
+        const matches = [];
+        for (let page = 0; ; page += 1) {
+            const data = await requestJson(`players/${playerId}/matches`, { year, type: "S", page, pageSize: 1000 });
+            if (!Array.isArray(data.matches)) throw new Error("The WTA player history response is incomplete.");
+            matches.push(...data.matches);
+            if (data.matches.length < 1000) return matches;
+        }
+    };
+    const [current, previous, draws] = await Promise.all([historyForYear(year), historyForYear(year - 1), activeFormDraws(now)]);
+    return mergePlayerForm(playerId, [...previous, ...current], draws, now);
 }

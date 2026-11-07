@@ -14,7 +14,7 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 from build_site import main as build_site
 from shared_data import source_signature
-from update_wta_champions import merge_draw_champions, save_history
+from update_wta_champions import fetch_json, merge_draw_champions, save_history
 from update_wta_draws import OUTPUT as DRAW_OUTPUT
 from update_wta_draws import collect_draws
 from update_wta_results import OUTPUT, ROOT, api_time, collect_results
@@ -83,6 +83,24 @@ class CardHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         url = urlsplit(self.path)
         path = url.path
+        if path.startswith("/api/"):
+            if not re.fullmatch(r"/api/tennis/(?:players/[1-9]\d*/matches|tournaments(?:/\d+/\d{4}/matches)?)/?", path):
+                self.send_error(404, "Unknown WTA endpoint")
+                return None
+            try:
+                upstream = "https://api.wtatennis.com" + path.removeprefix("/api")
+                payload = fetch_json(upstream + ("?" + url.query if url.query else ""))
+                body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as error:
+                self.log_error("WTA API unavailable: %s", error)
+                self.send_error(502, "WTA data is temporarily unavailable")
+            return None
         if path == "/photos" or re.fullmatch(r"/photos/[A-Za-z0-9_-]+", path):
             return self.player_photos(url)
         if path in {"/data/players.json", "/data/calendar_snapshot.json"}:
