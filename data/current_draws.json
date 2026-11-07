@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-07T18:27:35.664618+00:00",
+  "updated_at": "2026-11-07T20:36:26.855924+00:00",
   "date": "2026-11-07",
   "tournaments": [
     {
@@ -34,7 +34,7 @@
                 "country": "ESP"
               }
             ],
-            "state": "P"
+            "state": "F"
           }
         ],
         "S": [
@@ -671,5 +671,23 @@
       }
     }
   ],
-  "champions": []
+  "champions": [
+    {
+      "end_date": "2026-11-07",
+      "start_date": "2026-11-02",
+      "year": 2026,
+      "tournament_id": "1110",
+      "name": "Reto Win Tennis Cali Open - Cali, COL",
+      "city": "CALI",
+      "category": "WTA 125",
+      "country": "COL",
+      "surface": "Clay",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/1110/2026/matches",
+      "champion": {
+        "id": "326891",
+        "name": "Leyre Romero Gormaz",
+        "country": "ESP"
+      }
+    }
+  ]
 }

@@ -25,10 +25,10 @@ const exportsSource = fs.readFileSync(path.join(__dirname, "..", "export-card.js
 vm.runInContext(exportsSource.slice(exportsSource.indexOf("async function waitForCardImage("),
   exportsSource.indexOf("async function renderCardExport(")), context);
 
-function render(player, override) {
+function render(player, override, placeholder) {
   const image = { dataset: {}, style: {}, getAttribute(name) { return this[name]; },
     removeAttribute(name) { delete this[name]; } };
-  const initials = { style: {} };
+  const initials = { style: {}, dataset: { photoPlaceholder: placeholder } };
   context.setPlayerPortrait(image, initials, player, override);
   bindings.push({ image, initials });
   return { image, initials };
@@ -41,9 +41,11 @@ async function main() {
   const leylahPortrait = render(leylah);
   const manual = render(eala, "blob:manual-upload");
   const missing = render({ id: "missing", name: "No Photo" });
+  const uploadPrompt = render(eala, undefined, "UPLOAD A PHOTO");
   assert.equal(leylahPortrait.image.src, "assets/players/leylah-fernandez.png");
   assert.equal(missing.image.hidden, true);
   assert.equal(missing.initials.textContent, "NP");
+  assert.equal(uploadPrompt.initials.textContent, "UPLOAD A PHOTO");
   const remote = (name, id = name) => ({ name, path: "/photos/" + id + "?v=2026-11-05" });
   payload = { photos: [remote("leylah_fernandez.png", "leylah"), remote("330332.png", "eala"),
     remote("alexandra_eala.png", "eala-name"), remote("jessica_bouzas.png", "bouzas"),
@@ -53,6 +55,11 @@ async function main() {
   assert.match(leylahPortrait.image.src, /\/photos\/leylah\?/);
   assert.equal(leylahPortrait.image.crossOrigin, "anonymous");
   assert.equal(manual.image.src, "blob:manual-upload", "late indexes must preserve manual uploads");
+  assert.equal(uploadPrompt.initials.textContent, "UPLOAD A PHOTO", "photo-library refresh must preserve the upload prompt");
+  uploadPrompt.image.onerror();
+  assert.equal(uploadPrompt.image.hidden, true);
+  assert.equal(uploadPrompt.initials.hidden, false);
+  assert.equal(uploadPrompt.initials.textContent, "UPLOAD A PHOTO", "failed photos must show the upload prompt instead of initials");
   assert.match(context.savedPlayerPhoto(eala), /\/photos\/eala\?/, "WTA ID must beat a name match");
   assert.match(context.savedPlayerPhoto({ id: "other", name: "Leylah-Annie Fernandez", aliases: ["Leylah Fernandez"] }),
     /\/photos\/leylah\?/);

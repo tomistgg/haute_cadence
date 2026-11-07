@@ -49,7 +49,7 @@ const changeType = type => {
   context.cardType.listeners.change();
 };
 
-for (const type of ["form", "wta-125", "wta-tour", "result", "tour-result", "instagram-result", "draw"]) {
+for (const type of ["form", "wta-125", "wta-tour", "result", "tour-result", "instagram-result", "multiple-tour-result", "multiple-photo-result", "draw"]) {
   changeType("schedule");
   assert.equal(elements.get("schedule-options").hidden, false);
   assert.equal(elements.get("schedule-card-content").hidden, false);

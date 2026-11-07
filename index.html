@@ -74,6 +74,8 @@
           <option value="wta-tour">WTA Tour Title Card</option>
           <option value="result">Non-Tour Result Card</option>
           <option value="tour-result">Tour Result Card</option>
+          <option value="multiple-tour-result">Multiple Results Screenshot</option>
+          <option value="multiple-photo-result">Multiple Results Photo</option>
           <option value="instagram-result">Instagram Result</option>
           <option value="draw">Draw</option>
           <option value="schedule">Schedule</option>
@@ -108,6 +110,21 @@
         <p id="draw-status" role="status" hidden></p>
         <div class="result-controls" id="result-controls" hidden>
           <p id="result-status" role="status"></p>
+          <div id="photo-result-options" class="schedule-options" hidden>
+            <span id="photo-result-count-label">Matches</span>
+            <div class="schedule-count-buttons" role="group" aria-labelledby="photo-result-count-label">
+              <button type="button" data-photo-result-count="4" aria-pressed="true">4 matches</button>
+              <button type="button" data-photo-result-count="5" aria-pressed="false">5 matches</button>
+            </div>
+          </div>
+          <div id="multiple-result-controls" class="multiple-result-controls" hidden>
+            <label>Match 1<select data-match-slot="0" aria-label="Select match 1"></select></label>
+            <label>Match 2<select data-match-slot="1" aria-label="Select match 2"></select></label>
+            <label>Match 3<select data-match-slot="2" aria-label="Select match 3"></select></label>
+            <label>Match 4<select data-match-slot="3" aria-label="Select match 4"></select></label>
+            <label hidden>Match 5<select data-match-slot="4" aria-label="Select match 5"></select></label>
+            <input id="multiple-result-photo-upload" type="file" accept="image/*" hidden>
+          </div>
           <div class="result-photo-controls" id="non-tour-photo-controls">
             <label class="result-photo-upload"><span id="result-winner-upload-label">Winner photo</span><input class="sr-only" id="result-winner-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
             <label class="result-photo-upload"><span id="result-loser-upload-label">Opponent photo</span><input class="sr-only" id="result-loser-upload" type="file" accept="image/*"><span class="result-photo-button" aria-hidden="true">Choose file</span></label>
@@ -156,6 +173,7 @@
           </div>
         </div>
         <div id="result-card-content" class="result-content" hidden>
+          <div id="multiple-results-grid" class="multiple-results-grid" hidden></div>
           <img id="tour-match-photo" class="tour-match-photo" alt="Uploaded match photo" hidden>
           <div class="tour-photo-frame" aria-hidden="true"></div>
           <div id="tour-round-art" class="tour-cropped-art" hidden><img alt=""></div>

@@ -40,7 +40,7 @@ async function renderCardExport() {
     copy.classList.add("card-export-copy");
     copy.style.cssText = `position:fixed;left:-10000px;top:0;width:${width}px;height:${height}px;box-shadow:none;margin:0;--card-scale:1;`;
     copy.style.backgroundImage = card.style.backgroundImage;
-    copy.querySelectorAll("#card-save-image, .suggestions, .sr-only, .draw-photo-button, .draw-select-player").forEach(node => node.remove());
+    copy.querySelectorAll("#card-save-image, .suggestions, .sr-only, .draw-photo-button, .draw-select-player, .multiple-photo-button").forEach(node => node.remove());
     copy.querySelectorAll("[contenteditable]").forEach(node => node.removeAttribute("contenteditable"));
     copy.querySelectorAll("img").forEach(image => {
       if (image.closest("[hidden]") || !image.getAttribute("src")) image.remove();

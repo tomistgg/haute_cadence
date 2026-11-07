@@ -16,7 +16,7 @@ function scaleCardDesign() {
 new ResizeObserver(scaleCardDesign).observe(card);
 const cardType = document.getElementById("card-type");
 function isResultCard() {
-  return ["result", "tour-result", "instagram-result"].includes(cardType.value);
+  return ["result", "tour-result", "instagram-result", "multiple-tour-result", "multiple-photo-result"].includes(cardType.value);
 }
 function isDrawCard() { return cardType.value === "draw"; }
 const backgroundButton = document.getElementById("choose-background");
@@ -31,8 +31,8 @@ function updateBackgroundControls() {
   backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
   card.dataset.scheduleGrass = String(type === "schedule" && (!selected || selected === "assets/surfaces/grass_1.png"));
-  const original = isDrawCard() ? "assets/surfaces/hard_4.png" : type === "schedule" ? "assets/surfaces/grass_1.png"
-    : type === "instagram-result" ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
+  const original = isDrawCard() ? "assets/surfaces/hard_4.png" : ["schedule", "multiple-photo-result"].includes(type) ? "assets/surfaces/grass_1.png"
+    : ["instagram-result", "multiple-tour-result"].includes(type) ? "assets/surfaces/hard_4.png" : isResultCard() ? "assets/result-court.svg"
     : type === "wta-tour" ? "assets/tour-court.svg" : "assets/title-court.svg";
   card.style.backgroundImage = !["form", "tour-result"].includes(type) && selected ? `url("${selected}")` : "";
   document.getElementById("background-thumbnail").src = selected || original;
@@ -185,7 +185,8 @@ function setPlayerPortrait(image, initials, player, override) {
     initials.hidden = visible;
     initials.style.display = visible ? "none" : "flex";
   };
-  initials.textContent = playerDisplayName(player).split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
+  initials.textContent = initials.dataset?.photoPlaceholder
+    || playerDisplayName(player).split(/\s+/).slice(0, 2).map(part => part[0] || "").join("").toUpperCase();
   image.crossOrigin = "anonymous";
   image.onload = loaded;
   image.onerror = () => {

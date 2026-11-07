@@ -6,6 +6,12 @@ const resultStatus = document.getElementById("result-status");
 const resultContent = document.getElementById("result-card-content");
 const uploadedResultPhotos = new Map();
 const uploadedTourPhotos = new Map();
+const multipleResultIds = ["", "", "", ""];
+const multiplePhotoResultIds = ["", "", "", "", ""];
+let multiplePhotoCount = 4;
+const multipleResultPhotos = Array.from({ length: 4 }, () => new Map());
+const multiplePlayerPhotos = new Map();
+let multiplePhotoSelection;
 // PNGs include transparent padding; position their visible artwork without changing the supplied files.
 const tourArtwork = {
   premier: [3200, 1800, 690, 391, 1734, 304],
@@ -51,13 +57,21 @@ let resultsLoading = false;
 let lastResultsRefresh = 0;
 let resultOptionsSignature = "";
 
+function isMultipleResultCard() {
+  return ["multiple-tour-result", "multiple-photo-result"].includes(cardType.value);
+}
+
+function activeMultipleResultIds() {
+  return cardType.value === "multiple-photo-result" ? multiplePhotoResultIds : multipleResultIds;
+}
+
 function currentResults() {
   const now = Date.now();
   return (resultFeed?.matches || []).filter(match => {
     const finished = Date.parse(match.completed_at);
     const tour = ["Grand Slam", "WTA Finals", "Finals", "WTA 1000", "WTA 500", "WTA 250"];
     return Number.isFinite(finished) && now - 86400000 <= finished && finished <= now
-      && (cardType.value !== "tour-result" || tour.includes(match.tournament.category));
+      && (!(cardType.value === "tour-result" || isMultipleResultCard()) || tour.includes(match.tournament.category));
   });
 }
 
@@ -129,15 +143,10 @@ function makeResultEditable(node, manual, field, side = "", index = "") {
   }
 }
 
-function updateResultOutcome(match) {
+function updateResultScoreOutcome(root, match) {
   const winningSide = resultWinningSide(match);
-  const photoSide = winningSide || "winner";
-  if (cardType.value !== "tour-result") {
-    setResultPhoto("winner", match[photoSide]);
-    if (cardType.value !== "instagram-result") setResultPhoto("loser", match[photoSide === "winner" ? "loser" : "winner"]);
-  }
   for (const side of ["winner", "loser"]) {
-    const row = resultContent.querySelector('[data-side="' + side + '"]');
+    const row = root.querySelector('[data-side="' + side + '"]');
     row.classList.toggle("is-match-winner", winningSide === side);
     [...row.querySelector(".result-score-sets").children].forEach((score, index) => {
       const set = match.sets[index];
@@ -146,6 +155,16 @@ function updateResultOutcome(match) {
       score.classList.toggle("set-won", !!won);
     });
   }
+}
+
+function updateResultOutcome(match) {
+  const winningSide = resultWinningSide(match);
+  const photoSide = winningSide || "winner";
+  if (cardType.value !== "tour-result") {
+    setResultPhoto("winner", match[photoSide]);
+    if (cardType.value !== "instagram-result") setResultPhoto("loser", match[photoSide === "winner" ? "loser" : "winner"]);
+  }
+  updateResultScoreOutcome(resultContent, match);
   const description = winningSide
     ? match[winningSide].name + " defeated " + match[winningSide === "winner" ? "loser" : "winner"].name
     : match.winner.name + " vs " + match.loser.name;
@@ -170,6 +189,9 @@ function fitResultNames() {
   resultContent.querySelectorAll(".result-score-name > span").forEach(name => {
     fitPlayerName(name, name.parentElement.clientWidth);
   });
+  resultContent.querySelectorAll(".multiple-player-name").forEach(name => {
+    fitPlayerName(name, name.parentElement.clientWidth, "64px");
+  });
 }
 
 function setResultPhoto(side, player) {
@@ -181,7 +203,7 @@ function setResultPhoto(side, player) {
 function setTourArtwork(id, artwork, height, directory = "assets/wtatour_result", filename = artwork, artworkBounds = tourArtwork) {
   const [width, imageHeight, x, y, cropWidth, cropHeight] = artworkBounds[artwork];
   const scale = height / cropHeight;
-  const frame = document.getElementById(id);
+  const frame = typeof id === "string" ? document.getElementById(id) : id;
   frame.hidden = false;
   frame.style.width = cropWidth * scale + "px";
   frame.style.height = height + "px";
@@ -237,32 +259,310 @@ function renderInstagramHeader(match) {
 }
 
 function renderTourResult(match) {
-  const tour = cardType.value === "tour-result";
+  const multiple = isMultipleResultCard();
+  const photoCard = cardType.value === "multiple-photo-result";
+  const headerScale = photoCard ? 1.875 : 1;
+  const canvasWidth = photoCard ? 1440 : 1600;
+  const tour = cardType.value === "tour-result" || multiple;
   document.getElementById("tour-round-art").hidden = !tour;
-  document.getElementById("tour-score-art").hidden = !tour;
+  document.getElementById("tour-score-art").hidden = !tour || multiple;
   const photo = document.getElementById("tour-match-photo");
-  photo.hidden = !tour || !uploadedTourPhotos.has(match.id);
+  photo.hidden = !tour || multiple || !uploadedTourPhotos.has(match.id);
   if (!tour) return;
   if (!photo.hidden) photo.src = uploadedTourPhotos.get(match.id);
   else photo.removeAttribute("src");
   document.getElementById("tour-set-count").value = String(match.sets.length);
   const artwork = match.round_art === "troisieme" ? "premier" : match.round_art;
-  const width = setTourArtwork("tour-round-art", artwork, 80);
-  setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
+  const multipleHeader = multiple ? nonTourHeader(match) : null;
+  const width = multiple
+    ? setTourArtwork("tour-round-art", multipleHeader.file, 80 * headerScale, "assets/match_types", multipleHeader.file, nonTourArtwork)
+    : setTourArtwork("tour-round-art", artwork, 80);
+  if (!multiple) setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
+  const banner = document.getElementById("tour-round-art");
+  banner.style.left = multiple ? (canvasWidth - width) / 2 + "px" : "";
+  banner.style.transform = multiple ? "none" : "";
   const heading = document.getElementById("result-round-heading");
-  const label = match.round_heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
+  const label = multiple ? multipleHeader.label : match.round_heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
   heading.hidden = !match.manual && !label;
   heading.textContent = label || match.round;
   heading.classList.toggle("has-round-art", !label);
-  heading.style.left = (1600 - width) / 2 + 100 + "px";
-  heading.style.width = width - 106 + "px";
-  document.getElementById("result-event").style.left = "auto";
+  const textOffset = multiple ? 200 * 80 * headerScale / nonTourArtwork[multipleHeader.file][5] : 100;
+  heading.style.left = (canvasWidth - width) / 2 + textOffset + "px";
+  heading.style.width = width - textOffset - (multiple ? 144 * headerScale : 6) + "px";
+  document.getElementById("result-event").style.left = multiple ? (canvasWidth + width) / 2 - 136 * headerScale + "px" : "auto";
   const eventName = document.getElementById("result-event-name");
   eventName.style.fontSize = "78px";
 }
 
+function renderResultRows(root, match, tour = false, instagram = false) {
+  for (const side of ["winner", "loser"]) {
+    const player = match[side];
+    const row = root.querySelector('[data-side="' + side + '"]');
+    const flag = row.querySelector(".result-score-flag");
+    const fallback = row.querySelector(".result-flag-fallback");
+    fallback.textContent = player.country || "—";
+    fallback.hidden = !!player.country;
+    flag.hidden = !player.country;
+    flag.onerror = () => { flag.hidden = true; fallback.hidden = false; };
+    if (player.country) flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
+    else flag.removeAttribute("src");
+    flag.alt = player.country + " flag";
+    const rank = row.querySelector(".result-score-rank");
+    rank.textContent = resultRank(player);
+    rank.style.fontSize = tour
+      ? String(rank.textContent).length > 3 ? "28px" : "36px"
+      : String(rank.textContent).length > 3 ? "62px" : "82px";
+    row.querySelector(".result-score-name > span").textContent = instagram ? playerDisplayName(player) : resultPlayerName(player);
+    makeResultEditable(row.querySelector(".result-score-name"), match.manual, "player", side);
+    const scores = row.querySelector(".result-score-sets");
+    scores.replaceChildren();
+    for (let index = 0; index < Math.max(2, match.sets.length); index += 1) {
+      const set = match.sets[index];
+      const score = document.createElement("span");
+      if (set) {
+        score.textContent = set[side];
+        if (set.tiebreak && set[side] < set[side === "winner" ? "loser" : "winner"]) {
+          const tiebreak = document.createElement("sup");
+          tiebreak.textContent = set.tiebreak;
+          score.append(tiebreak);
+        }
+      }
+      score.classList.toggle("two-digit-score", String(score.textContent).length > 1 && !score.querySelector("sup"));
+      makeResultEditable(score, match.manual, "score", side, index);
+      scores.append(score);
+    }
+  }
+}
+
+function renderMultiplePhotoMatch(panel, match, index) {
+  for (const side of ["winner", "loser"]) {
+    const player = match?.[side];
+    const figure = document.createElement("figure");
+    figure.className = "multiple-photo-player";
+    figure.dataset.side = side;
+    const portrait = document.createElement("div");
+    portrait.className = "multiple-player-portrait";
+    const image = document.createElement("img");
+    const initials = document.createElement("span");
+    initials.className = "multiple-player-initials";
+    const override = player && multiplePlayerPhotos.get(player.id);
+    const hasPhoto = player && (override || savedPlayerPhoto(player));
+    if (player) {
+      initials.dataset.photoPlaceholder = "UPLOAD A PHOTO";
+      setPlayerPortrait(image, initials, player, override);
+    }
+    else {
+      image.hidden = true;
+      initials.textContent = "SELECT MATCH";
+    }
+    const upload = document.createElement("button");
+    upload.type = "button";
+    upload.className = "multiple-photo-button" + (hasPhoto ? " has-photo" : "");
+    upload.dataset.photoSlot = String(index);
+    upload.dataset.photoSide = side;
+    upload.disabled = !player;
+    upload.textContent = hasPhoto ? "Change photo" : "";
+    upload.setAttribute("aria-label", "Upload " + (player ? playerDisplayName(player) : side) + " photo for match " + (index + 1));
+    portrait.append(image, initials, upload);
+    const name = document.createElement("figcaption");
+    name.className = "multiple-player-name";
+    name.textContent = player ? playerDisplayName(player).toLocaleUpperCase() : side === "winner" ? "PLAYER 1" : "PLAYER 2";
+    figure.append(portrait, name);
+    panel.append(figure);
+  }
+  if (!match) return;
+  const count = Math.max(2, match.sets.length);
+  const scoreboard = document.createElement("div");
+  scoreboard.className = "multiple-photo-scoreboard";
+  scoreboard.style.setProperty("--sets", String(count));
+  scoreboard.setAttribute("aria-label", "Match " + (index + 1) + " score");
+  const art = document.createElement("div");
+  art.className = "tour-cropped-art multiple-photo-score-art";
+  art.append(document.createElement("img"));
+  const artwork = count === 3 ? "trois_sets" : "deux_sets";
+  // Reuse the scoreboard PNG's cell background behind the vertical set scores.
+  const bounds = { deux_sets: [1440, 1600, 1155, 1355, 160, 60], trois_sets: [1440, 1600, 1155, 1355, 216, 60] };
+  const width = setTourArtwork(art, artwork, count * 90 - 6, "assets/results", artwork, bounds);
+  art.style.transform = "scaleX(" + 176 / width + ")";
+  scoreboard.append(art);
+  for (let index = 0; index < count; index += 1) {
+    const set = match.sets[index];
+    const row = document.createElement("div");
+    row.className = "multiple-photo-set";
+    for (const side of ["winner", "loser"]) {
+      if (side === "loser") {
+        const dash = document.createElement("span");
+        dash.className = "multiple-photo-separator";
+        dash.textContent = "-";
+        row.append(dash);
+      }
+      const score = document.createElement("span");
+      score.className = "multiple-photo-score";
+      score.textContent = set?.[side] ?? "";
+      score.classList.toggle("set-won", !!set && set[side] > set[side === "winner" ? "loser" : "winner"]);
+      score.classList.toggle("two-digit-score", String(set?.[side] ?? "").length > 1);
+      if (set?.tiebreak && set[side] < set[side === "winner" ? "loser" : "winner"]) {
+        const tiebreak = document.createElement("sup");
+        tiebreak.textContent = set.tiebreak;
+        score.append(tiebreak);
+      }
+      row.append(score);
+    }
+    scoreboard.append(row);
+  }
+  if (match.status) {
+    const status = document.createElement("span");
+    status.className = "multiple-photo-status";
+    status.textContent = match.status;
+    scoreboard.append(status);
+  }
+  panel.append(scoreboard);
+}
+
+function updateMultipleResultOptions(matches) {
+  const ids = activeMultipleResultIds();
+  const count = cardType.value === "multiple-photo-result" ? multiplePhotoCount : 4;
+  const controls = document.getElementById("multiple-result-controls");
+  controls.querySelectorAll("select").forEach((select, index) => {
+    select.closest("label").hidden = index >= count;
+    if (index >= ids.length) { select.disabled = true; return; }
+    if (!matches.some(match => match.id === ids[index])) ids[index] = "";
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = "Choose match " + (index + 1);
+    select.replaceChildren(empty, ...[...resultSelect.children].map(node => node.cloneNode(true)));
+    select.value = ids[index];
+    select.disabled = !matches.length;
+  });
+}
+
+function setMultiplePhotoCount(count) {
+  if (cardType.value !== "multiple-photo-result" || ![4, 5].includes(count)) return;
+  multiplePhotoCount = count;
+  updateMultipleResultOptions(currentResults());
+  renderResultCard();
+}
+
+document.getElementById("photo-result-options").addEventListener("click", event => {
+  const button = event.target.closest("[data-photo-result-count]");
+  if (button) setMultiplePhotoCount(Number(button.dataset.photoResultCount));
+});
+
+function renderMultipleTourResults() {
+  const photoCard = cardType.value === "multiple-photo-result";
+  const headerScale = photoCard ? 1.875 : 1;
+  const ids = activeMultipleResultIds();
+  card.dataset.type = cardType.value;
+  card.dataset.photoCount = String(photoCard ? multiplePhotoCount : 4);
+  const countOptions = document.getElementById("photo-result-options");
+  countOptions.hidden = !photoCard;
+  countOptions.querySelectorAll("[data-photo-result-count]").forEach(button => {
+    button.setAttribute("aria-pressed", String(Number(button.dataset.photoResultCount) === multiplePhotoCount));
+  });
+  card.removeAttribute("data-tier");
+  document.querySelector(".card-content").hidden = true;
+  document.getElementById("card-title-details").hidden = true;
+  document.getElementById("draw-card-content").hidden = true;
+  document.getElementById("non-tour-photo-controls").hidden = true;
+  document.getElementById("tour-photo-controls").hidden = true;
+  document.getElementById("multiple-result-controls").hidden = false;
+  resultSelect.hidden = true;
+  resultContent.hidden = false;
+  resultContent.dataset.manual = "false";
+  delete resultContent.dataset.sets;
+  const matches = currentResults();
+  const selected = ids.slice(0, photoCard ? multiplePhotoCount : 4).map(id => matches.find(match => match.id === id));
+  const grid = document.getElementById("multiple-results-grid");
+  grid.hidden = false;
+  grid.replaceChildren();
+  const template = document.getElementById("result-score-art").closest(".result-scoreboard");
+  selected.forEach((match, index) => {
+    const panel = document.createElement("div");
+    panel.className = "multiple-result-panel";
+    if (photoCard) {
+      panel.classList.add("multiple-photo-match");
+      renderMultiplePhotoMatch(panel, match, index);
+      grid.append(panel);
+      return;
+    }
+    const photo = multipleResultPhotos[index].get(ids[index]);
+    if (photo) {
+      const image = document.createElement("img");
+      image.className = "multiple-match-photo";
+      image.src = photo;
+      image.alt = "Uploaded photo for match " + (index + 1);
+      panel.append(image);
+    }
+    const upload = document.createElement("button");
+    upload.type = "button";
+    upload.className = "multiple-photo-button" + (photo ? " has-photo" : "");
+    upload.dataset.photoSlot = String(index);
+    upload.setAttribute("aria-label", (photo ? "Change" : "Upload") + " photo for match " + (index + 1));
+    upload.textContent = photo ? "Change photo" : "Upload match " + (index + 1) + " photo";
+    panel.append(upload);
+    if (match) {
+      const board = document.createElement("div");
+      board.className = "result-content multiple-scoreboard";
+      board.dataset.sets = String(match.sets.length);
+      const art = document.createElement("div");
+      art.className = "tour-cropped-art multiple-score-art";
+      art.append(document.createElement("img"));
+      const width = setTourArtwork(art, match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
+      // Center the same Tour scoreboard at a readable size within each quadrant.
+      board.style.left = `calc(50% - ${width * .72 / 2}px)`;
+      board.append(art, ...[...template.querySelectorAll(".result-score-row")].map(row => row.cloneNode(true)));
+      renderResultRows(board, match, true);
+      updateResultScoreOutcome(board, match);
+      if (match.status) {
+        const status = document.createElement("span");
+        status.className = "multiple-result-status";
+        status.textContent = match.status;
+        panel.append(status);
+      }
+      panel.append(board);
+    }
+    grid.append(panel);
+  });
+  const header = selected.find(Boolean) || { id: "", round: "1st Round", round_art: "premier", sets: [],
+    tournament: { name: "", category: "WTA TOUR" } };
+  renderTourResult(header);
+  const heading = document.getElementById("result-round-heading");
+  heading.disabled = true;
+  heading.classList.remove("centered-itf-round", "itf-editable");
+  heading.style.backgroundImage = "";
+  heading.style.fontSize = "";
+  const event = document.getElementById("result-event");
+  event.style.backgroundColor = tournamentStyle({ level: header.tournament.category, name: header.tournament.name })?.color || "#699694";
+  const name = document.getElementById("result-event-name");
+  name.textContent = selected.some(Boolean) ? tournamentName(header.tournament).toLocaleUpperCase() : "WTA TOUR";
+  makeResultEditable(name, false, "tournament");
+  const category = document.getElementById("result-event-category");
+  category.textContent = tournamentCategoryLabel(header.tournament.category).toLocaleUpperCase();
+  category.style.fontSize = "";
+  makeResultEditable(category, false, "category");
+  document.getElementById("svg-title").textContent = cardType.selectedOptions[0].textContent;
+  document.getElementById("svg-description").textContent = selected.filter(Boolean)
+    .map(match => match.winner.name + " defeated " + match.loser.name).join("; ");
+  card.hidden = false;
+  scaleCardDesign();
+  fitTournamentName(name, 44 * headerScale + "px");
+  fitPlayerName(category, event.clientWidth - 24 * headerScale, 14 * headerScale + "px");
+  if (!heading.hidden) {
+    const available = heading.clientWidth;
+    fitPlayerName(heading, available, 40 * headerScale + "px");
+    heading.style.width = available + "px";
+  }
+  fitResultNames();
+}
+
 function renderResultCard() {
   if (!isResultCard()) return;
+  if (isMultipleResultCard()) return renderMultipleTourResults();
+  document.getElementById("photo-result-options").hidden = true;
+  document.getElementById("multiple-result-controls").hidden = true;
+  document.getElementById("multiple-results-grid").hidden = true;
+  document.getElementById("multiple-results-grid").replaceChildren();
+  resultSelect.hidden = false;
   document.getElementById("draw-card-content").hidden = true;
   const match = selectedResultMatch();
   const tour = cardType.value === "tour-result";
@@ -316,43 +616,7 @@ function renderResultCard() {
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
   document.getElementById("result-retired").textContent = match.status;
-  for (const side of ["winner", "loser"]) {
-    const player = match[side];
-    const row = resultContent.querySelector('[data-side="' + side + '"]');
-    const flag = row.querySelector(".result-score-flag");
-    const fallback = row.querySelector(".result-flag-fallback");
-    fallback.textContent = player.country || "—";
-    fallback.hidden = !!player.country;
-    flag.hidden = !player.country;
-    flag.onerror = () => { flag.hidden = true; fallback.hidden = false; };
-    if (player.country) flag.src = "assets/flags/" + player.country.toLowerCase() + ".svg";
-    else flag.removeAttribute("src");
-    flag.alt = player.country + " flag";
-    const rank = row.querySelector(".result-score-rank");
-    rank.textContent = resultRank(player);
-    rank.style.fontSize = cardType.value === "tour-result"
-      ? String(rank.textContent).length > 3 ? "28px" : "36px"
-      : String(rank.textContent).length > 3 ? "62px" : "82px";
-    row.querySelector(".result-score-name > span").textContent = instagram ? playerDisplayName(player) : resultPlayerName(player);
-    makeResultEditable(row.querySelector(".result-score-name"), match.manual, "player", side);
-    const scores = row.querySelector(".result-score-sets");
-    scores.replaceChildren();
-    for (let index = 0; index < Math.max(2, match.sets.length); index += 1) {
-      const set = match.sets[index];
-      const score = document.createElement("span");
-      if (set) {
-        score.textContent = set[side];
-        if (set.tiebreak && set[side] < set[side === "winner" ? "loser" : "winner"]) {
-          const tiebreak = document.createElement("sup");
-          tiebreak.textContent = set.tiebreak;
-          score.append(tiebreak);
-        }
-      }
-      score.classList.toggle("two-digit-score", String(score.textContent).length > 1 && !score.querySelector("sup"));
-      makeResultEditable(score, match.manual, "score", side, index);
-      scores.append(score);
-    }
-  }
+  renderResultRows(resultContent, match, tour, instagram);
   renderTourResult(match);
   updateResultOutcome(match);
   card.hidden = false;
@@ -428,6 +692,11 @@ function updateResultOptions() {
     resultSelect.append(manual);
   }
   resultSelect.disabled = false;
+  if (isMultipleResultCard()) {
+    updateMultipleResultOptions(matches);
+    renderResultCard();
+    return;
+  }
   const hasMatch = !!selectedResultMatch();
   document.getElementById("result-winner-upload").disabled = !hasMatch;
   document.getElementById("result-loser-upload").disabled = !hasMatch;
@@ -476,6 +745,46 @@ async function refreshResults(force = false) {
 resultSelect.addEventListener("change", () => {
   selectedResultId = resultSelect.value;
   renderResultCard();
+});
+document.getElementById("multiple-result-controls").addEventListener("change", event => {
+  const select = event.target.closest("select[data-match-slot]");
+  if (!select || !isMultipleResultCard()) return;
+  activeMultipleResultIds()[Number(select.dataset.matchSlot)] = select.value;
+  renderResultCard();
+});
+document.getElementById("multiple-results-grid").addEventListener("click", event => {
+  const button = event.target.closest("[data-photo-slot]");
+  if (!button || !isMultipleResultCard()) return;
+  const index = Number(button.dataset.photoSlot);
+  const id = activeMultipleResultIds()[index];
+  const side = button.dataset.photoSide;
+  const player = side && currentResults().find(match => match.id === id)?.[side];
+  if (side && !player) return;
+  multiplePhotoSelection = { index, id, playerId: player?.id, side };
+  document.getElementById("multiple-result-photo-upload").click();
+});
+document.getElementById("multiple-result-photo-upload").addEventListener("change", async event => {
+  const input = event.target;
+  const file = input.files[0];
+  const selection = multiplePhotoSelection;
+  input.value = "";
+  if (!file || !selection) return;
+  if (!file.type.startsWith("image/")) { resultStatus.textContent = "Choose an image file for the match photo."; return; }
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    const photos = selection.side ? multiplePlayerPhotos : multipleResultPhotos[selection.index];
+    const key = selection.side ? selection.playerId : selection.id;
+    const previous = photos.get(key);
+    photos.set(key, url);
+    if (previous) URL.revokeObjectURL(previous);
+    if (isMultipleResultCard()) renderResultCard();
+  } catch {
+    URL.revokeObjectURL(url);
+    resultStatus.textContent = "That photo could not be opened. Choose another image.";
+  }
 });
 document.getElementById("refresh-results").addEventListener("click", () => refreshResults(true));
 
@@ -628,6 +937,7 @@ resultCategoryDialog.addEventListener("click", event => {
 resultCategoryDialog.addEventListener("close", () => { categoryPickerSelection = null; });
 cardType.addEventListener("change", () => {
   resultOptionsSignature = "";
+  document.getElementById("photo-result-options").hidden = cardType.value !== "multiple-photo-result";
   resultControls.hidden = !isResultCard();
   if (isResultCard()) {
     updateResultOptions();

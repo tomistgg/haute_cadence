@@ -3,6 +3,19 @@
 A local, static player card builder using rankings and calendars saved by `tenis-fem-arg`.
 
 The **Instagram Result** card uses the shared last-24-hours WTA match picker and exports a 1080×1920 PNG.
+
+The **Multiple Results Screenshot** card exports four matches in a 1600×900 two-by-two layout using the Tour Result
+artwork. Choose each match with its own selector from the same last-24-hours Tour feed, then click each empty photo
+to upload it. Photos and selections remain independent; hover or focus its Change photo button to replace an upload.
+The shared round and tournament header follows the first selected match. Use Background to change the surface around
+and between the photos. The completed PNG includes that background and excludes upload buttons.
+
+The **Multiple Results Photo** card offers 4-match and 5-match buttons with independent Tour match selectors and a
+1440×1800 portrait layout. The five-match version scales the rows to fit; switching back to four retains the fifth selection.
+Each row has a colour winner portrait, a grayscale opponent portrait, their names, and vertical set scores using the
+existing scoreboard PNGs. Player photos load from the shared photo collection; click a missing photo or use Change photo
+to upload one. Its selections and portrait uploads are separate from Multiple Results Screenshot. Background changes
+and full-size PNG export use the same controls as the other cards.
 It combines the existing round and scoreboard artwork with a tournament badge and one large winner portrait.
 Winner-photo uploads, background selection, scores, rankings, set highlighting, and tiebreaks use the existing result workflow.
 Manual two- and three-set matches have their own saved drafts within the current tab.

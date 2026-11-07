@@ -1,7 +1,11 @@
 @font-face { font-family: "Chunk Five"; src: url("assets/fonts/chunk-five-regular.otf") format("opentype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Bebas Neue"; src: url("assets/fonts/bebas-neue-regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
 @font-face { font-family: "Poppins"; src: url("assets/fonts/poppins-bold-italic.ttf") format("truetype"); font-style: italic; font-weight: 700; font-display: swap; }
-.card-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; flex: 1; min-width: 0; }
+.masthead { display: grid; grid-template-columns: minmax(0, 1fr) 320px minmax(0, 1fr); }
+.masthead .brand { grid-area: 1 / 1; }
+.card-controls { display: contents; }
+.card-controls #player-search-wrap { grid-area: 1 / 3; justify-self: end; width: min(100%, 240px); }
+.card-controls #player-search-wrap[inert] { display: none; }
 .preview-controls { width: min(100%, 710px); min-width: 0; margin-bottom: 16px; }
 .preview-toolbar { display: flex; align-items: stretch; gap: 10px; }
 .preview-toolbar .tournament-wrap { flex: 1; width: auto; max-width: none; }
@@ -22,7 +26,7 @@
 #background-status { font-size: .85rem; color: #b9d7df; }
 #background-status:empty { display: none; }
 .card-controls .search-wrap { flex: 0 1 240px; width: 240px; max-width: 240px; min-width: 150px; }
-#card-type { max-width: 230px; min-width: 0; border: 1px solid #5cd5bf99; border-radius: 12px; padding: 16px 12px; color: #f5fbff; background: #051b31; font: inherit; cursor: pointer; }
+#card-type { grid-area: 1 / 2; justify-self: center; width: 320px; max-width: 100%; min-width: 0; border: 1px solid #5cd5bf99; border-radius: 12px; padding: 16px 12px; color: #f5fbff; background: #051b31; font: inherit; cursor: pointer; }
 #card-type:focus-visible, .search-box:focus-within { outline: 2px solid #81da57; outline-offset: 3px; }
 .tournament-wrap { position: relative; flex: 0 1 270px; width: 270px; max-width: 270px; min-width: 0; }
 .tournament-options { max-height: min(360px, 55vh); overflow-y: auto; }
@@ -77,8 +81,8 @@
 .player-card[data-type="wta-125"] .card-form, .player-card[data-type="wta-125"] .card-title-value, .player-card[data-type="wta-125"] .card-age, .player-card[data-type="wta-125"] .card-nationality,
 .player-card[data-type="wta-tour"] .card-form, .player-card[data-type="wta-tour"] .card-title-value, .player-card[data-type="wta-tour"] .card-age, .player-card[data-type="wta-tour"] .card-nationality { display: none; }
 .player-card[data-type="wta-tour"] .card-rank { display: none; }
-@media (max-width: 850px) { .masthead { flex-wrap: wrap; } .card-controls { flex-basis: 100%; justify-content: stretch; } .card-controls .search-wrap { flex-basis: 240px; } }
-@media (max-width: 480px) { .card-controls { flex-direction: column; align-items: stretch; gap: 10px; } .card-controls .search-wrap { flex: none; width: 100%; max-width: none; } #card-type, .tournament-wrap { flex: none; max-width: none; width: 100%; } }
+@media (max-width: 850px) { .masthead { grid-template-columns: minmax(0, 1fr); } #card-type { grid-area: 2 / 1; } .card-controls #player-search-wrap { grid-area: 3 / 1; justify-self: center; } }
+@media (max-width: 480px) { .card-controls #player-search-wrap { width: 100%; max-width: none; } #card-type, .tournament-wrap { flex: none; max-width: none; width: 100%; } }
 @media (max-width: 480px) { .preview-toolbar { flex-wrap: wrap; } .preview-toolbar .tournament-wrap, .preview-toolbar .result-match-picker, #choose-background { flex: 1 1 100%; } .background-dialog { padding: 16px; } .background-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
 
 .player-card[data-tier="top_1"] .card-rank { display: none; }
@@ -182,8 +186,8 @@
 .tour-player-details { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
 .tour-player-details label { display: flex; flex: 1 1 120px; flex-direction: column; gap: 6px; font-size: .85rem; }
 #tour-player-apply { width: 100%; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #fff; cursor: pointer; }
-.player-card[data-type="tour-result"] { aspect-ratio: 16 / 9; background: #132b3e; }
-.player-card[data-type="tour-result"] .card-design, .player-card[data-type="tour-result"] .result-content { width: 1600px; height: 900px; }
+.player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) { aspect-ratio: 16 / 9; background: #132b3e; }
+.player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) .card-design, .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) .result-content { width: 1600px; height: 900px; }
 .player-card[data-type="tour-result"] .tour-match-photo { position: absolute; display: block; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .player-card[data-type="tour-result"] .tour-photo-frame { position: absolute; display: block; inset: 32px 24px 28px; border: 7px solid #12c4b1; }
 .player-card[data-type="tour-result"] #result-round-art, .player-card[data-type="tour-result"] #result-score-art, .player-card[data-type="tour-result"] .result-winner-portrait, .player-card[data-type="tour-result"] .result-opponent-portrait, .player-card[data-type="tour-result"] .result-layer { display: none; }
@@ -193,17 +197,73 @@
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
 .player-card[data-type="tour-result"] .result-event { top: 14px; right: 16px; width: 234px; height: 96px; gap: 3px; padding: 4px; border-radius: 6px; }
 .player-card[data-type="tour-result"] .result-event span { min-height: 20px; font-size: 20px; }
-.player-card[data-type="tour-result"] .result-score-row { --row-top: 781px; }
-.player-card[data-type="tour-result"] .result-score-row[data-side="loser"] { --row-top: 842px; }
-.player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
-.player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
-.player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-.player-card[data-type="tour-result"] .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
-.player-card[data-type="tour-result"] .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
-.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 532px; width: 110px; }
-.player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
-.player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row { --row-top: 781px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] { --row-top: 842px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-flag, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-flag-fallback, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { left: 0; width: 57px; height: 58px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { -webkit-text-stroke-width: 2px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-sets { left: 532px; width: 110px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets > .two-digit-score { font-size: 35px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
+
+.multiple-result-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.multiple-result-controls label { display: grid; gap: 6px; min-width: 0; font-size: .85rem; }
+#photo-result-options { margin: 0 0 12px; }
+.multiple-result-controls select { width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; color: #f5fbff; background: #051b31; font: inherit; }
+.multiple-result-controls select:focus-visible { outline: 2px solid #81da57; outline-offset: 3px; }
+.player-card[data-type="multiple-tour-result"] { background: url("assets/surfaces/hard_4.png") center / cover; }
+.player-card:is([data-type="multiple-tour-result"], [data-type="multiple-photo-result"]) #result-card-content > :not(.multiple-results-grid, #tour-round-art, .result-round-heading, .result-event) { display: none; }
+.multiple-results-grid { position: absolute; inset: 12px 20px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.multiple-result-panel { position: relative; min-width: 0; overflow: hidden; background: #132b3e; }
+.multiple-match-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.multiple-photo-button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; color: #b9d7df; font: 400 42px/1 "Bebas Neue", sans-serif; cursor: pointer; pointer-events: auto; }
+.multiple-photo-button:focus-visible { outline: 5px solid #ffd400; outline-offset: -6px; }
+.multiple-photo-button.has-photo { inset: 12px 12px auto auto; width: auto; height: auto; padding: 8px 12px; border-radius: 6px; background: #071e36d9; font-size: 28px; opacity: 0; }
+.multiple-result-panel:hover .multiple-photo-button.has-photo, .multiple-photo-button.has-photo:focus-visible { opacity: 1; }
+@media (hover: none) { .multiple-photo-button.has-photo { opacity: 1; } }
+.multiple-result-panel .multiple-scoreboard { inset: auto auto 16px; width: 1600px; height: 900px; transform: scale(.72); transform-origin: bottom left; pointer-events: none; }
+.multiple-score-art { bottom: 0; left: 0; }
+.multiple-result-status { position: absolute; right: 16px; bottom: 110px; padding: 4px 8px; background: #071e36; font: 400 26px/1 "Bebas Neue", sans-serif; pointer-events: none; }
+.player-card[data-type="multiple-tour-result"] #tour-round-art { z-index: 3; top: 8px; }
+.player-card[data-type="multiple-tour-result"] .result-round-heading { z-index: 4; top: 20px; height: 56px; padding: 0 7px; font-size: 40px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
+.player-card[data-type="multiple-tour-result"] .result-event { z-index: 4; top: 20px; width: 124px; height: 56px; gap: 0; padding: 2px 6px; border-radius: 6px; }
+.player-card[data-type="multiple-tour-result"] .result-event span { margin-bottom: 4px; font-size: 14px; }
+.player-card[data-type="multiple-tour-result"] .result-event strong { font-size: 44px; }
+@media (max-width: 480px) { .multiple-result-controls { grid-template-columns: minmax(0, 1fr); } }
+
+.player-card[data-type="multiple-photo-result"] { aspect-ratio: 4 / 5; background: url("assets/surfaces/grass_1.png") center / cover; }
+.player-card[data-type="multiple-photo-result"] .card-design, .player-card[data-type="multiple-photo-result"] #result-card-content { width: 1440px; height: 1800px; }
+.player-card[data-type="multiple-photo-result"] .multiple-results-grid { inset: 204px 132px 56px; grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(4, 334px); gap: 68px; }
+.player-card[data-type="multiple-photo-result"][data-photo-count="5"] .multiple-results-grid { grid-template-rows: repeat(5, 267.2px); gap: 51px; }
+.player-card[data-type="multiple-photo-result"][data-photo-count="5"] .multiple-photo-match { height: 334px; transform: scale(.8); transform-origin: top center; }
+.multiple-photo-match { display: grid; grid-template-columns: 500px 176px 500px; background: transparent; overflow: visible; }
+.multiple-photo-player { position: relative; z-index: 1; min-width: 0; margin: 0; grid-row: 1; }
+.multiple-photo-player[data-side="winner"] { grid-column: 1; color: #ffd400; }
+.multiple-photo-player[data-side="loser"] { grid-column: 3; color: #fff; }
+.multiple-player-portrait { position: relative; height: 270px; border: 6px solid currentColor; background: #132b3e; }
+.multiple-player-portrait > img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; pointer-events: none; }
+.multiple-photo-player[data-side="loser"] .multiple-player-portrait > img { filter: grayscale(1); }
+.multiple-player-initials { display: flex; align-items: center; justify-content: center; height: 100%; color: #d2f9f4; font: 800 100px/1 "TT Bluescreens Upright", sans-serif; }
+.multiple-player-initials[data-photo-placeholder] { font-size: 52px; }
+.multiple-player-name { display: block; margin-top: 8px; white-space: nowrap; font: italic 800 64px/.88 "TT Bluescreens", sans-serif; text-shadow: 2px 3px 6px #0009; }
+.multiple-photo-scoreboard { position: relative; grid-area: 1 / 2; align-self: start; margin-top: calc((270px - var(--sets) * 90px) / 2); margin-left: -3px; width: 182px; height: calc(var(--sets) * 90px); border: 3px solid #fff; color: #fff; pointer-events: none; }
+.multiple-photo-score-art { inset: 0 auto auto 0; transform-origin: top left; }
+.multiple-photo-set { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; height: calc(100% / var(--sets)); font: italic 700 76px/1 "Poppins", sans-serif; text-align: center; }
+.multiple-photo-set + .multiple-photo-set { border-top: 2px solid #fff; }
+.multiple-photo-score { position: relative; }
+.multiple-photo-separator { font-size: 54px; }
+.multiple-photo-score.set-won { color: #ffd400; }
+.multiple-photo-score.two-digit-score { font-size: 54px; }
+.multiple-photo-score sup { position: absolute; top: 0; right: 1px; font-size: 24px; }
+.multiple-photo-status { position: absolute; top: calc(100% + 6px); left: 0; width: 100%; background: #071e36; font: 400 28px/1.2 "Bebas Neue", sans-serif; text-align: center; }
+.player-card[data-type="multiple-photo-result"] #tour-round-art { z-index: 3; top: 14px; }
+.player-card[data-type="multiple-photo-result"] .result-round-heading { z-index: 4; top: 36.5px; height: 105px; padding: 0 13px; font-size: 75px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
+.player-card[data-type="multiple-photo-result"] .result-event { z-index: 4; top: 36.5px; width: 232.5px; height: 105px; gap: 0; padding: 4px 11px; border-radius: 11px; }
+.player-card[data-type="multiple-photo-result"] .result-event span { margin-bottom: 7.5px; font-size: 26.25px; }
+.player-card[data-type="multiple-photo-result"] .result-event strong { font-size: 82.5px; }
 
 .player-card[data-type="instagram-result"] { width: min(100%, 450px); aspect-ratio: 9 / 16; background: url("assets/surfaces/hard_4.png") center / cover; }
 .player-card[data-type="instagram-result"] .card-design, .player-card[data-type="instagram-result"] .result-content { width: 1080px; height: 1920px; }
@@ -233,8 +293,8 @@
 #draw-status:empty { display: none; }
 /* Draw canvases and player slots follow the supplied PNG templates at their native sizes. */
 .player-card[data-type="draw"] { aspect-ratio: var(--draw-width, 1600) / var(--draw-height, 900); background: url("assets/surfaces/hard_4.png") center / cover; }
-.card-stage > .player-card:is([data-type="tour-result"], [data-type="draw"]:not([data-draw-round="S"])),
-.card-stage:has(> .player-card:is([data-type="tour-result"], [data-type="draw"]:not([data-draw-round="S"])):not([hidden])) > .preview-controls { width: 100%; }
+.card-stage > .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"], [data-type="draw"]:not([data-draw-round="S"])),
+.card-stage:has(> .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"], [data-type="draw"]:not([data-draw-round="S"])):not([hidden])) > .preview-controls { width: 100%; }
 .player-card[data-type="draw"] .card-design, .draw-content { width: calc(var(--draw-width, 1600) * 1px); height: calc(var(--draw-height, 900) * 1px); }
 .draw-content, #draw-matches { position: absolute; inset: 0; }
 .draw-layout-art, .draw-placeholder-art, .draw-versus-art { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }

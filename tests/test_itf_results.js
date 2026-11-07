@@ -107,6 +107,12 @@ vm.runInContext("resultFeed = { matches: feedMatches }", context);
 assert.equal(context.currentResults().map(match => match.id).join(","), "tour,125,slam");
 context.cardType.value = "tour-result";
 assert.equal(context.currentResults().map(match => match.id).join(","), "tour,slam");
+context.cardType.value = "multiple-tour-result";
+assert.equal(context.currentResults().map(match => match.id).join(","), "tour,slam",
+  "Multiple Tour results must use the Tour categories and last-24-hours window");
+context.cardType.value = "multiple-photo-result";
+assert.equal(context.currentResults().map(match => match.id).join(","), "tour,slam",
+  "Multiple Photo results must use the same Tour categories and last-24-hours window");
 
 context.cardType.value = "instagram-result";
 assert.equal(context.currentResults().map(match => match.id).join(","), "tour,125,slam",
@@ -123,7 +129,7 @@ for (const sets of [2, 3]) {
 context.cardType.value = "result";
 assert.equal(context.isManualResultId("instagram-2"), false, "Instagram drafts must not leak into other result types");
 vm.runInContext(appSource.slice(appSource.indexOf("function isResultCard("), appSource.indexOf("function isDrawCard(")), context);
-for (const type of ["result", "tour-result", "instagram-result"]) {
+for (const type of ["result", "tour-result", "instagram-result", "multiple-tour-result", "multiple-photo-result"]) {
   context.cardType.value = type;
   assert.equal(context.isResultCard(), true, type + " must use the shared result controls");
 }
