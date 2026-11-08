@@ -22,7 +22,7 @@
 .background-options img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
 .background-options span { display: block; padding: 9px 10px; font-size: .88rem; }
 .background-options button[aria-pressed="true"] { border-color: #81da57; }
-#choose-background:focus-visible, .background-dialog button:focus-visible, #refresh-results:focus-visible, #result-match:focus-visible { outline: 2px solid #81da57; outline-offset: 3px; }
+#choose-background:focus-visible, .background-dialog button:focus-visible, #refresh-results:focus-visible, #refresh-titles:focus-visible, #result-match:focus-visible { outline: 2px solid #81da57; outline-offset: 3px; }
 #background-status { font-size: .85rem; color: #b9d7df; }
 #background-status:empty { display: none; }
 .card-controls .search-wrap { flex: 0 1 240px; width: 240px; max-width: 240px; min-width: 150px; }
@@ -83,7 +83,7 @@
 .player-card[data-type="wta-tour"] .card-rank { display: none; }
 @media (max-width: 850px) { .masthead { grid-template-columns: minmax(0, 1fr); } #card-type { grid-area: 2 / 1; } .card-controls #player-search-wrap { grid-area: 3 / 1; justify-self: center; } }
 @media (max-width: 480px) { .card-controls #player-search-wrap { width: 100%; max-width: none; } #card-type, .tournament-wrap { flex: none; max-width: none; width: 100%; } }
-@media (max-width: 480px) { .preview-toolbar { flex-wrap: wrap; } .preview-toolbar .tournament-wrap, .preview-toolbar .result-match-picker, #choose-background { flex: 1 1 100%; } .background-dialog { padding: 16px; } .background-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+@media (max-width: 480px) { .preview-toolbar { flex-wrap: wrap; } .preview-toolbar .tournament-wrap, .preview-toolbar .result-match-picker, #choose-background, #refresh-titles { flex: 1 1 100%; } .background-dialog { padding: 16px; } .background-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
 
 .player-card[data-tier="top_1"] .card-rank { display: none; }
 .player-card[data-tier="top_1"] .card-previous { width: 13.7%; }
@@ -111,11 +111,11 @@
 
 .result-match-picker { display: flex; gap: 8px; }
 #result-match { flex: 1; width: 100%; min-width: 0; padding: 12px; border: 1px solid #5cd5bf99; border-radius: 12px; color: #f5fbff; background: #051b31; font: inherit; }
-#refresh-results { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
-#refresh-results, #refresh-draws { white-space: nowrap; }
-#refresh-results:disabled, #refresh-draws:disabled { opacity: .65; cursor: default; }
-#result-status { margin: 8px 0; color: #b9d7df; font-size: .8rem; }
-#result-status:empty { display: none; }
+#refresh-results, #refresh-titles { padding: 8px 12px; border: 1px solid #5cd5bf99; border-radius: 12px; background: #123e58; color: #f5fbff; cursor: pointer; }
+#refresh-results, #refresh-draws, #refresh-titles { white-space: nowrap; }
+#refresh-results:disabled, #refresh-draws:disabled, #refresh-titles:disabled { opacity: .65; cursor: default; }
+#result-status, #title-refresh-status { margin: 8px 0; color: #b9d7df; font-size: .8rem; }
+#result-status:empty, #title-refresh-status:empty { display: none; }
 .result-photo-controls { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 .result-photo-upload { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex: 1 1 220px; padding: 10px; border: 1px solid #ffffff25; border-radius: 10px; font-size: .85rem; cursor: pointer; }
 .result-photo-button { padding: 8px 10px; border: 1px solid #5cd5bf99; border-radius: 8px; background: #123e58; color: #f5fbff; white-space: nowrap; }

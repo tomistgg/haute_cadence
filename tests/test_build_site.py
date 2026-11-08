@@ -91,6 +91,8 @@ class SiteBuildTest(unittest.TestCase):
             self.assertEqual({key: row["tour_title_count"] for key, row in players.items()}, {
                 "1": 2, "2": 0, "3": 0, "4": 0, "6": 0,
             })
+            self.assertEqual(players["1"]["tour_title_ids"], ["100:2026", "101:2025"])
+            self.assertEqual(players["2"]["tour_title_ids"], [])
 
 
 

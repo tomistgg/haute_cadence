@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bracketRounds, collectPlayerForm, collectResults, completedAt, mergePlayerForm, parseMatch, requestJson } from "../wta-live.mjs";
+import { bracketRounds, collectPlayerForm, collectResults, completedAt, drawChampion, mergePlayerForm, parseMatch, requestJson } from "../wta-live.mjs";
 
 const now = Date.parse("2026-11-05T12:00:00Z");
 const tournament = { tournamentGroup: { id: 1110, name: "Cali" }, year: 2026,
@@ -174,4 +174,37 @@ test("Sunday Form still fetches Saturday's finished tournament and next week's q
     });
     assert.deepEqual((await collectPlayerForm("1", sunday)).slice(-2), ["win", "win"]);
     assert.deepEqual(events.sort(), ["/api/tennis/tournaments/1110/2026/matches", "/api/tennis/tournaments/1181/2026/matches"]);
+});
+
+test("champions require a completed main-draw singles final, including walkovers and confirmed retirements", () => {
+    const final = match({ MatchID: "LS001", RoundID: "F" });
+    assert.equal(drawChampion(tournament, [final], now).champion.id, "1");
+    assert.equal(drawChampion(tournament, [match({ MatchID: "LS001", RoundID: "1", Winner: "3" })], now).champion.id, "2");
+    for (const change of [{ DrawMatchType: "D" }, { DrawLevelType: "Q" }, { MatchState: "P" },
+        { Winner: "0" }, { RoundID: "RR" }, { MatchTimeStamp: "2026-11-06T09:00:00Z" }, { Winner: "4" }]) {
+        assert.equal(drawChampion(tournament, [{ ...final, ...change }], now), null);
+    }
+    assert.equal(drawChampion(tournament, [{ ...final, Winner: "7" }], now).champion.id, "2");
+    assert.equal(drawChampion(tournament, [{ ...final, Winner: "4", Message: "{11|Winner Player Two}" }], now).champion.id, "2");
+    assert.throws(() => drawChampion(tournament, [final, final], now), /multiple completed/);
+    assert.throws(() => drawChampion(tournament, [{ ...final, PlayerIDA: null }], now), /missing player/);
+});
+
+test("current-week champions use the shared draw feed without requiring a player history request", async t => {
+    const { collectChampions } = await import("../wta-live.mjs?champions-test");
+    const calls = [];
+    t.mock.method(globalThis, "fetch", async url => {
+        url = new URL(url); calls.push(url.pathname);
+        if (url.pathname.endsWith("/matches")) return Response.json({ matches: [match({ MatchID: "LS001", RoundID: "F" })] });
+        return Response.json({ pageInfo: { page: 0, numEntries: 1 }, content: [tournament] });
+    });
+    const titles = await collectChampions(now);
+    assert.equal(titles[0].tournament_id, "1110");
+    assert.equal(titles[0].champion.id, "1");
+    assert.equal(titles[0].category, "WTA 125");
+    assert.equal(calls.length, 2);
+    assert.deepEqual(await collectChampions(now), titles);
+    assert.equal(calls.length, 2);
+    assert.deepEqual(await collectChampions(now, true), titles);
+    assert.equal(calls.length, 4, "manual refresh bypasses the cached calendar and draw responses");
 });

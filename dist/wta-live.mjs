@@ -162,10 +162,10 @@ export async function collectDraws(now = Date.now()) {
     return { updated_at: new Date(now).toISOString(), date: today, tournaments };
 }
 
-let formDraws;
-function activeFormDraws(now) {
+let weekDraws;
+function currentWeekDraws(now, force = false) {
     const today = new Date(now).toISOString().slice(0, 10);
-    if (formDraws?.day === today && Date.now() < formDraws.expires) return formDraws.promise;
+    if (!force && weekDraws?.day === today && Date.now() < weekDraws.expires) return weekDraws.promise;
     const session = { day: today, expires: Date.now() + 300000 };
     session.promise = (async () => {
         const monday = new Date(now);
@@ -182,7 +182,7 @@ function activeFormDraws(now) {
             return { tournament, matches: data.matches };
         }));
     })().catch(error => { session.expires = 0; throw error; });
-    formDraws = session;
+    weekDraws = session;
     return session.promise;
 }
 
@@ -234,6 +234,40 @@ export async function collectPlayerForm(playerId, now = Date.now()) {
             if (data.matches.length < 1000) return matches;
         }
     };
-    const [current, previous, draws] = await Promise.all([historyForYear(year), historyForYear(year - 1), activeFormDraws(now)]);
+    const [current, previous, draws] = await Promise.all([historyForYear(year), historyForYear(year - 1), currentWeekDraws(now)]);
     return mergePlayerForm(playerId, [...previous, ...current], draws, now);
+}
+
+export function drawChampion(tournament, matches, now = Date.now()) {
+    const finals = matches.filter(match => match.DrawMatchType === "S" && match.DrawLevelType === "M" &&
+        !["R", "RR"].includes(String(match.RoundID)) &&
+        (String(match.RoundID) === "F" || /^LS0*1$/.test(String(match.MatchID))) && match.MatchState === "F");
+    if (!finals.length) return null;
+    if (finals.length !== 1) throw new Error("WTA returned multiple completed singles finals.");
+    const match = finals[0], code = String(match.Winner || "");
+    if (completedAt(match) > now) return null;
+    let side = { "2": "A", "3": "B", "6": "A", "7": "B" }[code];
+    if (["4", "5"].includes(code)) {
+        // Match the saved champions collector: retired finals require an explicit winner message.
+        const message = /\{11\|([^}]+)\}/.exec(match.Message || "");
+        const sides = message ? ["A", "B"].filter(s => match["PlayerNameLast" + s] &&
+            message[1].toLocaleLowerCase().endsWith(match["PlayerNameLast" + s].toLocaleLowerCase())) : [];
+        if (sides.length === 1) side = sides[0];
+    }
+    if (!side) return null;
+    const player = person(match, side);
+    if (!player.id || player.id === "0" || !player.name) throw new Error("A WTA singles champion has missing player details.");
+    const group = tournament.tournamentGroup;
+    return {
+        tournament_id: String(group.id), year: tournament.year,
+        start_date: tournament.startDate.slice(0, 10), end_date: tournament.endDate.slice(0, 10),
+        name: tournament.title || group.name || "WTA", city: tournament.city || group.name || "WTA",
+        category: tournament.level, surface: tournament.surface || "",
+        champion: { id: player.id, name: player.name, country: player.country },
+    };
+}
+
+export async function collectChampions(now = Date.now(), force = false) {
+    const draws = await currentWeekDraws(now, force);
+    return draws.map(({ tournament, matches }) => drawChampion(tournament, matches, now)).filter(Boolean);
 }

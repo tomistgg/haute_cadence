@@ -28,6 +28,9 @@ function updateBackgroundControls() {
   const type = cardType.value;
   document.getElementById("preview-controls").hidden = type === "form";
   document.getElementById("result-match-picker").hidden = !isResultCard();
+  const titleCard = ["wta-125", "wta-tour"].includes(type);
+  document.getElementById("refresh-titles").hidden = !titleCard;
+  document.getElementById("title-refresh-status").hidden = !titleCard;
   backgroundButton.hidden = type === "tour-result";
   const selected = selectedBackgrounds.get(type) || "";
   card.dataset.scheduleGrass = String(type === "schedule" && (!selected || selected === "assets/surfaces/grass_1.png"));
@@ -85,6 +88,10 @@ const tourTitleOrdinal = document.getElementById("tour-title-ordinal");
 const lastTitleValue = document.getElementById("last-title-value");
 // shortcut: Manual form edits are kept in this tab; add persistent storage if saving cards is needed.
 const manualForms = new Map();
+let recentChampions = [];
+let recentChampionsLoading = false;
+let nextChampionsRefresh = 0;
+let championsRefreshCooldown;
 let selectedTournamentId = "";
 let visibleTournaments = [];
 let tournamentActiveIndex = -1;
@@ -259,11 +266,70 @@ async function loadPlayerForm(player) {
 function renderTourTitleNumber(player, root = cardDesign) {
   const tourTitleNumber = root.querySelector("#tour-title-number");
   const tourTitleOrdinal = root.querySelector("#tour-title-ordinal");
-  const number = String(player.tour_title_count);
+  const count = playerTitles(player).tour_title_count;
+  const number = String(count);
   tourTitleNumber.textContent = number;
   tourTitleNumber.parentElement.classList.toggle("wide", number.length > 2);
-  tourTitleOrdinal.hidden = !player.tour_title_count;
+  tourTitleOrdinal.hidden = !count;
 }
+
+function playerTitles(player) {
+  let count = player.tour_title_count || 0, latest = player.latest_title;
+  const is125 = title => ["WTA 125", "125K"].includes(title.category);
+  const key = title => title.tournament_id + ":" + title.year;
+  const recorded = new Set(player.tour_title_ids || []);
+  if (latest && !is125(latest)) recorded.add(key(latest));
+  const order = title => [title.end_date, title.start_date, title.tournament_id].join(":");
+  for (const title of recentChampions) {
+    if (String(title.champion.id) !== String(player.id)) continue;
+    if (!is125(title) && !recorded.has(key(title))) { count += 1; recorded.add(key(title)); }
+    if (!latest || (is125(latest) && !is125(title)) ||
+        (is125(latest) === is125(title) && order(title) > order(latest))) latest = title;
+  }
+  return { tour_title_count: count, latest_title: latest };
+}
+
+async function refreshRecentChampions(force = false) {
+  if (recentChampionsLoading || (!force && Date.now() < nextChampionsRefresh) ||
+      !["form", "wta-125", "wta-tour", "draw"].includes(cardType.value) || (!selectedPlayer && !isDrawCard())) return;
+  championsRefreshCooldown ||= createRefreshCooldown("refresh-titles");
+  if (!championsRefreshCooldown.begin(force)) return;
+  recentChampionsLoading = true;
+  let refreshed = false;
+  const refreshStatus = document.getElementById("title-refresh-status");
+  if (force) refreshStatus.textContent = "Updating…";
+  try {
+    const { collectChampions } = await import("./wta-live.mjs");
+    recentChampions = await collectChampions(Date.now(), force);
+    nextChampionsRefresh = Date.now() + 300000;
+    refreshStatus.textContent = force ? "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "";
+    refreshed = true;
+    if (status.textContent?.startsWith("Recent WTA titles could not be refreshed")) status.textContent = "Recent WTA titles updated.";
+    if (selectedPlayer && ["form", "wta-125", "wta-tour"].includes(cardType.value)) {
+      renderTourTitleNumber(selectedPlayer);
+      renderPlayerForm(selectedPlayer);
+    }
+    document.querySelectorAll(".draw-player-card").forEach(root => {
+      const player = players.find(p => p.id === root.dataset.playerId) || { id: root.dataset.playerId };
+      renderTourTitleNumber(player, root);
+      renderPlayerForm(player, root);
+    });
+  } catch (error) {
+    nextChampionsRefresh = Date.now() + 60000;
+    console.warn("Recent WTA champions unavailable:", error);
+    refreshStatus.textContent = "Recent WTA titles could not be refreshed; showing the saved title history.";
+    if (selectedPlayer && ["wta-125", "wta-tour"].includes(cardType.value)) {
+      status.textContent = "Recent WTA titles could not be refreshed; showing the saved title history.";
+    }
+  } finally {
+    recentChampionsLoading = false;
+    championsRefreshCooldown.finish(refreshed);
+  }
+}
+
+document.getElementById("refresh-titles").addEventListener("click", () => refreshRecentChampions(true));
+window.addEventListener("focus", () => refreshRecentChampions());
+setInterval(() => refreshRecentChampions(), 300000);
 
 const formButtons = Array.from({ length: 10 }, (_, index) => {
   const button = document.createElement("button");
@@ -359,7 +425,8 @@ function renderPlayerForm(player, root = cardDesign) {
     button.title = "Match " + (index + 1) + ": " + label + " (click: blank > win > loss)";
   });
   const value = root.querySelector("#last-title-value");
-  value.textContent = player.latest_title ? lastTitleLabel(player.latest_title) : "W/O";
+  const latest = playerTitles(player).latest_title;
+  value.textContent = latest ? lastTitleLabel(latest) : "W/O";
   fitLastTitleValue(value);
 }
 
@@ -682,6 +749,7 @@ function renderPlayerArtwork(root, player, type = "form") {
   node("svg-title").textContent = cardType.selectedOptions[0].textContent + " - " + name + " \u00b7 WTA #" + (player.rank ?? "NR");
   node("svg-description").textContent = name + ", WTA singles rank " + (player.rank ?? "NR") + ", " + player.country + ", " + age + " years old.";
   if (type === "form") loadPlayerForm(player);
+  refreshRecentChampions();
   renderPlayerForm(player, root);
   renderTourTitleNumber(player, root);
 }

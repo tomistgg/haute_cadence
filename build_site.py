@@ -166,12 +166,14 @@ def main() -> None:
     latest_titles = {}
     latest_125_titles = {}
     tour_title_counts = {}
+    tour_title_ids = {}
     champions = json.loads(CHAMPIONS.read_text(encoding="utf-8"))["champions"]
     for title in champions:
         champion_id = str(title["champion"]["id"])
         is_125_title = title["category"] in {"WTA 125", "125K"}
         if not is_125_title:
             tour_title_counts[champion_id] = tour_title_counts.get(champion_id, 0) + 1
+            tour_title_ids.setdefault(champion_id, []).append(f"{title['tournament_id']}:{title['year']}")
         player_titles = latest_125_titles if is_125_title else latest_titles
         prior_title = player_titles.get(champion_id)
         title_date = (title["end_date"], title["start_date"], str(title["tournament_id"]))
@@ -204,6 +206,7 @@ def main() -> None:
             "previous_rank": int(prior["rank"]) if prior else None,
             "latest_title": latest_titles.get(player_id) or latest_125_titles.get(player_id),
             "tour_title_count": tour_title_counts.get(player_id, 0),
+            "tour_title_ids": tour_title_ids.get(player_id, []),
             "best_rank": best_rank[player_id],
             "best_rank_year": int(best_rank_date[player_id][:4]),
         })

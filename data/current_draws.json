@@ -1,40 +1,28 @@
 {
-  "updated_at": "2026-11-07T23:14:14.128267+00:00",
-  "date": "2026-11-07",
+  "updated_at": "2026-11-08T10:30:51.462954+00:00",
+  "date": "2026-11-08",
   "tournaments": [
     {
-      "id": "1110:2026",
-      "wta_id": "1110",
+      "id": "808:2026",
+      "wta_id": "808",
       "year": 2026,
-      "name": "Reto Win Tennis Cali Open - Cali, COL",
-      "city": "CALI",
-      "category": "WTA 125",
-      "surface": "Clay",
-      "start_date": "2026-11-02",
-      "end_date": "2026-11-07",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1110/2026/matches",
+      "name": "FAGE WTA Finals Indian Wells",
+      "city": "INDIAN WELLS",
+      "category": "Finals",
+      "surface": "Hard",
+      "start_date": "2026-11-08",
+      "end_date": "2026-11-15",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/808/2026/matches",
       "rounds": {
         "F": [
           {
             "id": "LS001",
             "position": 0,
             "players": [
-              {
-                "id": "325088",
-                "first_name": "Bianca",
-                "last_name": "Andreescu",
-                "name": "Bianca Andreescu",
-                "country": "CAN"
-              },
-              {
-                "id": "326891",
-                "first_name": "Leyre",
-                "last_name": "Romero Gormaz",
-                "name": "Leyre Romero Gormaz",
-                "country": "ESP"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           }
         ],
         "S": [
@@ -42,43 +30,19 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              {
-                "id": "325406",
-                "first_name": "Alice",
-                "last_name": "Tubello",
-                "name": "Alice Tubello",
-                "country": "FRA"
-              },
-              {
-                "id": "325088",
-                "first_name": "Bianca",
-                "last_name": "Andreescu",
-                "name": "Bianca Andreescu",
-                "country": "CAN"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              {
-                "id": "326891",
-                "first_name": "Leyre",
-                "last_name": "Romero Gormaz",
-                "name": "Leyre Romero Gormaz",
-                "country": "ESP"
-              },
-              {
-                "id": "327287",
-                "first_name": "Julia",
-                "last_name": "Riera",
-                "name": "Julia Riera",
-                "country": "ARG"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           }
         ],
         "Q": [
@@ -86,85 +50,37 @@
             "id": "LS004",
             "position": 0,
             "players": [
-              {
-                "id": "320313",
-                "first_name": "Leolia",
-                "last_name": "Jeanjean",
-                "name": "Leolia Jeanjean",
-                "country": "FRA"
-              },
-              {
-                "id": "325406",
-                "first_name": "Alice",
-                "last_name": "Tubello",
-                "name": "Alice Tubello",
-                "country": "FRA"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS005",
             "position": 1,
             "players": [
-              {
-                "id": "330746",
-                "first_name": "Luisina",
-                "last_name": "Giovannini",
-                "name": "Luisina Giovannini",
-                "country": "ARG"
-              },
-              {
-                "id": "325088",
-                "first_name": "Bianca",
-                "last_name": "Andreescu",
-                "name": "Bianca Andreescu",
-                "country": "CAN"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS006",
             "position": 2,
             "players": [
-              {
-                "id": "325991",
-                "first_name": "Carole",
-                "last_name": "Monnet",
-                "name": "Carole Monnet",
-                "country": "FRA"
-              },
-              {
-                "id": "326891",
-                "first_name": "Leyre",
-                "last_name": "Romero Gormaz",
-                "name": "Leyre Romero Gormaz",
-                "country": "ESP"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS007",
             "position": 3,
             "players": [
-              {
-                "id": "327287",
-                "first_name": "Julia",
-                "last_name": "Riera",
-                "name": "Julia Riera",
-                "country": "ARG"
-              },
-              {
-                "id": "320716",
-                "first_name": "Renata",
-                "last_name": "Zarazua",
-                "name": "Renata Zarazua",
-                "country": "MEX"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           }
         ]
       }
@@ -535,7 +451,7 @@
                 "country": "PHI"
               }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "S": [
@@ -673,20 +589,20 @@
   ],
   "champions": [
     {
-      "end_date": "2026-11-07",
+      "end_date": "2026-11-08",
       "start_date": "2026-11-02",
       "year": 2026,
-      "tournament_id": "1110",
-      "name": "Reto Win Tennis Cali Open - Cali, COL",
-      "city": "CALI",
-      "category": "WTA 125",
-      "country": "COL",
-      "surface": "Clay",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1110/2026/matches",
+      "tournament_id": "1074",
+      "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
+      "city": "HONG KONG",
+      "category": "WTA 250",
+      "country": "HKG",
+      "surface": "Hard",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/1074/2026/matches",
       "champion": {
-        "id": "326891",
-        "name": "Leyre Romero Gormaz",
-        "country": "ESP"
+        "id": "323966",
+        "name": "Claire Liu",
+        "country": "USA"
       }
     }
   ]

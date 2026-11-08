@@ -94,7 +94,9 @@
           </div>
           <div class="result-match-picker" id="result-match-picker" hidden><label class="sr-only" for="result-match">Select a completed match</label><select id="result-match" disabled><option>Loading matches&#8230;</option></select><button id="refresh-results" type="button">Refresh</button></div>
           <button id="choose-background" type="button" aria-haspopup="dialog" aria-controls="background-dialog"><img id="background-thumbnail" src="assets/title-court.svg" alt=""><span>Background</span></button>
+          <button id="refresh-titles" type="button" hidden>Refresh</button>
         </div>
+        <p id="title-refresh-status" role="status" hidden></p>
         <div id="draw-options" class="draw-options" hidden>
           <label class="sr-only" for="draw-round">Draw round</label><select id="draw-round"><option value="F">FINALE</option><option value="S">DEMI-FINALES</option><option value="Q">QUARTS DE FINALE</option></select>
           <button id="edit-draw-form" type="button" aria-haspopup="dialog" aria-controls="draw-form-dialog">Player form</button>
