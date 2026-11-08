@@ -280,15 +280,22 @@ function renderTourResult(match) {
   document.getElementById("tour-set-count").value = String(match.sets.length);
   const artwork = match.round_art === "troisieme" ? "premier" : match.round_art;
   const multipleHeader = multiple ? nonTourHeader(match) : null;
-  const width = multiple
+  const label = multiple ? multipleHeader.label : resultRoundHeading(match) || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
+  let width = multiple
     ? setTourArtwork("tour-round-art", multipleHeader.file, 80 * headerScale, "assets/match_types", multipleHeader.file, nonTourArtwork)
     : setTourArtwork("tour-round-art", artwork, 80);
   if (!multiple) setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
   const banner = document.getElementById("tour-round-art");
+  const compactRound = !multiple && label === "MATCHS DE POULE";
+  banner.dataset.compactRound = String(compactRound);
+  if (compactRound) {
+    // Match FINALE's right padding at the shared 80px header height.
+    width = 444;
+    banner.style.width = width + "px";
+  }
   banner.style.left = multiple ? (canvasWidth - width) / 2 + "px" : "";
   banner.style.transform = multiple ? "none" : "";
   const heading = document.getElementById("result-round-heading");
-  const label = multiple ? multipleHeader.label : resultRoundHeading(match) || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
   heading.hidden = !match.manual && !label;
   heading.textContent = label || match.round;
   heading.classList.toggle("has-round-art", !label);

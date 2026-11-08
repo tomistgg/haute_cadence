@@ -192,6 +192,7 @@
 .player-card[data-type="tour-result"] .tour-photo-frame { position: absolute; display: block; inset: 32px 24px 28px; border: 7px solid #12c4b1; }
 .player-card[data-type="tour-result"] #result-round-art, .player-card[data-type="tour-result"] #result-score-art, .player-card[data-type="tour-result"] .result-winner-portrait, .player-card[data-type="tour-result"] .result-opponent-portrait, .player-card[data-type="tour-result"] .result-layer { display: none; }
 #tour-round-art { left: 50%; top: 16px; transform: translateX(-50%); }
+.player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"] { border-right: 2px solid #fff; border-radius: 5px; }
 #tour-score-art { left: 0; bottom: 0; clip-path: inset(0 0 0 57px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
