@@ -225,7 +225,7 @@
 .multiple-result-panel:hover .multiple-photo-button.has-photo, .multiple-photo-button.has-photo:focus-visible { opacity: 1; }
 @media (hover: none) { .multiple-photo-button.has-photo { opacity: 1; } }
 .multiple-result-panel .multiple-scoreboard { inset: auto auto 16px; width: 1600px; height: 900px; transform: scale(.72); transform-origin: bottom left; pointer-events: none; }
-.multiple-score-art { bottom: 0; left: 0; }
+.multiple-score-art { bottom: 0; left: 0; background: #fff; border-radius: 0 14px 14px 0; box-shadow: 0 0 0 3px #fff; }
 .multiple-result-status { position: absolute; right: 16px; bottom: 110px; padding: 4px 8px; background: #071e36; font: 400 26px/1 "Bebas Neue", sans-serif; pointer-events: none; }
 .player-card[data-type="multiple-tour-result"] #tour-round-art { z-index: 3; top: 8px; }
 .player-card[data-type="multiple-tour-result"] .result-round-heading { z-index: 4; top: 20px; height: 56px; padding: 0 7px; font-size: 40px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
@@ -253,7 +253,7 @@
 .multiple-photo-score-art { inset: 0 auto auto 0; transform-origin: top left; }
 .multiple-photo-set { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; height: calc(100% / var(--sets)); font: italic 700 76px/1 "Poppins", sans-serif; text-align: center; }
 .multiple-photo-set + .multiple-photo-set { border-top: 2px solid #fff; }
-.multiple-photo-score { position: relative; }
+.multiple-photo-score { position: relative; -webkit-text-stroke: 3px #000; paint-order: stroke fill; }
 .multiple-photo-separator { font-size: 54px; }
 .multiple-photo-score.set-won { color: #ffd400; }
 .multiple-photo-score.two-digit-score { font-size: 54px; }
@@ -271,8 +271,8 @@
 .player-card[data-type="instagram-result"] .result-winner-portrait { left: 65px; top: 360px; width: 950px; height: 1260px; border: 10px solid #fff; }
 .player-card[data-type="instagram-result"] #non-tour-round-art { z-index: 2; top: 320px; }
 .player-card[data-type="instagram-result"] .result-round-heading { z-index: 3; top: 320px; height: 104px; padding: 0 10px; font-size: 62px; }
-.player-card[data-type="instagram-result"] .result-event { z-index: 3; top: 144px; left: 360px; width: 360px; height: 148px; gap: 4px; padding: 10px 16px; border-radius: 12px; }
-.player-card[data-type="instagram-result"] .result-event strong { font-size: 96px; }
+.player-card[data-type="instagram-result"] .result-event { z-index: 3; top: 144px; left: 50%; transform: translateX(-50%); width: max-content; height: 148px; gap: 4px; padding: 10px 16px; border-radius: 12px; }
+.player-card[data-type="instagram-result"] .result-event strong { width: auto; font-size: 96px; }
 .player-card[data-type="instagram-result"] .result-event > span { font-size: 28px; }
 .player-card[data-type="instagram-result"] .result-scoreboard { z-index: 4; inset: 471.2px auto auto -48.8px; width: 1440px; height: 1600px; transform: scale(.8); transform-origin: top left; }
 .player-card[data-type="instagram-result"] .result-content[data-sets="2"] .result-scoreboard { left: -16.4px; }

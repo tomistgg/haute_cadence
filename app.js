@@ -377,6 +377,10 @@ function fitTournamentName(name, fontSize) {
   name.dataset.tournamentFontSize = fontSize;
   name.style.fontSize = fontSize;
   name.style.removeProperty("--tournament-name-scale");
+  if (name.closest('.player-card[data-type="instagram-result"] .result-event')) {
+    name.style.removeProperty("width");
+    return;
+  }
   const boxStyle = getComputedStyle(name.parentElement);
   const available = name.parentElement.clientWidth - parseFloat(boxStyle.paddingLeft) - parseFloat(boxStyle.paddingRight);
   if (available <= 0) return;

@@ -255,7 +255,7 @@ function renderInstagramHeader(match) {
   heading.style.backgroundImage = label ? "linear-gradient(90deg, #20bca3, #a9e2d7)" : "";
   fitPlayerName(heading, labelWidth, "62px");
   heading.style.width = labelWidth + "px";
-  document.getElementById("result-event").style.left = "360px";
+  document.getElementById("result-event").style.left = "50%";
 }
 
 function renderTourResult(match) {
@@ -612,7 +612,7 @@ function renderResultCard() {
   const eventCategory = document.getElementById("result-event-category");
   eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS"
     : tournamentCategoryLabel(match.tournament.category).toLocaleUpperCase();
-  eventCategory.style.fontSize = match.manual ? Math.min(instagram ? 28 : tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
+  eventCategory.style.fontSize = instagram ? "28px" : match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
   document.getElementById("result-retired").textContent = match.status;
