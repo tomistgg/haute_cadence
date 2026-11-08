@@ -1,7 +1,89 @@
 {
-  "updated_at": "2026-11-07T18:27:36.472302+00:00",
-  "window_start": "2026-11-06T18:27:36.472302+00:00",
+  "updated_at": "2026-11-08T10:46:31.982896+00:00",
+  "window_start": "2026-11-07T10:46:31.982896+00:00",
   "matches": [
+    {
+      "id": "1074:2026:LS001",
+      "completed_at": "2026-11-08T09:22:22.867000+00:00",
+      "round": "Final",
+      "round_art": "finale",
+      "round_heading": "",
+      "tournament": {
+        "id": "1074",
+        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
+        "city": "HONG KONG",
+        "category": "WTA 250",
+        "surface": "Hard"
+      },
+      "winner": {
+        "id": "323966",
+        "first_name": "Claire",
+        "last_name": "Liu",
+        "name": "Claire Liu",
+        "country": "USA"
+      },
+      "loser": {
+        "id": "330332",
+        "first_name": "Alexandra",
+        "last_name": "Eala",
+        "name": "Alexandra Eala",
+        "country": "PHI"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 0,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1110:2026:LS001",
+      "completed_at": "2026-11-07T18:25:54.777000+00:00",
+      "round": "Final",
+      "round_art": "finale",
+      "round_heading": "",
+      "tournament": {
+        "id": "1110",
+        "name": "Reto Win Tennis Cali Open - Cali, COL",
+        "city": "CALI",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "326891",
+        "first_name": "Leyre",
+        "last_name": "Romero Gormaz",
+        "name": "Leyre Romero Gormaz",
+        "country": "ESP"
+      },
+      "loser": {
+        "id": "325088",
+        "first_name": "Bianca",
+        "last_name": "Andreescu",
+        "name": "Bianca Andreescu",
+        "country": "CAN"
+      },
+      "sets": [
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "4"
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
     {
       "id": "1176:2026:LS002",
       "completed_at": "2026-11-07T17:19:02.937000+00:00",
@@ -212,134 +294,6 @@
         {
           "winner": 3,
           "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1074:2026:LS002",
-      "completed_at": "2026-11-07T07:46:38.470000+00:00",
-      "round": "Semifinals",
-      "round_art": "demifinale",
-      "round_heading": "",
-      "tournament": {
-        "id": "1074",
-        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-        "city": "HONG KONG",
-        "category": "WTA 250",
-        "surface": "Hard"
-      },
-      "winner": {
-        "id": "323966",
-        "first_name": "Claire",
-        "last_name": "Liu",
-        "name": "Claire Liu",
-        "country": "USA"
-      },
-      "loser": {
-        "id": "332168",
-        "first_name": "Alexandra",
-        "last_name": "Shubladze",
-        "name": "Alexandra Shubladze",
-        "country": "RUS"
-      },
-      "sets": [
-        {
-          "winner": 7,
-          "loser": 5,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS002",
-      "completed_at": "2026-11-06T21:17:13.490000+00:00",
-      "round": "Semifinals",
-      "round_art": "demifinale",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "325088",
-        "first_name": "Bianca",
-        "last_name": "Andreescu",
-        "name": "Bianca Andreescu",
-        "country": "CAN"
-      },
-      "loser": {
-        "id": "325406",
-        "first_name": "Alice",
-        "last_name": "Tubello",
-        "name": "Alice Tubello",
-        "country": "FRA"
-      },
-      "sets": [
-        {
-          "winner": 6,
-          "loser": 0,
-          "tiebreak": ""
-        },
-        {
-          "winner": 6,
-          "loser": 4,
-          "tiebreak": ""
-        }
-      ],
-      "status": ""
-    },
-    {
-      "id": "1110:2026:LS003",
-      "completed_at": "2026-11-06T19:36:02.830000+00:00",
-      "round": "Semifinals",
-      "round_art": "demifinale",
-      "round_heading": "",
-      "tournament": {
-        "id": "1110",
-        "name": "Reto Win Tennis Cali Open - Cali, COL",
-        "city": "CALI",
-        "category": "WTA 125",
-        "surface": "Clay"
-      },
-      "winner": {
-        "id": "326891",
-        "first_name": "Leyre",
-        "last_name": "Romero Gormaz",
-        "name": "Leyre Romero Gormaz",
-        "country": "ESP"
-      },
-      "loser": {
-        "id": "327287",
-        "first_name": "Julia",
-        "last_name": "Riera",
-        "name": "Julia Riera",
-        "country": "ARG"
-      },
-      "sets": [
-        {
-          "winner": 3,
-          "loser": 6,
-          "tiebreak": ""
-        },
-        {
-          "winner": 7,
-          "loser": 5,
           "tiebreak": ""
         },
         {

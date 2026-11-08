@@ -1,11 +1,11 @@
 {
-  "updated_at": "2026-11-08T10:25:32.829251+00:00",
+  "updated_at": "2026-11-08T22:05:15.470664+00:00",
   "from": "2000-01-01",
   "through": "2026-11-08",
   "scope": "Individual singles champions; WTA Tour, historical Tour levels, WTA 125 and Grand Slams",
   "order": "Tournament end date, oldest first; this is not necessarily the actual final match date",
   "coverage_note": "Available records within the requested date range. Historical events labelled ITF in the WTA calendar are included only when the official WTA singles player records verify a Tour title in that season. Records marked explicitly ITF are excluded from historical candidate discovery. Coverage depends on WTA's published records; this does not assert a complete history of every title. Cancelled, unfinished, team and Olympic events are excluded. Unavailable champions are listed separately.",
-  "champion_count": 1798,
+  "champion_count": 1799,
   "missing_champion_count": 46,
   "champions": [
     {
@@ -32352,6 +32352,23 @@
         "id": "323966",
         "name": "Claire Liu",
         "country": "USA"
+      }
+    },
+    {
+      "end_date": "2026-11-08",
+      "start_date": "2026-11-02",
+      "year": 2026,
+      "tournament_id": "1176",
+      "name": "Angola Ladies Open - Luanda, ANG",
+      "city": "LUANDA",
+      "category": "WTA 125",
+      "country": "ANG",
+      "surface": "Hard",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/1176/2026/matches",
+      "champion": {
+        "id": "326481",
+        "name": "Sofya Lansere",
+        "country": "RUS"
       }
     }
   ],

@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-08T10:25:31.835925+00:00",
+  "updated_at": "2026-11-08T22:05:14.192629+00:00",
   "date": "2026-11-08",
   "tournaments": [
     {
@@ -59,7 +59,13 @@
             "id": "LS005",
             "position": 1,
             "players": [
-              null,
+              {
+                "id": "329668",
+                "first_name": "Linda",
+                "last_name": "Noskova",
+                "name": "Linda Noskova",
+                "country": "CZE"
+              },
               null
             ],
             "state": "U"
@@ -117,7 +123,7 @@
                 "country": "RUS"
               }
             ],
-            "state": "U"
+            "state": "F"
           }
         ],
         "S": [
@@ -603,6 +609,23 @@
         "id": "323966",
         "name": "Claire Liu",
         "country": "USA"
+      }
+    },
+    {
+      "end_date": "2026-11-08",
+      "start_date": "2026-11-02",
+      "year": 2026,
+      "tournament_id": "1176",
+      "name": "Angola Ladies Open - Luanda, ANG",
+      "city": "LUANDA",
+      "category": "WTA 125",
+      "country": "ANG",
+      "surface": "Hard",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/1176/2026/matches",
+      "champion": {
+        "id": "326481",
+        "name": "Sofya Lansere",
+        "country": "RUS"
       }
     }
   ]

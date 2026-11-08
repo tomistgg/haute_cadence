@@ -213,12 +213,18 @@ function setTourArtwork(id, artwork, height, directory = "assets/wtatour_result"
   return cropWidth * scale;
 }
 
+function resultRoundHeading(match) {
+  return ["Finals", "WTA Finals"].includes(match.tournament?.category) && !["demifinale", "finale"].includes(match.round_art)
+    ? "MATCHS DE POULE" : match.round_heading;
+}
+
 function nonTourHeader(match) {
-  const qualifying = match.round_heading === "QUALIFICATIONS";
+  const heading = resultRoundHeading(match);
+  const qualifying = heading === "QUALIFICATIONS";
   const file = qualifying ? { premier: "6", deuxieme: "7", troisieme: "8" }[match.round_art]
     : nonTourRoundFiles[match.round_art];
-  const label = file ? match.round_heading && !qualifying ? match.round_heading : ""
-    : match.round_heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : match.round);
+  const label = file ? heading && !qualifying ? heading : ""
+    : heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : match.round);
   return { file: file || "1", label: match.manual && match.round === "ITF MATCH" ? "ITF MATCH" : label };
 }
 
@@ -282,7 +288,7 @@ function renderTourResult(match) {
   banner.style.left = multiple ? (canvasWidth - width) / 2 + "px" : "";
   banner.style.transform = multiple ? "none" : "";
   const heading = document.getElementById("result-round-heading");
-  const label = multiple ? multipleHeader.label : match.round_heading || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
+  const label = multiple ? multipleHeader.label : resultRoundHeading(match) || (match.round_art === "troisieme" ? "TROISIÈMES TOURS" : "");
   heading.hidden = !match.manual && !label;
   heading.textContent = label || match.round;
   heading.classList.toggle("has-round-art", !label);
@@ -591,13 +597,14 @@ function renderResultCard() {
   document.getElementById("non-tour-round-art").hidden = tour;
   document.getElementById("result-score-art").src = "assets/results/" + (match.sets.length === 3 ? "trois_sets" : "deux_sets") + ".png";
   const heading = document.getElementById("result-round-heading");
-  heading.hidden = !match.manual && !match.round_heading;
-  heading.textContent = match.round_heading || match.round;
+  const roundHeading = resultRoundHeading(match);
+  heading.hidden = !match.manual && !roundHeading;
+  heading.textContent = roundHeading || match.round;
   heading.disabled = !match.manual;
   heading.classList.toggle("itf-editable", !!match.manual);
-  heading.classList.toggle("has-round-art", !match.round_heading);
+  heading.classList.toggle("has-round-art", !roundHeading);
   heading.classList.remove("centered-itf-round");
-  heading.setAttribute("aria-label", "Select round. Current: " + (match.round_heading || match.round));
+  heading.setAttribute("aria-label", "Select round. Current: " + (roundHeading || match.round));
   heading.style.left = "395px";
   const event = document.getElementById("result-event");
   heading.style.backgroundImage = "";
@@ -610,8 +617,7 @@ function renderResultCard() {
   eventName.style.fontSize = "84px";
   makeResultEditable(eventName, match.manual, "tournament");
   const eventCategory = document.getElementById("result-event-category");
-  eventCategory.textContent = match.tournament.category === "Finals" ? "WTA FINALS"
-    : tournamentCategoryLabel(match.tournament.category).toLocaleUpperCase();
+  eventCategory.textContent = tournamentCategoryLabel(match.tournament.category).toLocaleUpperCase();
   eventCategory.style.fontSize = instagram ? "28px" : match.manual ? Math.min(tour ? 20 : 22, 320 / Math.max(1, eventCategory.textContent.length || 8)) + "px" : "";
   makeResultEditable(eventCategory, match.manual, "category");
   document.getElementById("result-retired").hidden = !match.status;
@@ -626,6 +632,7 @@ function renderResultCard() {
 }
 
 function resultRoundOrder(match) {
+  if (resultRoundHeading(match) === "MATCHS DE POULE") return 0;
   const rounds = ["PHASE DE GROUPES", "1st Round", "2nd Round", "3rd Round", "QUATRIÈME TOUR", "CINQUIÈME TOUR", "Quarterfinals", "Semifinals", "Final"];
   const round = match.round.split(" · ").at(-1);
   const order = rounds.indexOf(round);
@@ -663,7 +670,8 @@ function updateResultOptions() {
     for (const match of group.matches) {
       const option = document.createElement("option");
       option.value = match.id;
-      option.textContent = match.round + " - " + match.winner.name + " vs " + match.loser.name;
+      const round = resultRoundHeading(match) === "MATCHS DE POULE" ? "MATCHS DE POULE" : match.round;
+      option.textContent = round + " - " + match.winner.name + " vs " + match.loser.name;
       optgroup.append(option);
     }
     resultSelect.append(optgroup);

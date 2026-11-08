@@ -148,25 +148,26 @@ function renderScheduleCard() {
   document.getElementById("schedule-tournament-category").textContent = tournament
     ? tournamentCategoryLabel(tournament.category).toLocaleUpperCase() : "WTA TOUR";
   const roundArt = document.getElementById("schedule-round-art");
-  const banner = scheduleState.round === "troisiemes" ? "deuxiemes" : scheduleState.round;
+  const groupRound = ["Finals", "WTA Finals"].includes(tournament?.category) && !["demi", "finale"].includes(scheduleState.round);
+  const banner = groupRound ? "premiers" : scheduleState.round === "troisiemes" ? "deuxiemes" : scheduleState.round;
   roundArt.src = "assets/schedule/" + banner + ".png";
-  roundArt.alt = scheduleRounds[scheduleState.round];
+  roundArt.alt = groupRound ? "MATCHS DE POULE" : scheduleRounds[scheduleState.round];
   const [x, y, width, height, contentWidth] = scheduleBanners[banner];
   const bannerScale = 134 / height;
   const bannerWidth = width * bannerScale;
   const roundButton = document.getElementById("schedule-round-button");
-  roundButton.dataset.round = scheduleState.round;
+  roundButton.dataset.round = groupRound ? "poules" : scheduleState.round;
   roundButton.style.width = bannerWidth + "px";
   roundArt.parentElement.style.width = "100%";
   roundArt.style.cssText = `left:${-x * bannerScale}px;top:${-y * bannerScale}px;width:${1600 * bannerScale}px;height:${900 * bannerScale}px;`;
   tournamentButton.style.right = (1440 - bannerWidth) / 2 + 14 + "px";
   tournamentButton.style.maxWidth = (width - contentWidth) * bannerScale - 28 + "px";
   const roundLabel = document.getElementById("schedule-round-label");
-  roundLabel.hidden = scheduleState.round !== "troisiemes";
+  roundLabel.hidden = !groupRound && scheduleState.round !== "troisiemes";
   if (!roundLabel.hidden) {
-    // No third-round PNG was supplied; retain its logo and paint the label over the shared strip.
+    // Retain the PNG logo while painting rounds without their own artwork over the shared strip.
     roundArt.parentElement.style.width = "150px";
-    roundLabel.textContent = scheduleRounds.troisiemes;
+    roundLabel.textContent = groupRound ? "MATCHS DE POULE" : scheduleRounds.troisiemes;
   }
   scheduleMatches.replaceChildren();
   for (let index = 0; index < scheduleState.count; index++) {

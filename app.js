@@ -549,7 +549,7 @@ function tournamentName(item) {
 }
 
 function tournamentCategoryLabel(category) {
-  return category.replace("Grand Slam", "Grand Chelem");
+  return ["Finals", "WTA Finals"].includes(category) ? "Indian Wells" : category.replace("Grand Slam", "Grand Chelem");
 }
 
 function tournamentLabel(item) {

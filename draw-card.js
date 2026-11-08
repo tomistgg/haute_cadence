@@ -148,21 +148,23 @@ function updateDrawH2hColors(h2h) {
   });
 }
 
-function updateDrawHeaderArtwork() {
+function updateDrawHeaderArtwork(tournament = isManualDraw() ? manualDraw() : null) {
   const label = { F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE" }[drawRound.value];
   document.getElementById("draw-round-art").dataset.customHeader = String(
-    isManualDraw() && manualDraw().header.trim().toLocaleUpperCase() !== label
+    (["Finals", "WTA Finals"].includes(tournament?.category) && !["S", "F"].includes(drawRound.value)) ||
+    (isManualDraw() && manualDraw().header.trim().toLocaleUpperCase() !== label)
   );
 }
 
 function renderDrawHeading(tournament) {
   const manual = isManualDraw();
+  const groupRound = ["Finals", "WTA Finals"].includes(tournament.category) && !["S", "F"].includes(drawRound.value);
   document.getElementById("draw-round-art").dataset.manual = String(manual);
-  document.getElementById("manual-draw-logo").hidden = !manual;
-  document.getElementById("manual-draw-round-text").hidden = !manual;
-  updateDrawHeaderArtwork();
+  document.getElementById("manual-draw-logo").hidden = !manual && !groupRound;
+  document.getElementById("manual-draw-round-text").hidden = !manual && !groupRound;
+  updateDrawHeaderArtwork(tournament);
   const roundLabel = document.getElementById("manual-draw-round-label");
-  roundLabel.textContent = (manual ? tournament.header : {
+  roundLabel.textContent = (groupRound ? "MATCHS DE POULE" : manual ? tournament.header : {
     F: "FINALE", S: "DEMI-FINALES", Q: "QUARTS DE FINALE",
   }[drawRound.value]).toLocaleUpperCase();
   roundLabel.dataset.placeholder = "ROUND";
@@ -173,8 +175,7 @@ function renderDrawHeading(tournament) {
   const headingScale = drawLayouts[drawRound.value].width / 1600;
   nameNode.style.fontSize = 78 * headingScale + "px";
   const category = document.getElementById("draw-event-category");
-  category.textContent = tournament.category === "Finals" ? "WTA FINALS"
-    : tournamentCategoryLabel(tournament.category).toLocaleUpperCase();
+  category.textContent = tournamentCategoryLabel(tournament.category).toLocaleUpperCase();
   category.dataset.placeholder = "CATEGORY";
   for (const [node, field] of [[nameNode, "name"], [category, "category"], [roundLabel, "header"]]) {
     if (manual) {

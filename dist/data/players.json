@@ -8372,7 +8372,23 @@
       "last_rank": 266,
       "last_rank_date": "2026-11-02",
       "previous_rank": 265,
-      "latest_title": null,
+      "latest_title": {
+        "end_date": "2026-11-08",
+        "start_date": "2026-11-02",
+        "year": 2026,
+        "tournament_id": "1176",
+        "name": "Angola Ladies Open - Luanda, ANG",
+        "city": "LUANDA",
+        "category": "WTA 125",
+        "country": "ANG",
+        "surface": "Hard",
+        "source_url": "https://api.wtatennis.com/tennis/tournaments/1176/2026/matches",
+        "champion": {
+          "id": "326481",
+          "name": "Sofya Lansere",
+          "country": "RUS"
+        }
+      },
       "tour_title_count": 0,
       "tour_title_ids": [],
       "best_rank": 200,

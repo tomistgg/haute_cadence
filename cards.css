@@ -348,8 +348,8 @@
 .schedule-content { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
 .schedule-layout-art { position: absolute; inset: 0; width: 100%; height: 100%; }
 .schedule-round-button { position: absolute; z-index: 2; left: 50%; top: 18px; height: 134px; transform: translateX(-50%); overflow: hidden; padding: 0; border: 0; background: transparent; cursor: pointer; pointer-events: auto; }
-.schedule-round-button[data-round="troisiemes"] { border-radius: 28px; background: linear-gradient(90deg, #0bb999 150px, #b9e6dd); }
-.schedule-round-button[data-round="troisiemes"]::before { content: ""; position: absolute; inset: 0; border: 8px solid #fff; border-radius: inherit; }
+.schedule-round-button:is([data-round="troisiemes"], [data-round="poules"]) { border-radius: 28px; background: linear-gradient(90deg, #0bb999 150px, #b9e6dd); }
+.schedule-round-button:is([data-round="troisiemes"], [data-round="poules"])::before { content: ""; position: absolute; inset: 0; border: 8px solid #fff; border-radius: inherit; }
 .schedule-round-crop { position: absolute; left: 0; top: 0; height: 134px; overflow: hidden; pointer-events: none; }
 .schedule-round-crop img { position: absolute; max-width: none; }
 .schedule-round-label { position: absolute; left: 180px; top: 14px; width: 500px; color: #fff; font: 400 96px/1 "Bebas Neue", sans-serif; text-align: left; text-shadow: 1px 3px 6px #16392355; white-space: nowrap; }
