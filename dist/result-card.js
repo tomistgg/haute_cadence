@@ -509,9 +509,6 @@ function renderMultipleTourResults() {
       image.alt = "Uploaded photo for match " + (index + 1);
       panel.append(image);
     }
-    const photoFrame = document.createElement("div");
-    photoFrame.className = "multiple-match-frame";
-    panel.append(photoFrame);
     const upload = document.createElement("button");
     upload.type = "button";
     upload.className = "multiple-photo-button" + (photo ? " has-photo" : "");
@@ -526,7 +523,7 @@ function renderMultipleTourResults() {
       const art = document.createElement("div");
       art.className = "tour-cropped-art multiple-score-art";
       art.append(document.createElement("img"));
-      const width = setTourArtwork(art, match.sets.length === 3 ? "trois_sets_frame" : "deux_sets_frame", 118);
+      const width = setTourArtwork(art, match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
       // Center the same Tour scoreboard at a readable size within each quadrant.
       board.style.left = `calc(50% - ${width * .72 / 2}px)`;
       board.append(art, ...[...template.querySelectorAll(".result-score-row")].map(row => row.cloneNode(true)));

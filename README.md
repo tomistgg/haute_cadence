@@ -10,10 +10,11 @@ to upload it. Photos and selections remain independent; hover or focus its Chang
 The shared round and tournament header follows the first selected match. Use Background to change the surface around
 and between the photos. The completed PNG includes that background and excludes upload buttons.
 
-Tour Result and Multiple Results Screenshot use `assets/wtatour_result/2 sets match frame.png` and
+Tour Result uses `assets/wtatour_result/2 sets match frame.png` and
 `3 sets match frame.png` for their scoreboards, with a matching green photo outline. The opaque white photo area
 in these PNGs is cropped out so uploaded match photos remain visible. Names, flags, rankings, and set scores follow
-the new boxes; other card types retain their existing scoreboard artwork.
+the new boxes. Multiple Results Screenshot uses the separate `match result 2 sets.png` and
+`match result 3 sets.png` scoreboard artwork.
 
 The **Multiple Results Photo** card offers 4-match and 5-match buttons with independent Tour match selectors and a
 1440×1800 portrait layout. The five-match version scales the rows to fit; switching back to four retains the fifth selection.

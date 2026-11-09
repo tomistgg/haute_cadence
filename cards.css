@@ -195,22 +195,28 @@
 .player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"] { border-radius: 10px; }
 .player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"]::after { content: ""; position: absolute; inset: 0; border: 2px solid #fff; border-radius: inherit; }
 #tour-score-art { left: 16px; bottom: 14px; border-radius: 0 14px 14px 0; }
+/* Keep the new artwork's green cells, leaving the single-result grid transparent. */
+.player-card[data-type="tour-result"] #tour-score-art { clip-path: path("M59.5 1.5H454V57.5H59.5Z M59.5 60.5H454V115.5H59.5Z M466 1.5H542Q556 1.5 556 15.5V57.5H466Z M466 60.5H556V101.5Q556 115.5 542 115.5H466Z"); }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-score-art { clip-path: path("M59.5 1.5H488.5V57.5H59.5Z M59.5 60.5H488.5V115.5H59.5Z M496.5 1.5H610.5Q624.5 1.5 624.5 15.5V57.5H496.5Z M496.5 60.5H624.5V101.5Q624.5 115.5 610.5 115.5H496.5Z"); }
 .player-card[data-type="tour-result"] .result-scoreboard { transform: translate(16px, -14px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
 .player-card[data-type="tour-result"] .result-event { top: 14px; right: 16px; width: 234px; height: 96px; gap: 3px; padding: 4px; border-radius: 6px; }
 .player-card[data-type="tour-result"] .result-event span { min-height: 20px; font-size: 20px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row { --row-top: 783.5px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] { --row-top: 842.5px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-flag, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-flag-fallback, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { left: 1.5px; width: 54px; height: 56px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { -webkit-text-stroke-width: 2px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-name { left: 69px; top: var(--row-top); width: 385px; height: 56px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets { left: 466px; top: var(--row-top); width: 90px; height: 56px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-name { width: 419px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-sets { left: 496.5px; width: 128px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets > .two-digit-score { font-size: 35px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
+.player-card[data-type="tour-result"] .result-score-row { --row-top: 783.5px; }
+.player-card[data-type="tour-result"] .result-score-row[data-side="loser"] { --row-top: 842.5px; }
+.player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 1.5px; width: 54px; height: 56px; }
+.player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
+.player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 385px; height: 56px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
+.player-card[data-type="tour-result"] .result-score-sets { left: 466px; top: var(--row-top); width: 90px; height: 56px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="tour-result"] .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-name { width: 419px; }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 496.5px; width: 128px; }
+.player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
+.player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
+.player-card[data-type="tour-result"] .result-score-name { font-size: 33px; }
+.player-card[data-type="tour-result"] .result-score-sets { font-size: 44px; }
+.player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 30px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
 
 .multiple-result-controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
@@ -223,17 +229,26 @@
 .multiple-results-grid { position: absolute; inset: 12px 20px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .multiple-result-panel { position: relative; min-width: 0; overflow: hidden; background: #132b3e; }
 .multiple-match-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-.multiple-match-frame { position: absolute; inset: 3.7222% 1.875% 3.8889% 1.96875%; border: 4px solid #2dc6b2; border-radius: 2px; pointer-events: none; }
 .multiple-photo-button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; color: #b9d7df; font: 400 42px/1 "Bebas Neue", sans-serif; cursor: pointer; pointer-events: auto; }
 .multiple-photo-button:focus-visible { outline: 5px solid #ffd400; outline-offset: -6px; }
 .multiple-photo-button.has-photo { inset: 12px 12px auto auto; width: auto; height: auto; padding: 8px 12px; border-radius: 6px; background: #071e36d9; font-size: 28px; opacity: 0; }
 .multiple-result-panel:hover .multiple-photo-button.has-photo, .multiple-photo-button.has-photo:focus-visible { opacity: 1; }
 @media (hover: none) { .multiple-photo-button.has-photo { opacity: 1; } }
 .multiple-result-panel .multiple-scoreboard { inset: auto auto 16px; width: 1600px; height: 900px; transform: scale(.72); transform-origin: bottom left; pointer-events: none; }
+.player-card[data-type="multiple-tour-result"] .result-score-row { --row-top: 781px; }
+.player-card[data-type="multiple-tour-result"] .result-score-row[data-side="loser"] { --row-top: 842px; }
+.player-card[data-type="multiple-tour-result"] .result-score-flag, .player-card[data-type="multiple-tour-result"] .result-flag-fallback, .player-card[data-type="multiple-tour-result"] .result-score-rank { left: 0; width: 57px; height: 58px; }
+.player-card[data-type="multiple-tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
+.player-card[data-type="multiple-tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
+.player-card[data-type="multiple-tour-result"] .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; grid-template-columns: repeat(2, 1fr); transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="multiple-tour-result"] .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
+.player-card[data-type="multiple-tour-result"] .multiple-scoreboard[data-sets="3"] .result-score-sets { left: 532px; width: 110px; grid-template-columns: repeat(3, 1fr); }
+.player-card[data-type="multiple-tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
+.player-card[data-type="multiple-tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .multiple-score-art { bottom: 0; left: 0; background: #fff; border-radius: 0 14px 14px 0; box-shadow: 0 0 0 3px #fff; }
 .multiple-result-status { position: absolute; right: 16px; bottom: 110px; padding: 4px 8px; background: #071e36; font: 400 26px/1 "Bebas Neue", sans-serif; pointer-events: none; }
 .player-card[data-type="multiple-tour-result"] #tour-round-art { z-index: 3; top: 8px; }
-.player-card[data-type="multiple-tour-result"] .result-round-heading { z-index: 4; top: 20px; height: 56px; padding: 0 7px; font-size: 40px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
+.player-card[data-type="multiple-tour-result"] .result-round-heading { z-index: 4; top: 20px; height: 56px; padding: 0 7px; font-size: 40px; background: linear-gradient(90deg, #0dbe9e, #1fc5a6 25%, #41c4a8 50%, #55c7af 75%, #63ccb6); }
 .player-card[data-type="multiple-tour-result"] .result-event { z-index: 4; top: 20px; width: 124px; height: 56px; gap: 0; padding: 2px 6px; border-radius: 6px; }
 .player-card[data-type="multiple-tour-result"] .result-event span { margin-bottom: 4px; font-size: 14px; }
 .player-card[data-type="multiple-tour-result"] .result-event strong { font-size: 44px; }
