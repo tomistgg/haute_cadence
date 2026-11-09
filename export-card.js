@@ -64,7 +64,7 @@ async function renderCardExport() {
       exportFontType = card.dataset.type;
     }
     const png = await htmlToImage.toPng(copy, {
-      width, height, canvasWidth: width, canvasHeight: height, pixelRatio: 1,
+      width, height, canvasWidth: width, canvasHeight: height, pixelRatio: 2,
       fontEmbedCSS: exportFontCSS,
       style: { position: "relative", inset: "0 auto auto 0", insetInline: "0 auto", insetBlock: "0 auto" }
     });

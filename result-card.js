@@ -21,6 +21,9 @@ const tourArtwork = {
   finale: [1880, 1576, 91, 86, 719, 218],
   deux_sets: [3200, 1800, 414, 607, 2429, 476],
   trois_sets: [3200, 1800, 355, 577, 2307, 423],
+  // Crop the opaque photo area out of the new screenshot overlays; its outline is drawn separately.
+  deux_sets_frame: [3200, 1800, 32, 1536, 1116, 236],
+  trois_sets_frame: [3200, 1800, 32, 1536, 1254, 236],
 };
 const nonTourArtwork = {
   "1": [1600, 900, 160, 327, 1178, 167],
@@ -284,7 +287,7 @@ function renderTourResult(match) {
   let width = multiple
     ? setTourArtwork("tour-round-art", multipleHeader.file, 80 * headerScale, "assets/match_types", multipleHeader.file, nonTourArtwork)
     : setTourArtwork("tour-round-art", artwork, 80);
-  if (!multiple) setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
+  if (!multiple) setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets_frame" : "deux_sets_frame", 118);
   const banner = document.getElementById("tour-round-art");
   const compactRound = !multiple && label === "MATCHS DE POULE";
   banner.dataset.compactRound = String(compactRound);
@@ -506,6 +509,9 @@ function renderMultipleTourResults() {
       image.alt = "Uploaded photo for match " + (index + 1);
       panel.append(image);
     }
+    const photoFrame = document.createElement("div");
+    photoFrame.className = "multiple-match-frame";
+    panel.append(photoFrame);
     const upload = document.createElement("button");
     upload.type = "button";
     upload.className = "multiple-photo-button" + (photo ? " has-photo" : "");
@@ -520,7 +526,7 @@ function renderMultipleTourResults() {
       const art = document.createElement("div");
       art.className = "tour-cropped-art multiple-score-art";
       art.append(document.createElement("img"));
-      const width = setTourArtwork(art, match.sets.length === 3 ? "trois_sets" : "deux_sets", 120);
+      const width = setTourArtwork(art, match.sets.length === 3 ? "trois_sets_frame" : "deux_sets_frame", 118);
       // Center the same Tour scoreboard at a readable size within each quadrant.
       board.style.left = `calc(50% - ${width * .72 / 2}px)`;
       board.append(art, ...[...template.querySelectorAll(".result-score-row")].map(row => row.cloneNode(true)));

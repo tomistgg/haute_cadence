@@ -1,13 +1,13 @@
 {
-  "updated_at": "2026-11-08T22:25:15.327320+00:00",
-  "window_start": "2026-11-07T22:25:15.327320+00:00",
+  "updated_at": "2026-11-09T22:50:59.628651+00:00",
+  "window_start": "2026-11-08T22:50:59.628651+00:00",
   "matches": [
     {
-      "id": "808:2026:LS010",
-      "completed_at": "2026-11-08T21:10:59.510000+00:00",
-      "round": "1st Round",
+      "id": "808:2026:LS018",
+      "completed_at": "2026-11-09T21:45:43.180000+00:00",
+      "round": "Round 0",
       "round_art": "premier",
-      "round_heading": "",
+      "round_heading": "ROUND 0",
       "tournament": {
         "id": "808",
         "name": "FAGE WTA Finals Indian Wells",
@@ -16,18 +16,100 @@
         "surface": "Hard"
       },
       "winner": {
-        "id": "329668",
-        "first_name": "Linda",
-        "last_name": "Noskova",
-        "name": "Linda Noskova",
-        "country": "CZE"
+        "id": "320760",
+        "first_name": "Aryna",
+        "last_name": "Sabalenka",
+        "name": "Aryna Sabalenka",
+        "country": "BLR"
       },
       "loser": {
-        "id": "326482",
-        "first_name": "Marta",
-        "last_name": "Kostyuk",
-        "name": "Marta Kostyuk",
-        "country": "UKR"
+        "id": "322191",
+        "first_name": "Karolina",
+        "last_name": "Muchova",
+        "name": "Karolina Muchova",
+        "country": "CZE"
+      },
+      "sets": [
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "2"
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS026",
+      "completed_at": "2026-11-09T21:10:51.720000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "321157",
+        "first_name": "Irene",
+        "last_name": "Burillo",
+        "name": "Irene Burillo",
+        "country": "ESP"
+      },
+      "loser": {
+        "id": "315695",
+        "first_name": "Yuliana",
+        "last_name": "Lizarazo",
+        "name": "Yuliana Lizarazo",
+        "country": "COL"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS027",
+      "completed_at": "2026-11-09T20:16:05.803000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "320316",
+        "first_name": "Julia",
+        "last_name": "Grabher",
+        "name": "Julia Grabher",
+        "country": "AUT"
+      },
+      "loser": {
+        "id": "323079",
+        "first_name": "Tamara",
+        "last_name": "Zidansek",
+        "name": "Tamara Zidansek",
+        "country": "SLO"
       },
       "sets": [
         {
@@ -44,31 +126,287 @@
       "status": ""
     },
     {
-      "id": "1176:2026:LS001",
-      "completed_at": "2026-11-08T13:42:28.043000+00:00",
+      "id": "1181:2026:LS025",
+      "completed_at": "2026-11-09T19:29:51.960000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "330451",
+        "first_name": "Sofia",
+        "last_name": "Costoulas",
+        "name": "Sofia Costoulas",
+        "country": "BEL"
+      },
+      "loser": {
+        "id": "338057",
+        "first_name": "Antonella",
+        "last_name": "Esquivel Usech",
+        "name": "Antonella Esquivel Usech",
+        "country": "COL"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 0,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS029",
+      "completed_at": "2026-11-09T19:26:55.493000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "326379",
+        "first_name": "Elizabeth",
+        "last_name": "Mandlik",
+        "name": "Elizabeth Mandlik",
+        "country": "USA"
+      },
+      "loser": {
+        "id": "327655",
+        "first_name": "Veronika",
+        "last_name": "Erjavec",
+        "name": "Veronika Erjavec",
+        "country": "SLO"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 4,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS023",
+      "completed_at": "2026-11-09T18:40:17.807000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "324128",
+        "first_name": "Marina",
+        "last_name": "Bassols Ribera",
+        "name": "Marina Bassols Ribera",
+        "country": "ESP"
+      },
+      "loser": {
+        "id": "320581",
+        "first_name": "Maria",
+        "last_name": "Herazo",
+        "name": "Maria Herazo",
+        "country": "COL"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 1,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 4,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS016",
+      "completed_at": "2026-11-09T18:28:26.537000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "310440",
+        "first_name": "Tatjana",
+        "last_name": "Maria",
+        "name": "Tatjana Maria",
+        "country": "GER"
+      },
+      "loser": {
+        "id": "330746",
+        "first_name": "Luisina",
+        "last_name": "Giovannini",
+        "name": "Luisina Giovannini",
+        "country": "ARG"
+      },
+      "sets": [
+        {
+          "winner": 4,
+          "loser": 6,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 5,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS018",
+      "completed_at": "2026-11-09T16:58:47.273000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "313968",
+        "first_name": "Polona",
+        "last_name": "Hercog",
+        "name": "Polona Hercog",
+        "country": "SLO"
+      },
+      "loser": {
+        "id": "120420",
+        "first_name": "Varvara",
+        "last_name": "Lepchenko",
+        "name": "Varvara Lepchenko",
+        "country": "USA"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 2,
+          "tiebreak": ""
+        },
+        {
+          "winner": 7,
+          "loser": 6,
+          "tiebreak": "3"
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1181:2026:LS021",
+      "completed_at": "2026-11-09T16:41:12.057000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
+      "round_heading": "",
+      "tournament": {
+        "id": "1181",
+        "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+        "city": "SOPO",
+        "category": "WTA 125",
+        "surface": "Clay"
+      },
+      "winner": {
+        "id": "317155",
+        "first_name": "Laura",
+        "last_name": "Pigossi",
+        "name": "Laura Pigossi",
+        "country": "BRA"
+      },
+      "loser": {
+        "id": "315294",
+        "first_name": "Dalila",
+        "last_name": "Jakupovic",
+        "name": "Dalila Jakupovic",
+        "country": "SLO"
+      },
+      "sets": [
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        },
+        {
+          "winner": 6,
+          "loser": 3,
+          "tiebreak": ""
+        }
+      ],
+      "status": ""
+    },
+    {
+      "id": "1148:2026:LS001",
+      "completed_at": "2026-11-09T07:59:57.047000+00:00",
       "round": "Final",
       "round_art": "finale",
       "round_heading": "",
       "tournament": {
-        "id": "1176",
-        "name": "Angola Ladies Open - Luanda, ANG",
-        "city": "LUANDA",
-        "category": "WTA 125",
+        "id": "1148",
+        "name": "Chennai Open - Chennai, IND",
+        "city": "CHENNAI",
+        "category": "WTA 250",
         "surface": "Hard"
       },
       "winner": {
-        "id": "326481",
-        "first_name": "Sofya",
-        "last_name": "Lansere",
-        "name": "Sofya Lansere",
-        "country": "RUS"
+        "id": "315130",
+        "first_name": "Magda",
+        "last_name": "Linette",
+        "name": "Magda Linette",
+        "country": "POL"
       },
       "loser": {
-        "id": "324267",
-        "first_name": "Anna",
-        "last_name": "Blinkova",
-        "name": "Anna Blinkova",
-        "country": "FRA"
+        "id": "328818",
+        "first_name": "Janice",
+        "last_name": "Tjen",
+        "name": "Janice Tjen",
+        "country": "INA"
       },
       "sets": [
         {
@@ -90,41 +428,46 @@
       "status": ""
     },
     {
-      "id": "1074:2026:LS001",
-      "completed_at": "2026-11-08T09:22:22.867000+00:00",
-      "round": "Final",
-      "round_art": "finale",
+      "id": "808:2026:LS011",
+      "completed_at": "2026-11-09T00:26:30.113000+00:00",
+      "round": "1st Round",
+      "round_art": "premier",
       "round_heading": "",
       "tournament": {
-        "id": "1074",
-        "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-        "city": "HONG KONG",
-        "category": "WTA 250",
+        "id": "808",
+        "name": "FAGE WTA Finals Indian Wells",
+        "city": "INDIAN WELLS",
+        "category": "Finals",
         "surface": "Hard"
       },
       "winner": {
-        "id": "323966",
-        "first_name": "Claire",
-        "last_name": "Liu",
-        "name": "Claire Liu",
+        "id": "328560",
+        "first_name": "Coco",
+        "last_name": "Gauff",
+        "name": "Coco Gauff",
         "country": "USA"
       },
       "loser": {
-        "id": "330332",
-        "first_name": "Alexandra",
-        "last_name": "Eala",
-        "name": "Alexandra Eala",
-        "country": "PHI"
+        "id": "316956",
+        "first_name": "Jessica",
+        "last_name": "Pegula",
+        "name": "Jessica Pegula",
+        "country": "USA"
       },
       "sets": [
         {
           "winner": 6,
-          "loser": 3,
+          "loser": 4,
           "tiebreak": ""
         },
         {
           "winner": 6,
-          "loser": 0,
+          "loser": 7,
+          "tiebreak": "5"
+        },
+        {
+          "winner": 6,
+          "loser": 2,
           "tiebreak": ""
         }
       ],

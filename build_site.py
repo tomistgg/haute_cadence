@@ -104,6 +104,7 @@ ASSETS.update({
         "premier": "PREMIERS TOURS", "deuxieme": "DEUXIÈMES TOURS", "quartdefinale": "QUARTS DE FINALE TITLE",
         "demifinale": "DEMI-FINALES TITLE", "finale": "FINALE TITLE",
         "deux_sets": "match result 2 sets", "trois_sets": "match result 3 sets",
+        "deux_sets_frame": "2 sets match frame", "trois_sets_frame": "3 sets match frame",
     }.items()
 })
 ASSETS.update({

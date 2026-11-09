@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-08T22:25:09.123665+00:00",
-  "date": "2026-11-08",
+  "updated_at": "2026-11-09T22:50:55.621645+00:00",
+  "date": "2026-11-09",
   "tournaments": [
     {
       "id": "808:2026",
@@ -66,7 +66,13 @@
                 "name": "Linda Noskova",
                 "country": "CZE"
               },
-              null
+              {
+                "id": "328560",
+                "first_name": "Coco",
+                "last_name": "Gauff",
+                "name": "Coco Gauff",
+                "country": "USA"
+              }
             ],
             "state": "U"
           },
@@ -92,203 +98,24 @@
       }
     },
     {
-      "id": "1176:2026",
-      "wta_id": "1176",
+      "id": "1181:2026",
+      "wta_id": "1181",
       "year": 2026,
-      "name": "Angola Ladies Open - Luanda, ANG",
-      "city": "LUANDA",
+      "name": "DIRECTV Open Presentado por Compesar - Sopo, COL",
+      "city": "SOPO",
       "category": "WTA 125",
-      "surface": "Hard",
-      "start_date": "2026-11-02",
-      "end_date": "2026-11-08",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1176/2026/matches",
+      "surface": "Clay",
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-14",
+      "source_url": "https://api.wtatennis.com/tennis/tournaments/1181/2026/matches",
       "rounds": {
         "F": [
           {
             "id": "LS001",
             "position": 0,
             "players": [
-              {
-                "id": "324267",
-                "first_name": "Anna",
-                "last_name": "Blinkova",
-                "name": "Anna Blinkova",
-                "country": "FRA"
-              },
-              {
-                "id": "326481",
-                "first_name": "Sofya",
-                "last_name": "Lansere",
-                "name": "Sofya Lansere",
-                "country": "RUS"
-              }
-            ],
-            "state": "F"
-          }
-        ],
-        "S": [
-          {
-            "id": "LS002",
-            "position": 0,
-            "players": [
-              {
-                "id": "324267",
-                "first_name": "Anna",
-                "last_name": "Blinkova",
-                "name": "Anna Blinkova",
-                "country": "FRA"
-              },
-              {
-                "id": "331290",
-                "first_name": "Gina",
-                "last_name": "Feistel",
-                "name": "Gina Feistel",
-                "country": "POL"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS003",
-            "position": 1,
-            "players": [
-              {
-                "id": "326481",
-                "first_name": "Sofya",
-                "last_name": "Lansere",
-                "name": "Sofya Lansere",
-                "country": "RUS"
-              },
-              {
-                "id": "328631",
-                "first_name": "Noma",
-                "last_name": "Noha Akugue",
-                "name": "Noma Noha Akugue",
-                "country": "GER"
-              }
-            ],
-            "state": "F"
-          }
-        ],
-        "Q": [
-          {
-            "id": "LS004",
-            "position": 0,
-            "players": [
-              {
-                "id": "324267",
-                "first_name": "Anna",
-                "last_name": "Blinkova",
-                "name": "Anna Blinkova",
-                "country": "FRA"
-              },
-              {
-                "id": "330733",
-                "first_name": "Yasmine",
-                "last_name": "Kabbaj",
-                "name": "Yasmine Kabbaj",
-                "country": "MAR"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS005",
-            "position": 1,
-            "players": [
-              {
-                "id": "331039",
-                "first_name": "Ksenia",
-                "last_name": "Zaytseva",
-                "name": "Ksenia Zaytseva",
-                "country": "RUS"
-              },
-              {
-                "id": "331290",
-                "first_name": "Gina",
-                "last_name": "Feistel",
-                "name": "Gina Feistel",
-                "country": "POL"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS006",
-            "position": 2,
-            "players": [
-              {
-                "id": "326481",
-                "first_name": "Sofya",
-                "last_name": "Lansere",
-                "name": "Sofya Lansere",
-                "country": "RUS"
-              },
-              {
-                "id": "328907",
-                "first_name": "Martyna",
-                "last_name": "Kubka",
-                "name": "Martyna Kubka",
-                "country": "POL"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS007",
-            "position": 3,
-            "players": [
-              {
-                "id": "323677",
-                "first_name": "Justina",
-                "last_name": "Mikulskyte",
-                "name": "Justina Mikulskyte",
-                "country": "LTU"
-              },
-              {
-                "id": "328631",
-                "first_name": "Noma",
-                "last_name": "Noha Akugue",
-                "name": "Noma Noha Akugue",
-                "country": "GER"
-              }
-            ],
-            "state": "F"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1148:2026",
-      "wta_id": "1148",
-      "year": 2026,
-      "name": "Chennai Open - Chennai, IND",
-      "city": "CHENNAI",
-      "category": "WTA 250",
-      "surface": "Hard",
-      "start_date": "2026-11-02",
-      "end_date": "2026-11-08",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1148/2026/matches",
-      "rounds": {
-        "F": [
-          {
-            "id": "LS001",
-            "position": 0,
-            "players": [
-              {
-                "id": "328818",
-                "first_name": "Janice",
-                "last_name": "Tjen",
-                "name": "Janice Tjen",
-                "country": "INA"
-              },
-              {
-                "id": "315130",
-                "first_name": "Magda",
-                "last_name": "Linette",
-                "name": "Magda Linette",
-                "country": "POL"
-              }
+              null,
+              null
             ],
             "state": "U"
           }
@@ -298,43 +125,19 @@
             "id": "LS002",
             "position": 0,
             "players": [
-              {
-                "id": "328818",
-                "first_name": "Janice",
-                "last_name": "Tjen",
-                "name": "Janice Tjen",
-                "country": "INA"
-              },
-              {
-                "id": "329408",
-                "first_name": "Robin",
-                "last_name": "Montgomery",
-                "name": "Robin Montgomery",
-                "country": "USA"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS003",
             "position": 1,
             "players": [
-              {
-                "id": "315130",
-                "first_name": "Magda",
-                "last_name": "Linette",
-                "name": "Magda Linette",
-                "country": "POL"
-              },
-              {
-                "id": "327367",
-                "first_name": "Anastasia",
-                "last_name": "Zakharova",
-                "name": "Anastasia Zakharova",
-                "country": "RUS"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           }
         ],
         "Q": [
@@ -342,291 +145,41 @@
             "id": "LS004",
             "position": 0,
             "players": [
-              {
-                "id": "328818",
-                "first_name": "Janice",
-                "last_name": "Tjen",
-                "name": "Janice Tjen",
-                "country": "INA"
-              },
-              {
-                "id": "328897",
-                "first_name": "Polina",
-                "last_name": "Kudermetova",
-                "name": "Polina Kudermetova",
-                "country": "UZB"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS005",
             "position": 1,
             "players": [
-              {
-                "id": "329408",
-                "first_name": "Robin",
-                "last_name": "Montgomery",
-                "name": "Robin Montgomery",
-                "country": "USA"
-              },
-              {
-                "id": "334512",
-                "first_name": "Maaya",
-                "last_name": "Rajeshwaran Revathi",
-                "name": "Maaya Rajeshwaran Revathi",
-                "country": "IND"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS006",
             "position": 2,
             "players": [
-              {
-                "id": "324750",
-                "first_name": "Mai",
-                "last_name": "Hontama",
-                "name": "Mai Hontama",
-                "country": "JPN"
-              },
-              {
-                "id": "315130",
-                "first_name": "Magda",
-                "last_name": "Linette",
-                "name": "Magda Linette",
-                "country": "POL"
-              }
+              null,
+              null
             ],
-            "state": "F"
+            "state": "U"
           },
           {
             "id": "LS007",
             "position": 3,
             "players": [
-              {
-                "id": "327367",
-                "first_name": "Anastasia",
-                "last_name": "Zakharova",
-                "name": "Anastasia Zakharova",
-                "country": "RUS"
-              },
-              {
-                "id": "323149",
-                "first_name": "Lucrezia",
-                "last_name": "Stefanini",
-                "name": "Lucrezia Stefanini",
-                "country": "ITA"
-              }
+              null,
+              null
             ],
-            "state": "F"
-          }
-        ]
-      }
-    },
-    {
-      "id": "1074:2026",
-      "wta_id": "1074",
-      "year": 2026,
-      "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-      "city": "HONG KONG",
-      "category": "WTA 250",
-      "surface": "Hard",
-      "start_date": "2026-11-02",
-      "end_date": "2026-11-08",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1074/2026/matches",
-      "rounds": {
-        "F": [
-          {
-            "id": "LS001",
-            "position": 0,
-            "players": [
-              {
-                "id": "323966",
-                "first_name": "Claire",
-                "last_name": "Liu",
-                "name": "Claire Liu",
-                "country": "USA"
-              },
-              {
-                "id": "330332",
-                "first_name": "Alexandra",
-                "last_name": "Eala",
-                "name": "Alexandra Eala",
-                "country": "PHI"
-              }
-            ],
-            "state": "F"
-          }
-        ],
-        "S": [
-          {
-            "id": "LS002",
-            "position": 0,
-            "players": [
-              {
-                "id": "332168",
-                "first_name": "Alexandra",
-                "last_name": "Shubladze",
-                "name": "Alexandra Shubladze",
-                "country": "RUS"
-              },
-              {
-                "id": "323966",
-                "first_name": "Claire",
-                "last_name": "Liu",
-                "name": "Claire Liu",
-                "country": "USA"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS003",
-            "position": 1,
-            "players": [
-              {
-                "id": "318312",
-                "first_name": "Maria",
-                "last_name": "Sakkari",
-                "name": "Maria Sakkari",
-                "country": "GRE"
-              },
-              {
-                "id": "330332",
-                "first_name": "Alexandra",
-                "last_name": "Eala",
-                "name": "Alexandra Eala",
-                "country": "PHI"
-              }
-            ],
-            "state": "F"
-          }
-        ],
-        "Q": [
-          {
-            "id": "LS004",
-            "position": 0,
-            "players": [
-              {
-                "id": "312469",
-                "first_name": "Sorana",
-                "last_name": "Cirstea",
-                "name": "Sorana Cirstea",
-                "country": "ROU"
-              },
-              {
-                "id": "332168",
-                "first_name": "Alexandra",
-                "last_name": "Shubladze",
-                "name": "Alexandra Shubladze",
-                "country": "RUS"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS005",
-            "position": 1,
-            "players": [
-              {
-                "id": "326907",
-                "first_name": "Zeynep",
-                "last_name": "Sonmez",
-                "name": "Zeynep Sonmez",
-                "country": "TUR"
-              },
-              {
-                "id": "323966",
-                "first_name": "Claire",
-                "last_name": "Liu",
-                "name": "Claire Liu",
-                "country": "USA"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS006",
-            "position": 2,
-            "players": [
-              {
-                "id": "317790",
-                "first_name": "Aliaksandra",
-                "last_name": "Sasnovich",
-                "name": "Aliaksandra Sasnovich",
-                "country": "BLR"
-              },
-              {
-                "id": "318312",
-                "first_name": "Maria",
-                "last_name": "Sakkari",
-                "name": "Maria Sakkari",
-                "country": "GRE"
-              }
-            ],
-            "state": "F"
-          },
-          {
-            "id": "LS007",
-            "position": 3,
-            "players": [
-              {
-                "id": "329505",
-                "first_name": "Antonia",
-                "last_name": "Ruzic",
-                "name": "Antonia Ruzic",
-                "country": "CRO"
-              },
-              {
-                "id": "330332",
-                "first_name": "Alexandra",
-                "last_name": "Eala",
-                "name": "Alexandra Eala",
-                "country": "PHI"
-              }
-            ],
-            "state": "F"
+            "state": "U"
           }
         ]
       }
     }
   ],
-  "champions": [
-    {
-      "end_date": "2026-11-08",
-      "start_date": "2026-11-02",
-      "year": 2026,
-      "tournament_id": "1074",
-      "name": "Prudential Hong Kong Tennis Open - Hong Kong, China",
-      "city": "HONG KONG",
-      "category": "WTA 250",
-      "country": "HKG",
-      "surface": "Hard",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1074/2026/matches",
-      "champion": {
-        "id": "323966",
-        "name": "Claire Liu",
-        "country": "USA"
-      }
-    },
-    {
-      "end_date": "2026-11-08",
-      "start_date": "2026-11-02",
-      "year": 2026,
-      "tournament_id": "1176",
-      "name": "Angola Ladies Open - Luanda, ANG",
-      "city": "LUANDA",
-      "category": "WTA 125",
-      "country": "ANG",
-      "surface": "Hard",
-      "source_url": "https://api.wtatennis.com/tennis/tournaments/1176/2026/matches",
-      "champion": {
-        "id": "326481",
-        "name": "Sofya Lansere",
-        "country": "RUS"
-      }
-    }
-  ]
+  "champions": []
 }

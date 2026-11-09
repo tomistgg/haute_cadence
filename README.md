@@ -2,13 +2,18 @@
 
 A local, static player card builder using rankings and calendars saved by `tenis-fem-arg`.
 
-The **Instagram Result** card uses the shared last-24-hours WTA match picker and exports a 1080×1920 PNG.
+The **Instagram Result** card uses the shared last-24-hours WTA match picker and exports a 2160×3840 PNG from its 1080×1920 design.
 
-The **Multiple Results Screenshot** card exports four matches in a 1600×900 two-by-two layout using the Tour Result
+The **Multiple Results Screenshot** card exports four matches as a 3200×1800 PNG from its 1600×900 two-by-two layout using the Tour Result
 artwork. Choose each match with its own selector from the same last-24-hours Tour feed, then click each empty photo
 to upload it. Photos and selections remain independent; hover or focus its Change photo button to replace an upload.
 The shared round and tournament header follows the first selected match. Use Background to change the surface around
 and between the photos. The completed PNG includes that background and excludes upload buttons.
+
+Tour Result and Multiple Results Screenshot use `assets/wtatour_result/2 sets match frame.png` and
+`3 sets match frame.png` for their scoreboards, with a matching green photo outline. The opaque white photo area
+in these PNGs is cropped out so uploaded match photos remain visible. Names, flags, rankings, and set scores follow
+the new boxes; other card types retain their existing scoreboard artwork.
 
 The **Multiple Results Photo** card offers 4-match and 5-match buttons with independent Tour match selectors and a
 1440×1800 portrait layout. The five-match version scales the rows to fit; switching back to four retains the fifth selection.
@@ -77,7 +82,7 @@ singles bracket. Click a portrait to upload its photo. Click the ten form result
 card, or use Player form for larger controls, to cycle blank, win, loss from oldest to newest. Form edits share the
 same per-player draft as the main Form card. Final H2H values are edited inside the supplied image's H2H frame.
 Photos, form, H2H, background choice, and selected round are included in the saved PNG. Uploads and edits reset
-on reload. Draws export at the templates' native sizes: finals 1600 × 900, semifinals 1880 × 1576, and
+on reload. Draws use the templates' native design sizes: finals 1600 × 900, semifinals 1880 × 1576, and
 quarterfinals 3200 × 1800. All categories use the same supplied layout artwork and editable final H2H frame.
 The quarterfinal preview uses the full available page width (up to 1120px) so all eight player cards are easier to read.
 The tournament box leaves a small background gap above it; overlapping player cards appear in front of the box.
@@ -210,11 +215,11 @@ existing 30-minute WTA results/draw refresh. The generated calendar archive and 
 separate `card-data` branch, so later deployments preserve past tournaments and newly won titles. This requires the
 workflow's contents-write permission. No workflow or data in `tenis-fem-arg` is changed.
 
-Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. Player/title exports are 1440 x 1800, Non-Tour results 1440 x 1600, and Tour results 1600 x 900. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime.
+Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. All cards export at twice their design width and height for sharper text, outlines, and flags. Player/title exports are 2880 x 3600, Non-Tour results 2880 x 3200, and Tour results 3200 x 1800. Layout and font proportions stay the same. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime. Photo detail still depends on the resolution and quality of the uploaded source.
 
 On a phone, touch and hold the player photo and choose the browser's Save Image / Save to Photos action to save the complete PNG. The saveable image permits native touch callouts; the editing controls remain interactive. Wait briefly after making edits for the combined PNG to refresh.
 
-Each layout uses a fixed design surface at its export dimensions. The responsive preview scales that entire surface as a unit, so text sizes, positions, outlines and spacing keep their proportions at every viewport width. Browser text auto-enlargement is disabled inside the card. The saveable PNG is rendered directly from the same design surface at full size, independently of preview width or device pixel density. Search menus stay sized for readable interaction outside the artwork's typography.
+Each layout uses a fixed design surface. The responsive preview scales that entire surface as a unit, so text sizes, positions, outlines and spacing keep their proportions at every viewport width. Browser text auto-enlargement is disabled inside the card. The saveable PNG is rendered from the same design surface at 2× pixel density, independently of preview width or device pixel density. Search menus stay sized for readable interaction outside the artwork's typography.
 
 Responsive checks compared six representative cards (Form with history, Form at career best, both title layouts, prospect, and rank 1) at widths 280, 320, 360, 390, 414, 600, 768, 1024, 1440, and 2560 with pixel densities 1-3. Every card kept matching normalized text bounds and generated byte-identical PNGs across the tested viewports in Chrome. Physical-phone browser rendering has not been verified.
 

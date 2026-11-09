@@ -189,24 +189,26 @@
 .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) { aspect-ratio: 16 / 9; background: #132b3e; }
 .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) .card-design, .player-card:is([data-type="tour-result"], [data-type="multiple-tour-result"]) .result-content { width: 1600px; height: 900px; }
 .player-card[data-type="tour-result"] .tour-match-photo { position: absolute; display: block; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.player-card[data-type="tour-result"] .tour-photo-frame { position: absolute; display: block; inset: 32px 24px 28px; border: 7px solid #12c4b1; }
+.player-card[data-type="tour-result"] .tour-photo-frame { position: absolute; display: block; inset: 33.5px 30px 35px 31.5px; border: 8px solid #2dc6b2; border-radius: 3px; }
 .player-card[data-type="tour-result"] #result-round-art, .player-card[data-type="tour-result"] #result-score-art, .player-card[data-type="tour-result"] .result-winner-portrait, .player-card[data-type="tour-result"] .result-opponent-portrait, .player-card[data-type="tour-result"] .result-layer { display: none; }
 #tour-round-art { left: 50%; top: 16px; transform: translateX(-50%); }
 .player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"] { border-radius: 10px; }
 .player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"]::after { content: ""; position: absolute; inset: 0; border: 2px solid #fff; border-radius: inherit; }
-#tour-score-art { left: 0; bottom: 0; clip-path: inset(0 0 0 57px); }
+#tour-score-art { left: 16px; bottom: 14px; border-radius: 0 14px 14px 0; }
+.player-card[data-type="tour-result"] .result-scoreboard { transform: translate(16px, -14px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
 .player-card[data-type="tour-result"] .result-event { top: 14px; right: 16px; width: 234px; height: 96px; gap: 3px; padding: 4px; border-radius: 6px; }
 .player-card[data-type="tour-result"] .result-event span { min-height: 20px; font-size: 20px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row { --row-top: 781px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] { --row-top: 842px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-flag, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-flag-fallback, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { left: 0; width: 57px; height: 58px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row { --row-top: 783.5px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] { --row-top: 842.5px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-flag, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-flag-fallback, :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { left: 1.5px; width: 54px; height: 56px; }
 :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-rank { -webkit-text-stroke-width: 2px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-name { left: 69px; top: var(--row-top); width: 435px; height: 58px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets { left: 526px; top: var(--row-top); width: 78px; height: 58px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-name { left: 69px; top: var(--row-top); width: 385px; height: 56px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets { left: 466px; top: var(--row-top); width: 90px; height: 56px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
 :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
-:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-sets { left: 532px; width: 110px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-name { width: 419px; }
+:is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-content[data-sets="3"] .result-score-sets { left: 496.5px; width: 128px; }
 :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets > .two-digit-score { font-size: 35px; }
 :is(.player-card[data-type="tour-result"], .multiple-result-panel) .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
@@ -221,6 +223,7 @@
 .multiple-results-grid { position: absolute; inset: 12px 20px 20px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .multiple-result-panel { position: relative; min-width: 0; overflow: hidden; background: #132b3e; }
 .multiple-match-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.multiple-match-frame { position: absolute; inset: 3.7222% 1.875% 3.8889% 1.96875%; border: 4px solid #2dc6b2; border-radius: 2px; pointer-events: none; }
 .multiple-photo-button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; color: #b9d7df; font: 400 42px/1 "Bebas Neue", sans-serif; cursor: pointer; pointer-events: auto; }
 .multiple-photo-button:focus-visible { outline: 5px solid #ffd400; outline-offset: -6px; }
 .multiple-photo-button.has-photo { inset: 12px 12px auto auto; width: auto; height: auto; padding: 8px 12px; border-radius: 6px; background: #071e36d9; font-size: 28px; opacity: 0; }
