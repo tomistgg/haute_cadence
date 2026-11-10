@@ -24,6 +24,8 @@ const tourArtwork = {
   // Crop the opaque photo area out of the new screenshot overlays; its outline is drawn separately.
   deux_sets_frame: [3200, 1800, 32, 1536, 1116, 236],
   trois_sets_frame: [3200, 1800, 32, 1536, 1254, 236],
+  deux_sets_scores: [3200, 1800, 964, 1536, 180, 236],
+  trois_sets_scores: [3200, 1800, 1025, 1536, 256, 236],
 };
 const nonTourArtwork = {
   "1": [1600, 900, 160, 327, 1178, 167],
@@ -275,6 +277,7 @@ function renderTourResult(match) {
   const tour = cardType.value === "tour-result" || multiple;
   document.getElementById("tour-round-art").hidden = !tour;
   document.getElementById("tour-score-art").hidden = !tour || multiple;
+  document.getElementById("tour-set-art").hidden = !tour || multiple;
   const photo = document.getElementById("tour-match-photo");
   photo.hidden = !tour || multiple || !uploadedTourPhotos.has(match.id);
   if (!tour) return;
@@ -287,7 +290,11 @@ function renderTourResult(match) {
   let width = multiple
     ? setTourArtwork("tour-round-art", multipleHeader.file, 80 * headerScale, "assets/match_types", multipleHeader.file, nonTourArtwork)
     : setTourArtwork("tour-round-art", artwork, 80);
-  if (!multiple) setTourArtwork("tour-score-art", match.sets.length === 3 ? "trois_sets_frame" : "deux_sets_frame", 118);
+  if (!multiple) {
+    const sets = match.sets.length === 3 ? "trois_sets" : "deux_sets";
+    setTourArtwork("tour-score-art", sets + "_frame", 118);
+    setTourArtwork("tour-set-art", sets + "_scores", 118, "assets/wtatour_result", sets + "_frame");
+  }
   const banner = document.getElementById("tour-round-art");
   const compactRound = !multiple && label === "MATCHS DE POULE";
   banner.dataset.compactRound = String(compactRound);

@@ -196,8 +196,10 @@
 .player-card[data-type="tour-result"] #tour-round-art[data-compact-round="true"]::after { content: ""; position: absolute; inset: 0; border: 2px solid #fff; border-radius: inherit; }
 #tour-score-art { left: 16px; bottom: 14px; border-radius: 0 14px 14px 0; }
 /* Keep the new artwork's green cells, leaving the single-result grid transparent. */
-.player-card[data-type="tour-result"] #tour-score-art { clip-path: path("M59.5 1.5H454V57.5H59.5Z M59.5 60.5H454V115.5H59.5Z M466 1.5H542Q556 1.5 556 15.5V57.5H466Z M466 60.5H556V101.5Q556 115.5 542 115.5H466Z"); }
-.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-score-art { clip-path: path("M59.5 1.5H488.5V57.5H59.5Z M59.5 60.5H488.5V115.5H59.5Z M496.5 1.5H610.5Q624.5 1.5 624.5 15.5V57.5H496.5Z M496.5 60.5H624.5V101.5Q624.5 115.5 610.5 115.5H496.5Z"); }
+.player-card[data-type="tour-result"] #tour-score-art { clip-path: path("M59.5 1.5H454V57.5H59.5Z M59.5 60.5H454V115.5H59.5Z"); }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-score-art { clip-path: path("M59.5 1.5H488.5V57.5H59.5Z M59.5 60.5H488.5V115.5H59.5Z"); }
+.player-card[data-type="tour-result"] #tour-set-art { left: 482px; bottom: 14px; transform: scaleX(calc(84 / 90)); transform-origin: left center; clip-path: path("M0 1.5H76Q90 1.5 90 15.5V57.5H0Z M0 60.5H90V101.5Q90 115.5 76 115.5H0Z"); }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-set-art { left: 512.5px; transform: scaleX(calc(116 / 128)); clip-path: path("M0 1.5H114Q128 1.5 128 15.5V57.5H0Z M0 60.5H128V101.5Q128 115.5 114 115.5H0Z"); }
 .player-card[data-type="tour-result"] .result-scoreboard { transform: translate(16px, -14px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
@@ -208,14 +210,15 @@
 .player-card[data-type="tour-result"] .result-score-flag, .player-card[data-type="tour-result"] .result-flag-fallback, .player-card[data-type="tour-result"] .result-score-rank { left: 1.5px; width: 54px; height: 56px; }
 .player-card[data-type="tour-result"] .result-score-rank { -webkit-text-stroke-width: 2px; }
 .player-card[data-type="tour-result"] .result-score-name { left: 69px; top: var(--row-top); width: 385px; height: 56px; font-size: 38px; -webkit-text-stroke-width: 1.8px; }
-.player-card[data-type="tour-result"] .result-score-sets { left: 466px; top: var(--row-top); width: 90px; height: 56px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
+.player-card[data-type="tour-result"] .result-score-sets { left: 466px; top: var(--row-top); width: 84px; height: 56px; transform: translateY(2px); font-size: 49px; -webkit-text-stroke-width: 1.6px; }
 .player-card[data-type="tour-result"] .result-score-row[data-side="loser"] .result-score-sets { transform: translateY(4px); }
 .player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-name { width: 419px; }
-.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 496.5px; width: 128px; }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] .result-score-sets { left: 496.5px; width: 116px; }
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 35px; }
 .player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-score-name { font-size: 33px; }
 .player-card[data-type="tour-result"] .result-score-sets { font-size: 44px; }
+.player-card[data-type="tour-result"] .result-score-sets > span:nth-child(2) { transform: translateX(-5px); }
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 30px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
 
