@@ -4590,22 +4590,6 @@
       [
         "itf",
         "",
-        "W15 Osijek",
-        "W15",
-        "Clay",
-        "CRO",
-        "2026-06-01",
-        "2026-06-07",
-        "ITF",
-        "w-itf-cro-2026-007",
-        "",
-        "itf:w-itf-cro-2026-007",
-        "Osijek",
-        2026
-      ],
-      [
-        "itf",
-        "",
         "W15 Ontinyent",
         "W15",
         "Clay",
@@ -4665,38 +4649,6 @@
         "",
         "itf:w-itf-por-2026-009",
         "Montemor-o-Novo",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Focsani",
-        "W15",
-        "Clay",
-        "ROU",
-        "2026-06-01",
-        "2026-06-07",
-        "ITF",
-        "w-itf-rou-2026-002",
-        "",
-        "itf:w-itf-rou-2026-002",
-        "Focsani",
-        2026
-      ],
-      [
-        "itf",
-        "",
-        "W15 Kursumlijska Banja ",
-        "W15",
-        "Clay",
-        "SRB",
-        "2026-06-01",
-        "2026-06-07",
-        "ITF",
-        "w-itf-srb-2026-005",
-        "",
-        "itf:w-itf-srb-2026-005",
-        "KURSUMLIJSKA BANJA",
         2026
       ],
       [
@@ -12826,6 +12778,24 @@
         2027
       ]
     ],
+    "2027-03-01": [
+      [
+        "itf",
+        "europe",
+        "W15 Hagetmau",
+        "W15",
+        "Hard",
+        "FRA",
+        "2027-03-01",
+        "2027-03-07",
+        "ITF",
+        "w-itf-fra-2027-003",
+        "",
+        "itf:w-itf-fra-2027-003",
+        "Hagetmau",
+        2027
+      ]
+    ],
     "2027-03-03": [
       [
         "wta_tour",
@@ -12841,6 +12811,42 @@
         609,
         "wta:609:2027",
         "INDIAN WELLS",
+        2027
+      ]
+    ],
+    "2027-03-08": [
+      [
+        "itf",
+        "europe",
+        "W15 Gonesse",
+        "W15",
+        "Clay",
+        "FRA",
+        "2027-03-08",
+        "2027-03-14",
+        "ITF",
+        "w-itf-fra-2027-016",
+        "",
+        "itf:w-itf-fra-2027-016",
+        "Gonesse",
+        2027
+      ]
+    ],
+    "2027-03-15": [
+      [
+        "itf",
+        "europe",
+        "W15 Le Havre",
+        "W15",
+        "Clay",
+        "FRA",
+        "2027-03-15",
+        "2027-03-21",
+        "ITF",
+        "w-itf-fra-2027-004",
+        "",
+        "itf:w-itf-fra-2027-004",
+        "Le Havre",
         2027
       ]
     ],
@@ -12863,6 +12869,22 @@
       ]
     ],
     "2027-03-29": [
+      [
+        "itf",
+        "europe",
+        "W50 Nantes",
+        "W50",
+        "Hard",
+        "FRA",
+        "2027-03-29",
+        "2027-04-03",
+        "ITF",
+        "w-itf-fra-2027-005",
+        "",
+        "itf:w-itf-fra-2027-005",
+        "Nantes",
+        2027
+      ],
       [
         "wta_tour",
         "north_central_america",
