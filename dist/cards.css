@@ -199,7 +199,7 @@
 .player-card[data-type="tour-result"] #tour-score-art { clip-path: path("M59.5 1.5H454V57.5H59.5Z M59.5 60.5H454V115.5H59.5Z"); }
 .player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-score-art { clip-path: path("M59.5 1.5H488.5V57.5H59.5Z M59.5 60.5H488.5V115.5H59.5Z"); }
 .player-card[data-type="tour-result"] #tour-set-art { left: 482px; bottom: 14px; transform: scaleX(calc(84 / 90)); transform-origin: left center; clip-path: path("M0 1.5H76Q90 1.5 90 15.5V57.5H0Z M0 60.5H90V101.5Q90 115.5 76 115.5H0Z"); }
-.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-set-art { left: 512.5px; transform: scaleX(calc(116 / 128)); clip-path: path("M0 1.5H114Q128 1.5 128 15.5V57.5H0Z M0 60.5H128V101.5Q128 115.5 114 115.5H0Z"); }
+.player-card[data-type="tour-result"] .result-content[data-sets="3"] #tour-set-art { left: 512.5px; transform: scaleX(calc(112.666667 / 128)); clip-path: path("M0 1.5H114Q128 1.5 128 15.5V57.5H0Z M0 60.5H128V101.5Q128 115.5 114 115.5H0Z"); }
 .player-card[data-type="tour-result"] .result-scoreboard { transform: translate(16px, -14px); }
 .player-card[data-type="tour-result"] .result-round-heading { top: 21px; height: 70px; padding: 0 7px; font-size: 58px; background: linear-gradient(90deg, #0cbea4, #b9e7dd); }
 .player-card[data-type="tour-result"] .result-round-heading.has-round-art { background: transparent; }
@@ -218,7 +218,8 @@
 .player-card[data-type="tour-result"] .result-score-sets sup { margin-top: 4px; font-size: 15px; -webkit-text-stroke-width: 1px; }
 .player-card[data-type="tour-result"] .result-score-name { font-size: 33px; }
 .player-card[data-type="tour-result"] .result-score-sets { font-size: 44px; }
-.player-card[data-type="tour-result"] .result-score-sets > span:nth-child(2) { transform: translateX(-5px); }
+.player-card[data-type="tour-result"] .result-score-sets > span:nth-child(n+2) { transform: translateX(-5px); }
+.player-card[data-type="tour-result"] .result-score-sets > span:nth-child(3) { transform: translateX(-10px); }
 .player-card[data-type="tour-result"] .result-score-sets > .two-digit-score { font-size: 30px; }
 .player-card[data-type="tour-result"] .result-retired { top: auto; left: 675px; bottom: 0; padding: 4px 8px; font-size: 26px; }
 
