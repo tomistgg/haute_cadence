@@ -4,11 +4,9 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
-  schedule:
-    - cron: '*/30 * * * *'
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -27,31 +25,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Check out shared rankings and calendar
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          repository: tomistgg/tenis-fem-arg
-          ref: data-state
-          path: shared-source
-          persist-credentials: false
-          sparse-checkout-cone-mode: false
-          sparse-checkout: |
-            /data/wta_rankings_*.csv
-            /data/calendar_snapshot.json
-            /data/wta_full_calendar_cache.json
-            /data/itf_calendar_cache.json
-            /data/player_aliases_wta_itf.json
-      - name: Restore accumulated calendar and champions
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh auth setup-git
-          state_ref=$(git ls-remote --heads origin refs/heads/card-data)
-          if [ -n "$state_ref" ]; then
-            git fetch --no-tags --depth=1 origin refs/heads/card-data:refs/remotes/origin/card-data
-            git show refs/remotes/origin/card-data:data/calendar_snapshot.json > data/calendar_snapshot.json
-            git show refs/remotes/origin/card-data:data/wta_champions.json > data/wta_champions.json
-          fi
       - name: Set up Python
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
@@ -59,30 +32,7 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
       - name: Build the static site
-        env:
-          HAUTE_CADENCE_DATA_DIR: ${{ github.workspace }}/shared-source/data
-        run: |
-          python update_wta_results.py
-          python update_wta_draws.py
-          python build_site.py
-      - name: Preserve accumulated calendar and champions
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          state_index="$RUNNER_TEMP/card-data.index"
-          GIT_INDEX_FILE="$state_index" git read-tree --empty
-          GIT_INDEX_FILE="$state_index" git add -f data/calendar_snapshot.json data/wta_champions.json
-          state_tree=$(GIT_INDEX_FILE="$state_index" git write-tree)
-          state_parent=$(git rev-parse --verify refs/remotes/origin/card-data 2>/dev/null || true)
-          if [ -n "$state_parent" ]; then
-            if [ "$state_tree" = "$(git rev-parse "$state_parent^{tree}")" ]; then exit 0; fi
-            state_commit=$(git commit-tree "$state_tree" -p "$state_parent" -m "Update card calendar and champions")
-          else
-            state_commit=$(git commit-tree "$state_tree" -m "Initialize card calendar and champions")
-          fi
-          git push origin "$state_commit:refs/heads/card-data"
+        run: python build_site.py --shared-data
       - name: Upload the built site
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

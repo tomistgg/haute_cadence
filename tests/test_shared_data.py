@@ -1,15 +1,12 @@
 import csv
-import io
 import json
 import os
 import tempfile
 import unittest
-from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import build_site
-import serve_site
 import shared_data
 
 
@@ -195,61 +192,6 @@ class SharedDataTest(unittest.TestCase):
                          (10, 11, 2, 2009))
         self.assertIsNone(former["rank"])
         self.assertEqual(former["last_rank"], 300)
-
-
-class FeedRefreshTest(unittest.TestCase):
-    def test_manual_refresh_bypasses_fresh_cache(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "feed.json"
-            previous = {"updated_at": datetime.now(UTC).isoformat(), "matches": []}
-            path.write_text(json.dumps(previous), encoding="utf-8")
-            fresh = previous | {"matches": ["new match"]}
-            collect = Mock(return_value=fresh)
-            self.assertEqual(serve_site.refresh_feed(path, collect), previous)
-            collect.assert_not_called()
-            with patch.object(serve_site, "merge_draw_champions"):
-                self.assertEqual(serve_site.refresh_feed(path, collect, force=True), fresh)
-            collect.assert_called_once_with()
-            self.assertEqual(json.loads(path.read_text(encoding="utf-8")), fresh)
-
-    def test_feed_endpoints_force_refresh_without_reading_shared_data(self):
-        for filename, output, collect in [
-            ("recent_results", serve_site.OUTPUT, serve_site.collect_results),
-            ("current_draws", serve_site.DRAW_OUTPUT, serve_site.collect_draws),
-        ]:
-            with self.subTest(feed=filename):
-                handler = object.__new__(serve_site.CardHandler)
-                handler.path = f"/data/{filename}.json?refresh=1&t=123"
-                handler.wfile = io.BytesIO()
-                handler.send_response = Mock()
-                handler.send_header = Mock()
-                handler.end_headers = Mock()
-                with patch.object(serve_site, "refresh_feed", return_value={"updated_at": "now"}) as refresh, \
-                        patch.object(serve_site, "refresh_site_data", side_effect=OSError("WTARG")) as shared:
-                    handler.do_GET()
-                refresh.assert_called_once_with(output, collect, force=True)
-                shared.assert_not_called()
-                handler.send_response.assert_called_once_with(200)
-
-    def test_failed_live_refresh_preserves_the_last_successful_feed(self):
-        with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "feed.json"
-            previous = {"updated_at": "2026-01-01T00:00:00Z", "tournaments": ["saved"]}
-            path.write_text(json.dumps(previous), encoding="utf-8")
-            with patch.object(serve_site, "merge_draw_champions", side_effect=OSError("disk full")):
-                result = serve_site.refresh_feed(path, lambda: {"updated_at": datetime.now(UTC).isoformat()})
-            self.assertEqual(result["tournaments"], ["saved"])
-            self.assertIn("refresh_error", result)
-            self.assertEqual(json.loads(path.read_text(encoding="utf-8")), previous)
-
-    def test_shared_changes_rebuild_once_and_unchanged_requests_do_not(self):
-        with patch.object(serve_site, "_site_signature", None), \
-                patch.object(serve_site, "source_signature", side_effect=[1, 1, 2]), \
-                patch.object(serve_site, "build_site") as build:
-            serve_site.refresh_site_data()
-            serve_site.refresh_site_data()
-            serve_site.refresh_site_data()
-            self.assertEqual(build.call_count, 2)
 
 
 if __name__ == "__main__":

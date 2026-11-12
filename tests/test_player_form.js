@@ -12,11 +12,14 @@ const context = {
   document: { querySelectorAll: () => [{ dataset: { playerId: "1" } }, { dataset: { playerId: "2" } }],
     getElementById: () => ({ open: true }) },
   renderPlayerForm: player => rendered.push(player.id), renderDrawFormEditor() {},
-  getModule: async () => ({ collectPlayerForm: id => { requests++; return new Promise((resolve, reject) => pending.set(id, { resolve, reject })); } }),
+  loadSharedFeed: feed => {
+    requests++;
+    const id = feed.split("/")[1];
+    return new Promise((resolve, reject) => pending.set(id, { resolve: results => resolve({ results }), reject }));
+  },
 };
 vm.createContext(context);
-vm.runInContext(source.slice(source.indexOf("function playerForm("), source.indexOf("function renderTourTitleNumber("))
-  .replace('import("./wta-live.mjs")', "getModule()"), context);
+vm.runInContext(source.slice(source.indexOf("function playerForm("), source.indexOf("function renderTourTitleNumber(")), context);
 
 async function main() {
   const one = { id: "1" }, two = { id: "2" };

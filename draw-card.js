@@ -325,16 +325,9 @@ async function refreshDraws(force = false) {
   if (force) drawStatus.textContent = "Updating…";
   else if (!drawFeed) drawStatus.textContent = "Loading current WTA draws...";
   try {
-    let data;
-    if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
-      const url = "data/current_draws.json" + (force ? "?refresh=1&t=" + Date.now() : "");
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) throw new Error("Current WTA draws could not be loaded. Try Refresh again.");
-      data = await response.json();
-    } else {
-      const live = await import("./wta-live.mjs");
-      data = await live.collectDraws();
-    }
+    const data = await loadSharedFeed("draws", force, message => {
+      if ((force || !drawFeed) && !isManualDraw()) drawStatus.textContent = message;
+    });
     if (!Array.isArray(data.tournaments)) throw new Error("The WTA draw feed is invalid.");
     const changed = JSON.stringify(drawFeed?.tournaments) !== JSON.stringify(data.tournaments);
     drawFeed = data;
@@ -360,8 +353,9 @@ async function refreshDraws(force = false) {
       renderDrawCard();
     }
     if (!isManualDraw()) {
+      const updatedAt = Number.isFinite(Date.parse(data.updated_at)) ? Date.parse(data.updated_at) : Date.now();
       const updated = force && !data.refresh_error
-        ? "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "";
+        ? "Updated and saved at " + new Date(updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "";
       drawStatus.textContent = [updated, data.refresh_error || (!current.length ? "No current WTA tournaments available." : "")]
         .filter(Boolean).join(" ");
       if (isDrawCard() && (changed || !current.some(t => t.id === previous))) renderDrawCard();

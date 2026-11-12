@@ -741,21 +741,15 @@ async function refreshResults(force = false) {
   if (force) resultStatus.textContent = "Updating…";
   else if (!resultFeed) resultStatus.textContent = "Loading completed WTA singles matches…";
   try {
-    let data;
-    if (["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
-      const url = "data/recent_results.json" + (force ? "?refresh=1&t=" + Date.now() : "");
-      const response = await fetch(url, { cache: "no-store" });
-      if (!response.ok) throw new Error("Completed WTA matches are temporarily unavailable. Try Refresh again.");
-      data = await response.json();
-    } else {
-      const live = await import("./wta-live.mjs");
-      data = await live.collectResults();
-    }
+    const data = await loadSharedFeed("results", force, message => {
+      if (force || !resultFeed) resultStatus.textContent = message;
+    });
     if (!Array.isArray(data.matches)) throw new Error("The completed-match feed is invalid.");
     resultFeed = data;
     updateResultOptions();
     if (force && !resultStatus.textContent) {
-      resultStatus.textContent = "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ".";
+      const updated = Number.isFinite(Date.parse(data.updated_at)) ? Date.parse(data.updated_at) : Date.now();
+      resultStatus.textContent = "Updated and saved at " + new Date(updated).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + ".";
     }
     refreshed = !data.refresh_error;
   } catch (error) {

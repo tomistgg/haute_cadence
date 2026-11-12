@@ -1,26 +1,24 @@
-"""Serve the built cards locally with a refreshed completed-match feed."""
+"""Serve the card editor with a local shared-data backend and the existing photo library."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import re
-import threading
-from datetime import UTC, datetime, timedelta
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlsplit
+from urllib.error import HTTPError
+from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
+from build_site import ROOT
 from build_site import main as build_site
-from shared_data import source_signature
-from update_wta_champions import fetch_json, merge_draw_champions, save_history
-from update_wta_draws import OUTPUT as DRAW_OUTPUT
-from update_wta_draws import collect_draws
-from update_wta_results import OUTPUT, ROOT, api_time, collect_results
 
-_refresh_lock = threading.Lock()
-_site_signature = None
+SHARED_ROUTE = r"/data/(?:players|calendar|results|draws|champions|players/[1-9]\d{0,9}/form)"
+LEGACY_FEEDS = {
+    "/data/players.json", "/data/calendar_snapshot.json", "/data/recent_results.json", "/data/current_draws.json",
+}
+PUBLIC_ORIGIN = "https://tomistgg.github.io"
 
 
 class NoPhotoRedirects(HTTPRedirectHandler):
@@ -28,40 +26,66 @@ class NoPhotoRedirects(HTTPRedirectHandler):
         return None
 
 
-def refresh_feed(output, collect, force=False):
-    payload = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
-    updated = api_time(payload.get("updated_at"))
-    if force or updated is None or datetime.now(UTC) - updated > timedelta(minutes=5):
-        try:
-            fresh = collect()
-            merge_draw_champions(fresh.get("champions", []))
-            save_history(output, fresh)
-            payload = fresh
-        except Exception:
-            if not payload:
-                raise
-            payload = dict(payload)
-            payload["refresh_error"] = "WTA data could not be refreshed; showing the saved feed."
-    return payload
-
-
-def refresh_site_data():
-    global _site_signature
-    signature = source_signature()
-    if signature != _site_signature:
-        build_site()
-        _site_signature = signature
+def local_backend(value: str) -> str:
+    url = urlsplit(value)
+    if (url.scheme != "http" or url.hostname not in {"localhost", "127.0.0.1", "::1"}
+            or url.username or url.password or url.path not in {"", "/"} or url.query or url.fragment):
+        raise ValueError("The preview backend must be a localhost HTTP address.")
+    try:
+        if url.port is None:
+            raise ValueError("The preview backend needs an explicit port.")
+    except ValueError as error:
+        raise ValueError("The preview backend needs a valid explicit port.") from error
+    return value.rstrip("/")
 
 
 class CardHandler(SimpleHTTPRequestHandler):
+    def __init__(self, *args, shared_backend="http://127.0.0.1:8787", **kwargs):
+        self.shared_backend = local_backend(shared_backend)
+        super().__init__(*args, **kwargs)
+
+    def json_response(self, payload, status=200):
+        body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.end_headers()
+        self.wfile.write(body)
+
+    def shared_data(self, url, method="GET"):
+        upstream = self.shared_backend + url.path + ("?" + url.query if url.query else "")
+        request = Request(upstream, data=b"" if method == "POST" else None, method=method, headers={
+            "Origin": PUBLIC_ORIGIN, "Accept": "application/json", "User-Agent": "Haute-Cadence-local-preview",
+        })
+        try:
+            try:
+                response = build_opener(NoPhotoRedirects).open(request, timeout=90 if method == "POST" else 30)
+            except HTTPError as error:
+                response = error
+            with response:
+                body = response.read(8 * 1024 * 1024 + 1)
+                if (response.headers.get("Content-Type", "").split(";")[0].strip() != "application/json"
+                        or len(body) > 8 * 1024 * 1024):
+                    raise ValueError("Invalid shared-data response")
+                payload = json.loads(body)
+                if not isinstance(payload, dict):
+                    raise ValueError("Invalid shared-data envelope")
+                self.json_response(payload, response.status)
+        except (BrokenPipeError, ConnectionResetError):
+            return
+        except (OSError, ValueError) as error:
+            self.log_error("Shared data unavailable: %s", error)
+            self.json_response({"error": "Shared data is temporarily unavailable. Please try again."}, 503)
+
     def player_photos(self, url):
         upstream = "https://tennis-wta-api.schiter-tomas.workers.dev" + url.path
         if url.query:
             upstream += "?" + url.query
         try:
             request = Request(upstream, headers={
-                "Origin": "https://tomistgg.github.io", "Accept": "application/json, image/*",
-                "User-Agent": "Mozilla/5.0",
+                "Origin": PUBLIC_ORIGIN, "Accept": "application/json, image/*", "User-Agent": "Mozilla/5.0",
             })
             with build_opener(NoPhotoRedirects).open(request, timeout=20) as response:
                 content_type = response.headers.get("Content-Type", "").split(";")[0].strip()
@@ -76,72 +100,56 @@ class CardHandler(SimpleHTTPRequestHandler):
             self.send_header("X-Content-Type-Options", "nosniff")
             self.end_headers()
             self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            return
         except (OSError, ValueError) as error:
             self.log_error("Player photos unavailable: %s", error)
             self.send_error(502, "Player photos are temporarily unavailable")
 
     def do_GET(self):
         url = urlsplit(self.path)
-        path = url.path
-        if path.startswith("/api/"):
-            if not re.fullmatch(r"/api/tennis/(?:players/[1-9]\d*/matches|tournaments(?:/\d+/\d{4}/matches)?)/?", path):
-                self.send_error(404, "Unknown WTA endpoint")
-                return None
-            try:
-                upstream = "https://api.wtatennis.com" + path.removeprefix("/api")
-                payload = fetch_json(upstream + ("?" + url.query if url.query else ""))
-                body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json; charset=utf-8")
-                self.send_header("Cache-Control", "no-store")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
-            except Exception as error:
-                self.log_error("WTA API unavailable: %s", error)
-                self.send_error(502, "WTA data is temporarily unavailable")
-            return None
-        if path == "/photos" or re.fullmatch(r"/photos/[A-Za-z0-9_-]+", path):
+        if re.fullmatch(SHARED_ROUTE, url.path):
+            return self.shared_data(url)
+        if url.path == "/photos" or re.fullmatch(r"/photos/[A-Za-z0-9_-]+", url.path):
             return self.player_photos(url)
-        if path in {"/data/players.json", "/data/calendar_snapshot.json"}:
-            try:
-                with _refresh_lock:
-                    if path == "/data/players.json":
-                        refresh_feed(DRAW_OUTPUT, collect_draws)
-                    refresh_site_data()
-            except Exception as error:
-                self.log_error("Shared ranking/calendar data unavailable: %s", error)
-                self.send_error(503, "Shared data from tenis-fem-arg is unavailable")
-                return None
-            return super().do_GET()
-        if path not in {"/data/recent_results.json", "/data/current_draws.json"}:
-            return super().do_GET()
-        output, collect = (
-            (DRAW_OUTPUT, collect_draws) if path == "/data/current_draws.json" else (OUTPUT, collect_results)
-        )
+        if (url.path in LEGACY_FEEDS or url.path.startswith("/api/")
+                or url.path.startswith("/data/") and url.path != "/data/surfaces.json"):
+            self.send_error(404, "Unknown data endpoint")
+            return None
+        return super().do_GET()
+
+    def do_POST(self):
+        url = urlsplit(self.path)
+        if not re.fullmatch(SHARED_ROUTE + r"/refresh", url.path):
+            self.json_response({"error": "Unknown refresh endpoint."}, 404)
+            return
+        origins = {f"http://{host}:{self.server.server_port}" for host in ("127.0.0.1", "localhost", "[::1]")}
+        if self.headers.get("Origin") not in origins | {None}:
+            self.json_response({"error": "Website origin is not allowed."}, 403)
+            return
         try:
-            with _refresh_lock:
-                payload = refresh_feed(output, collect, force=parse_qs(url.query).get("refresh") == ["1"])
-            body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Cache-Control", "no-store")
-            self.send_header("Content-Length", str(len(body)))
-            self.end_headers()
-            self.wfile.write(body)
-        except Exception as error:
-            self.log_error("WTA result feed unavailable: %s", error)
-            self.send_error(503, "WTA result feed is temporarily unavailable")
+            empty = int(self.headers.get("Content-Length", "0")) == 0 and not self.headers.get("Transfer-Encoding")
+        except ValueError:
+            empty = False
+        if not empty:
+            self.json_response({"error": "Refresh accepts an empty request only."}, 400)
+            return
+        self.shared_data(url, "POST")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--shared-backend", default="http://127.0.0.1:8787")
     args = parser.parse_args()
-    refresh_site_data()
-    handler = partial(CardHandler, directory=str(ROOT / "dist"))
+    try:
+        backend = local_backend(args.shared_backend)
+    except ValueError as error:
+        parser.error(str(error))
+    build_site(shared_data=True)
+    handler = partial(CardHandler, directory=str(ROOT / "dist"), shared_backend=backend)
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
-        print(f"Card preview: http://127.0.0.1:{args.port}/", flush=True)
+        print(f"Card editor: http://127.0.0.1:{args.port}/", flush=True)
         server.serve_forever()
 
 

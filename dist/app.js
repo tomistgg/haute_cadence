@@ -88,7 +88,7 @@ const tourTitleOrdinal = document.getElementById("tour-title-ordinal");
 const lastTitleValue = document.getElementById("last-title-value");
 // shortcut: Manual form edits are kept in this tab; add persistent storage if saving cards is needed.
 const manualForms = new Map();
-let recentChampions = [];
+let recentChampions = null;
 let recentChampionsLoading = false;
 let nextChampionsRefresh = 0;
 let championsRefreshCooldown;
@@ -248,10 +248,15 @@ async function loadPlayerForm(player) {
   form.loading = true;
   form.error = "";
   try {
-    const { collectPlayerForm } = await import("./wta-live.mjs");
-    const results = await collectPlayerForm(player.id);
+    const data = await loadSharedFeed("players/" + player.id + "/form");
+    const results = data.results;
+    if (!Array.isArray(results) || results.length !== 10 || results.some(result => !["", "win", "loss"].includes(result))) {
+      throw new Error("Invalid saved player form.");
+    }
     results.forEach((result, index) => { if (!form.edited.has(index)) form.results[index] = result; });
-    form.nextLoad = Date.now() + 300000;
+    form.error = data.refresh_error || "";
+    form.nextLoad = Date.now() + (data.refresh_error ? 60000 : 300000);
+    if (form.error && selectedPlayer?.id === player.id && cardType.value === "form") status.textContent = form.error;
   } catch (error) {
     form.error = "WTA Form could not be loaded. You can still edit the ten results manually.";
     form.nextLoad = Date.now() + 60000;
@@ -274,11 +279,11 @@ function renderTourTitleNumber(player, root = cardDesign) {
 }
 
 function playerTitles(player) {
-  let count = player.tour_title_count || 0, latest = player.latest_title;
+  if (recentChampions === null) return { tour_title_count: player.tour_title_count || 0, latest_title: player.latest_title };
+  let count = 0, latest = null;
   const is125 = title => ["WTA 125", "125K"].includes(title.category);
   const key = title => title.tournament_id + ":" + title.year;
-  const recorded = new Set(player.tour_title_ids || []);
-  if (latest && !is125(latest)) recorded.add(key(latest));
+  const recorded = new Set();
   const order = title => [title.end_date, title.start_date, title.tournament_id].join(":");
   for (const title of recentChampions) {
     if (String(title.champion.id) !== String(player.id)) continue;
@@ -299,12 +304,13 @@ async function refreshRecentChampions(force = false) {
   const refreshStatus = document.getElementById("title-refresh-status");
   if (force) refreshStatus.textContent = "Updating…";
   try {
-    const { collectChampions } = await import("./wta-live.mjs");
-    recentChampions = await collectChampions(Date.now(), force);
-    nextChampionsRefresh = Date.now() + 300000;
-    refreshStatus.textContent = force ? "Updated at " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "";
-    refreshed = true;
-    if (status.textContent?.startsWith("Recent WTA titles could not be refreshed")) status.textContent = "Recent WTA titles updated.";
+    const data = await loadSharedFeed("champions", force, message => { if (force) refreshStatus.textContent = message; });
+    if (!Array.isArray(data.champions)) throw new Error("Invalid saved champion history.");
+    recentChampions = data.champions;
+    nextChampionsRefresh = Date.now() + (data.refresh_error ? 60000 : 300000);
+    refreshStatus.textContent = data.refresh_error || (force ? "Updated and saved at " + new Date(data.updated_at || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) + "." : "");
+    refreshed = !data.refresh_error;
+    if (!data.refresh_error && status.textContent?.startsWith("Recent WTA titles could not be refreshed")) status.textContent = "Recent WTA titles updated.";
     if (selectedPlayer && ["form", "wta-125", "wta-tour"].includes(cardType.value)) {
       renderTourTitleNumber(selectedPlayer);
       renderPlayerForm(selectedPlayer);
@@ -829,13 +835,13 @@ document.addEventListener("click", event => {
   if (!event.target.closest("#player-search-wrap")) { options.classList.remove("open"); searchInput.setAttribute("aria-expanded", "false"); }
 });
 
-fetch("data/players.json", { cache: "no-store" })
-  .then(response => { if (!response.ok) throw new Error("Player data could not be loaded"); return response.json(); })
+loadSharedFeed("players")
   .then(data => {
+    if (!Array.isArray(data.players) || typeof data.snapshot_date !== "string") throw new Error("Invalid saved player directory.");
     players = data.players;
     playerNameIndex = data.player_names || { by_wta_id: {}, by_name: {} };
     snapshotDate = data.snapshot_date;
-    status.textContent = "Player list loaded.";
+    status.textContent = data.refresh_error || "Player list loaded.";
     if (!card.hidden) renderCard(selectedPlayer);
   })
   .catch(error => {
@@ -843,16 +849,13 @@ fetch("data/players.json", { cache: "no-store" })
   });
 
 function refreshCalendar() {
-  return fetch("data/calendar_snapshot.json", { cache: "no-store" })
-    .then(response => {
-      if (!response.ok) throw new Error("Calendar data could not be loaded");
-      return response.json();
-    })
+  return loadSharedFeed("calendar")
     .then(data => {
       yearTournaments(data);
       const changed = calendarFailed || JSON.stringify(data) !== JSON.stringify(calendar);
       calendar = data;
-      calendarFailed = false;
+      calendarFailed = !!data.refresh_error;
+      if (data.refresh_error) status.textContent = data.refresh_error;
       if (!changed) return;
       updateTournamentSearch();
       if (selectedPlayer) renderCard(selectedPlayer);
@@ -860,7 +863,6 @@ function refreshCalendar() {
     })
     .catch(error => {
       calendarFailed = true;
-      calendar = null;
       updateTournamentSearch();
       status.textContent = error.message;
     });
@@ -868,51 +870,37 @@ function refreshCalendar() {
 
 refreshCalendar();
 
+function loadSharedFeed(feed, force = false, onProgress) {
+  return window.HCSharedData.load(feed, { refresh: force, onProgress });
+}
+
 function createRefreshCooldown(buttonId) {
   const button = document.getElementById(buttonId);
-  const key = "haute-cadence:" + buttonId + ":next-refresh";
-  let until = 0, pending = false, manual = false;
-
-  function read() {
-    try {
-      const stored = Number(localStorage.getItem(key));
-      until = Number.isFinite(stored) ? stored : 0;
-    } catch {
-      // Keep the countdown in memory when browser storage is unavailable.
-    }
-  }
-
-  function save(value) {
-    until = value;
-    try { localStorage.setItem(key, String(value)); } catch { /* In-memory cooldown still applies. */ }
-  }
+  const feed = { "refresh-results": "results", "refresh-draws": "draws", "refresh-titles": "champions" }[buttonId];
+  let pending = false;
 
   function update() {
-    const seconds = Math.max(0, Math.ceil((until - Date.now()) / 1000));
-    button.disabled = pending || seconds > 0;
-    button.textContent = seconds && !pending
+    const state = window.HCSharedData.getState(feed);
+    const updating = pending || state.pending || state.refreshing;
+    const seconds = Math.max(0, Math.ceil((state.next_refresh_at - Date.now()) / 1000));
+    button.disabled = updating || seconds > 0;
+    button.textContent = updating ? "Updating…" : seconds
       ? `Refresh (${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")})` : "Refresh";
   }
 
-  read();
+  window.HCSharedData.subscribe(feed, update);
   update();
   setInterval(update, 1000);
-  window.addEventListener("storage", event => {
-    if (event.key === key || event.key === null) { read(); update(); }
-  });
 
   return {
     begin(force) {
-      read();
-      if (pending || (force && until > Date.now())) { update(); return false; }
+      const state = window.HCSharedData.getState(feed);
+      if (pending || force && (state.next_refresh_at > Date.now() || state.pending || state.refreshing)) { update(); return false; }
       pending = true;
-      manual = force;
-      if (manual) save(Date.now() + 120000);
       update();
       return true;
     },
-    finish(success) {
-      if (manual) save(success ? Date.now() + 120000 : 0);
+    finish() {
       pending = false;
       update();
     },

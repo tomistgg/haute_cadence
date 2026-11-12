@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import hashlib
 import json
@@ -17,7 +18,7 @@ CHAMPIONS = DATA / "wta_champions.json"
 DIST = ROOT / "dist"
 
 ASSETS = {
-    "wta-live.mjs": ROOT / "wta-live.mjs",
+    "shared-data.js": ROOT / "shared-data.js",
     "draw-card.js": ROOT / "draw-card.js",
     "result-card.js": ROOT / "result-card.js",
     "assets/result-court.svg": ROOT / "assets" / "backgrounds" / "result-court.svg",
@@ -121,10 +122,9 @@ ASSETS.update({
 })
 
 
-def main() -> None:
+def build_player_payload(champions_path: Path | None = None) -> dict:
     sources = ranking_sources()
     names_by_id, player_names = load_player_names()
-    calendar = merged_calendar(CALENDAR)
 
     latest_date = ""
     previous_date = ""
@@ -168,7 +168,7 @@ def main() -> None:
     latest_125_titles = {}
     tour_title_counts = {}
     tour_title_ids = {}
-    champions = json.loads(CHAMPIONS.read_text(encoding="utf-8"))["champions"]
+    champions = json.loads((champions_path or CHAMPIONS).read_text(encoding="utf-8"))["champions"]
     for title in champions:
         champion_id = str(title["champion"]["id"])
         is_125_title = title["category"] in {"WTA 125", "125K"}
@@ -212,7 +212,10 @@ def main() -> None:
             "best_rank_year": int(best_rank_date[player_id][:4]),
         })
     players.sort(key=lambda player: (player["rank"] or float("inf"), player["name"].casefold()))
+    return {"snapshot_date": latest_date, "players": players, "player_names": player_names}
 
+
+def build_assets() -> None:
     for destination, source in ASSETS.items():
         if not source.is_file():
             raise FileNotFoundError(f"Missing site asset: {source}")
@@ -221,7 +224,9 @@ def main() -> None:
         shutil.copy2(source, target)
 
     page = (ROOT / "index.html").read_text(encoding="utf-8")
-    for filename in ("app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js", "schedule-card.js"):
+    for filename in (
+        "shared-data.js", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js", "schedule-card.js",
+    ):
         version = hashlib.sha256((ROOT / filename).read_bytes()).hexdigest()[:12]
         page = page.replace(f'"{filename}"', f'"{filename}?v={version}"')
     (DIST / "index.html").write_text(page, encoding="utf-8")
@@ -234,6 +239,20 @@ def main() -> None:
         {"src": f"assets/surfaces/{surface.name}", "name": surface.stem.replace("_", " ").title()}
         for surface in SURFACES
     ]), encoding="utf-8")
+
+
+def main(*, shared_data: bool = False) -> None:
+    if shared_data:
+        build_assets()
+        for name in ("players.json", "calendar_snapshot.json", "recent_results.json", "current_draws.json"):
+            (DIST / "data" / name).unlink(missing_ok=True)
+        (DIST / "wta-live.mjs").unlink(missing_ok=True)
+        print(f"Prepared the shared-data card editor in {DIST}")
+        return
+    payload = build_player_payload()
+    calendar = merged_calendar(CALENDAR)
+    build_assets()
+    data_dir = DIST / "data"
     if not CALENDAR.is_file() or json.loads(CALENDAR.read_text(encoding="utf-8")) != calendar:
         save_history(CALENDAR, calendar)
     save_history(data_dir / "calendar_snapshot.json", calendar)
@@ -242,15 +261,18 @@ def main() -> None:
         shutil.copy2(results, data_dir / "recent_results.json")
     else:
         (data_dir / "recent_results.json").write_text('{"updated_at":null,"matches":[]}', encoding="utf-8")
-    payload = {"snapshot_date": latest_date, "players": players, "player_names": player_names}
     draws = ROOT / "data" / "current_draws.json"
     if draws.is_file():
         shutil.copy2(draws, data_dir / "current_draws.json")
     else:
         (data_dir / "current_draws.json").write_text('{"updated_at":null,"tournaments":[]}', encoding="utf-8")
     save_history(data_dir / "players.json", payload)
-    print(f"Prepared {len(players):,} WTA singles players from {latest_date} in {DIST}")
+    print(f"Prepared {len(payload['players']):,} WTA singles players from {payload['snapshot_date']} in {DIST}")
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Build the Haute Cadence card editor.")
+    parser.add_argument(
+        "--shared-data", action="store_true", help="Build assets only; data comes from the shared Worker.",
+    )
+    main(shared_data=parser.parse_args().shared_data)

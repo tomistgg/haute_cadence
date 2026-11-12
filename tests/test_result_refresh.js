@@ -12,7 +12,10 @@ function element() {
 }
 let renders = 0;
 let requests = 0;
-let requestedUrl;
+let requestedFeed;
+let requestImplementation = async () => payload;
+let manualAllowed = true;
+const finished = [];
 let changeCard;
 let timeOffset = 0;
 let payload = { updated_at: new Date().toISOString(), matches: [] };
@@ -31,15 +34,19 @@ const context = {
   tournamentName: tournament => tournament.name,
   countRender: () => { renders += 1; },
   setInterval() {},
-  fetch: async url => { requestedUrl = url; requests += 1; return { ok: true, json: async () => payload }; },
+  createRefreshCooldown: () => ({ begin: force => !force || manualAllowed, finish: success => finished.push(success) }),
+  loadSharedFeed: async (feed, force, progress) => {
+    requestedFeed = { feed, force };
+    requests += 1;
+    return requestImplementation(force, progress);
+  },
 };
 vm.createContext(context);
 const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
 vm.runInContext(appSource.slice(appSource.indexOf("function isResultCard("), appSource.indexOf("function isDrawCard(")), context);
 vm.runInContext(appSource.slice(appSource.indexOf("function tournamentCategoryLabel("), appSource.indexOf("function tournamentLabel(")), context);
-vm.runInContext(appSource.slice(appSource.indexOf("function createRefreshCooldown(")), context);
 vm.runInContext(fs.readFileSync(path.join(__dirname, "..", "result-card.js"), "utf8"), context);
-vm.runInContext("renderResultCard = countRender", context);
+vm.runInContext("const originalRefreshResults = refreshResults; renderResultCard = countRender", context);
 
 async function main() {
   await context.refreshResults();
@@ -47,39 +54,46 @@ async function main() {
   assert.equal(elements.get("result-status").textContent, "");
   context.refreshResultsIfStale();
   assert.equal(requests, 1, "refocusing a recently refreshed page must not fetch again");
-  assert.equal(requestedUrl, "data/recent_results.json");
+  assert.deepEqual(requestedFeed, { feed: "results", force: false });
   await elements.get("refresh-results").listeners.click();
-  assert.match(requestedUrl, /^data\/recent_results\.json\?refresh=1&t=\d+$/,
-    "the Refresh button must bypass the server's fresh cache");
+  assert.deepEqual(requestedFeed, { feed: "results", force: true }, "the Refresh button must request a saved backend update");
   assert.equal(renders, 1, "manual refresh must preserve an unchanged card");
-  assert.match(elements.get("result-status").textContent, /^Updated at /);
+  assert.match(elements.get("result-status").textContent, /^Updated and saved at /);
   const completedStatus = elements.get("result-status").textContent;
-  assert.equal(elements.get("refresh-results").disabled, true);
+  manualAllowed = false;
   const completedRequests = requests;
   await context.refreshResults(true);
   assert.equal(requests, completedRequests, "manual clicks during cooldown must not fetch");
 
   let finishFetch;
-  context.fetch = () => new Promise(resolve => { finishFetch = resolve; });
+  requestImplementation = (_, progress) => new Promise(resolve => {
+    finishFetch = resolve;
+    progress("Loading shared WTA matches…");
+  });
   const refresh = context.refreshResults();
   assert.equal(elements.get("result-status").textContent, completedStatus, "background loading must preserve the current status");
-  finishFetch({ ok: true, json: async () => ({ ...payload, updated_at: new Date().toISOString() }) });
+  finishFetch({ ...payload, updated_at: new Date().toISOString() });
   await refresh;
   assert.equal(renders, 1, "an unchanged feed must not rebuild the card");
 
   timeOffset += 121000;
+  manualAllowed = true;
+  let reportProgress;
+  requestImplementation = (_, progress) => new Promise(resolve => { finishFetch = resolve; reportProgress = progress; });
   const manualRefresh = context.refreshResults(true);
   assert.equal(elements.get("result-status").textContent, "Updating…");
-  finishFetch({ ok: true, json: async () => payload });
+  reportProgress("Loading shared WTA matches (1/2)…");
+  assert.equal(elements.get("result-status").textContent, "Loading shared WTA matches (1/2)…");
+  finishFetch(payload);
   await manualRefresh;
-  assert.match(elements.get("result-status").textContent, /^Updated at /);
+  assert.match(elements.get("result-status").textContent, /^Updated and saved at /);
 
   payload.matches = [{
     id: "tour", completed_at: new Date(Date.now() - 3600000).toISOString(), round: "Final",
     tournament: { id: "event", name: "Test event", category: "WTA 250" },
     winner: { name: "Player 1" }, loser: { name: "Player 2" },
   }];
-  context.fetch = async () => ({ ok: true, json: async () => payload });
+  requestImplementation = async () => payload;
   await context.refreshResults();
   assert.equal(renders, 2, "new matches must still update the card");
   payload.matches[0].completed_at = new Date(Date.now() - 90000000).toISOString();
@@ -88,12 +102,17 @@ async function main() {
   context.cardType.value = "tour-result";
   context.updateResultOptions();
   assert.equal(renders, 4, "changing layout must redraw even with the same match list");
-  context.fetch = async () => { throw new Error("Refresh failed"); };
+  requestImplementation = async () => { throw new Error("Refresh failed"); };
   timeOffset += 121000;
   await context.refreshResults(true);
   assert.equal(elements.get("result-status").textContent, "Refresh failed");
   assert.equal(renders, 4);
-  assert.equal(elements.get("refresh-results").disabled, false);
+  assert.equal(finished.at(-1), false);
+  requestImplementation = async () => ({ ...payload, refresh_error: "WTA unavailable; showing the saved feed." });
+  await context.refreshResults(true);
+  assert.equal(elements.get("result-status").textContent, "WTA unavailable; showing the saved feed.");
+  assert.equal(renders, 4);
+  assert.equal(finished.at(-1), false, "a retained snapshot must not be reported as a successful refresh");
   vm.runInContext("refreshResults = async () => {}", context);
   context.cardType.value = "form";
   changeCard();
@@ -112,6 +131,11 @@ async function main() {
   changeCard();
   assert.equal(context.selectedResultMatch(), instagramDraft, "returning to Instagram must preserve its manual draft");
   assert.equal(instagramDraft.sets[0].winner, 7);
-  console.log("Quiet background refresh, focus throttling, unchanged feeds, expiry, layout changes, and error recovery passed.");
+  requestImplementation = async () => ({ ...payload, matches: [{ ...payload.matches[0], id: "new-match", completed_at: new Date().toISOString() }] });
+  vm.runInContext("refreshResults = originalRefreshResults", context);
+  await context.refreshResults();
+  assert.equal(context.selectedResultMatch(), instagramDraft, "new saved matches must not replace the selected manual draft");
+  assert.equal(instagramDraft.sets[0].winner, 7);
+  console.log("Shared saved-feed refresh, progress, unchanged cards, expiry, manual drafts, and error recovery passed.");
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });

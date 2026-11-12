@@ -1,6 +1,7 @@
 # Haute Cadence player cards
 
-A local, static player card builder using rankings and calendars saved by `tenis-fem-arg`.
+A static player card editor using shared WTA data saved in Cloudflare D1 by the existing `tennis-wta-api` Worker.
+The shared database and Worker are deployed; the website is published through the assets-only Pages workflow.
 
 The **Instagram Result** card uses the shared last-24-hours WTA match picker and exports a 2160×3840 PNG from its 1080×1920 design.
 
@@ -28,31 +29,38 @@ Manual two- and three-set matches have their own saved drafts within the current
 
 ## Run locally
 
-From this folder:
+Start the prepared local shared backend on <http://127.0.0.1:8787/> first, then run from this folder:
 
 ```powershell
-python build_site.py
-python serve_site.py
+python serve_site.py --port 8765
 ```
 
-Then open <http://127.0.0.1:8765/>. By default the build reads all four WTA ranking CSVs from
-`../tenis-fem-arg/data/`, uses their latest ranking week, and prepares `dist/data/players.json`.
-The source files are read only; Haute Cadence does not fetch or update rankings.
-For a different checkout location, set `$env:HAUTE_CADENCE_DATA_DIR = 'C:\path\to\tenis-fem-arg\data'` before running.
-The source directory must contain the four ranking CSVs, `calendar_snapshot.json`, `wta_full_calendar_cache.json`,
-`itf_calendar_cache.json`, and `player_aliases_wta_itf.json`.
-Missing or invalid shared files produce an error instead of silently using Haute Cadence's old ranking copies.
+Then open <http://127.0.0.1:8765/> to use the actual card editor. The server builds the static assets and proxies
+`/data/*` reads and refreshes to the local backend on port 8787. Its database writes stay local. A different local
+backend can be selected with `--shared-backend http://127.0.0.1:8787`. See
+[the migration guide](cloudflare/MIGRATION.md) for the baseline and backend preparation.
+The existing photo library still uses the Worker's read-only photo relay.
 
-Tournament lists merge the shared calendar files. Current WTA dates, categories, cities, cancellations, and new events
-come from the shared cache. `data/calendar_snapshot.json` is an accumulated calendar archive: older tournaments remain
-searchable after they leave the other project's moving cache window. The build writes the merged calendar to `dist/data/`.
-The local server notices changed source files and rebuilds player/calendar data when requested; reload the page to load it.
+For an assets-only build, run `python build_site.py --shared-data`. This build needs no ranking CSVs or saved
+results/draws JSON. Hosted pages read the shared Worker directly; local previews use the proxy above.
+Opening the root HTML or serving `dist` without this proxy does not provide the local shared backend.
+
+Player, calendar, result, draw, champion, and form feeds come from saved shared snapshots. Clicking Refresh asks
+the Worker to fetch WTA data, validate it, and save the completed update before displaying it. The saved update
+survives a page reload and is shared with other visitors. Progress and completion text appear beside Refresh.
+Results, Draw, and Title Refresh buttons share one server-enforced two-minute cooldown across browsers and reloads.
+An unsuccessful update retains the last usable saved feed and shows the error; incomplete jobs display their progress.
+
+Tournament selectors use the merged shared calendar. WTA dates, categories, cities, cancellations, and new events
+are collected by the Worker. The imported ITF calendar and custom rows remain available, but WTA refreshes do not
+update those ITF records. Lifetime title history, curated names, and known career bests are retained separately
+from expiring recent results, active draws, and player-form caches.
 
 All player searches include anyone ranked within two calendar years of the latest ranking snapshot. Players absent
 from the latest week show NR; their old ranking is retained only as `last_rank` / `last_rank_date` in the data.
 Current rank, career-best rank, and last recorded rank remain separate. Country flags cover the expanded list.
 
-All card images use WTARG's player display names from `player_aliases_wta_itf.json`, matched by WTA ID, including
+All card images use the shared curated player display names imported from `player_aliases_wta_itf.json`, matched by WTA ID, including
 additional WTA IDs. For example, Maaya Rajeshwaran Revathi is shown as Maaya Rajeshwaran. Records with a separate
 `presentation_name` use that visible label instead of an internal disambiguation suffix. Both WTA and ITF names,
 display names, and aliases remain searchable. The original ranking and match names and IDs remain unchanged.
@@ -69,7 +77,7 @@ Local previews use the server's `/photos` relay; hosted pages contact the Worker
 With the Worker's five-minute cache, folder changes can take up to ten minutes in an open tab.
 Google credentials stay in the Worker's secrets. Deployment and folder-sharing instructions are in
 `../wta-tracker/cloudflare/SETUP.md`. Check the client with `node tests/test_player_photos.js`.
-The local server detects changes to the shared name file; reload to rebuild and load the updated labels.
+Ranking refreshes preserve these curated names and aliases in the shared database.
 Long player names reduce their font size to fit their space while keeping the letters' natural proportions. This
 also applies to both Result Card layouts and WTA 125 draw names; shorter names retain their normal font size.
 Long tournament names also reduce their font size to fit, preserving the letters' natural proportions.
@@ -101,17 +109,15 @@ the round or the tournament heading to search the current WTA Calendar. Click ei
 a player; their photo, ranking frame, ranking, and name load automatically. Click each time/court line to edit it.
 Round banners, rank frames, and match layouts come from `assets/schedule/`; the completed image is included in PNG export.
 
-`python update_wta_draws.py` saves current tournaments and their singles brackets to `data/current_draws.json`.
-The matches endpoint is requested without a completed-only filter, and `LS` match numbers preserve bracket
+The shared Worker saves current tournaments and their singles brackets. Its matches endpoint is requested
+without a completed-only filter, and `LS` match numbers preserve bracket
 positions even when the feed gives a scheduled match an unreliable round label. Missing parent slots are filled
 only from confirmed winners of their direct child matches. Doubles, qualifying, and round-robin results never
-advance into the knockout bracket. The updater preserves the previous snapshot on failure. The local server and
-Draw refresh every five minutes while used. On GitHub Pages, draw refreshes fetch WTA directly through the shared relay.
-Result Card and Draw tournament discovery, match states, and scores come directly from WTA, independently of WTARG.
-Clicking Refresh on the local server forces a new WTA request, bypassing the five-minute automatic refresh cache.
-Confirmed main-draw singles finals update `data/wta_champions.json` using the same draw response. Recently ended events
-without a saved champion are checked too; existing titles are merged by tournament ID and season, so refreshes do not
-increase title counts twice. Player title counts and DERNIER TITRE are regenerated on the next player-data request or build.
+advance into the knockout bracket. Failed updates preserve the last usable bracket. The Worker refreshes match
+feeds in the background; the page checks for updates every five minutes while used. Result Card and Draw use the
+same saved match collection, independently of WTARG. Confirmed main-draw singles finals update shared title records
+using the same match response. Recently ended events without a saved champion are checked too. Titles are keyed by
+tournament ID and season, so refreshes do not increase title counts twice. Title counts and DERNIER TITRE use those records.
 
 Non-Tour Result Card lists completed WTA singles matches from the rolling last 24 hours, including WTA 125 and qualifying.
 Select a match to load its round artwork, tournament heading, flags, current ranking snapshot, names, and set scores.
@@ -139,7 +145,7 @@ after winning two completed sets; incomplete or tied scores do not declare a win
 to the large frame. The photo upload controls correspond to Player 1 and Player 2 in manual ITF mode.
 These drafts and uploaded photos clear on reload. ITF editing is available even if the live WTA feed is unavailable.
 For ITF MATCH 2 SETS and ITF MATCH 3 SETS, click the tournament name in the image to choose an ITF event from
-the current Monday–Sunday week (Europe/Madrid). The list uses WTARG's full ITF calendar, refreshed when opened;
+the current Monday–Sunday week (Europe/Madrid). The list uses the preserved ITF rows in the shared calendar;
 choosing an event fills its city and category automatically. The Tour Result Card's MANUAL MATCH uses the same
 picker for current-week WTA Tour events, Finals and senior Grand Slams, including their explicitly dated qualifying weeks.
 Grand Slams retain their standard tournament names when selected during qualifying; WTA 125 and ITF events are excluded.
@@ -154,29 +160,51 @@ rankings and flags in the player dialog, and edit scores. A Sets selector switch
 switching back restores a previously entered third set. The missing third-round badge uses the supplied first-round
 banner with a live third-round label. All manual edits and the uploaded match photo are included in PNG export.
 
-The local server automatically refreshes `data/recent_results.json` from the official WTA completed-match endpoint
-every five minutes while used; clicking Refresh forces an immediate update. The page also refreshes while either
-result card is selected. The official match start timestamp plus
+The shared results feed uses the official WTA completed-match endpoint. The official match start timestamp plus
 duration defines the finish time; LastUpdated is the fallback when duration is unavailable. Walkovers are excluded;
 retirements/defaults with played sets are marked. Cached matches outside the last 24 hours never appear.
 If WTA is unavailable, the last successful feed is retained and the page reports the refresh failure.
-For a static build, run `python update_wta_results.py` and `python update_wta_draws.py` before `python build_site.py`.
-The Pages workflow refreshes the feed on each deployment and every 30 minutes once this workflow is published.
-On GitHub Pages, Result Card and Draw refreshes use `wta-live.mjs` and the shared endpoint at
-`https://tennis-wta-api.schiter-tomas.workers.dev`. Clicking Refresh fetches a fresh WTA calendar and match responses;
-the browser transforms them into the same singles-result/bracket format without writing repository data files.
-Automatic five-minute refreshes use this live path too. A failed or incomplete response retains the current card/feed
-and shows an error. Rankings and player display names still use the shared WTARG files. The scheduled Python updaters
-continue maintaining the saved feeds and champion history; browser refreshes do not write to that history.
-Clicking Refresh shows a small "Updating…" message, followed by "Updated at HH:MM." when it finishes successfully.
-Each manual results or draw refresh starts a two-minute button countdown, remembered across reloads and tabs in the
-same browser. The two Result Card layouts share one countdown; Draw has its own. Failed refreshes allow an immediate
-retry. Automatic five-minute updates still run normally. If browser storage is unavailable, the cooldown lasts only
-in the current tab until reload.
+The browser reads `/data/results` and `/data/draws`; Refresh uses their empty-POST `/refresh` routes.
+Collection and transformation run in the Worker, and complete snapshots publish atomically to D1. The public
+endpoint remains `https://tennis-wta-api.schiter-tomas.workers.dev`. This replaces browser WTA collection and
+scheduled Python feed generation. Background Worker jobs keep shared data fresh independently of Pages builds.
+Selections, manual scores, form edits, H2H values, uploaded photos, and backgrounds survive in-tab data refreshes.
+These editing drafts still reset on full page reload; the shared WTA data remains saved.
 
 Use the selector next to player search to switch between Player Form Card, WTA 125 Title Card, and WTA Tour Title Card. The selected player is preserved when changing card types. The layouts follow the three references in `examples/` using supplied PNG layers and CSS. Title cards layer `assets/details/wta125_title_details.png` or `assets/details/wtatour_title_details.png` over the complete card; the Tour overlay includes its trophy and laurels. No AI image generation is used.
 
-Rank, age, and country come from the latest CSV week. Rank 1 uses `top_1`, ranks 2-10 use `top_10`, ranks 11-20 use `top_20`, ranks 21-100 use `top_100`, ranks 101-200 use `top_200`, ranks 201-300 use `top_300`, ranks 301-400 use `top_400`, ranks 401-500 use `top_500`, and ranks 501-600 use `top_600`. Ranks above 600 use the existing `top_300` fallback. The `top_400`, `top_500`, and `top_600` tiers all use `top_200_details.png`. Players aged 19 or younger outside the top 10 use `prospect_card.png` and `prospect_details.png` instead of their rank tier. Ranks 1-10 retain their existing artwork at any age. Age is calculated on the ranking snapshot date, matching the age printed on the card. These tiers apply to all three card types. The `top_300` tier temporarily uses the beige `top_200_details.png` overlay; adding `assets/details/top_300_details.png` and rebuilding switches to that file automatically. Title cards show a text search for eligible tournaments in the current calendar year/season, using `data/calendar_snapshot.json`. Search matches city, tournament name, category, country, or start date. All matches appear in a scrollable list, with keyboard navigation and dates to distinguish repeat events in the same city. WTA 125 Title Cards list only WTA 125 events. WTA Tour Title Cards list WTA 250, 500, 1000, WTA Finals, and Grand Slams; BJKC and junior events are excluded. The WTA Tour Title Card displays each player's count of recorded WTA Tour singles titles, including Grand Slams and historical Tour categories, while excluding WTA 125 titles. Changing card type clears an incompatible tournament selection. The Form card's DERNIER TITRE is filled automatically from `data/wta_champions.json`, matching the player's WTA ID and preferring the latest WTA Tour, Grand Slam, or United Cup title over WTA 125; when there is no higher-level title, it uses the latest WTA 125 title. Selecting a result updates the tournament city, category, and heading color. Form cards automatically pre-fill their ten results from WTA singles history and completed matches in this week's draws (including qualifying), ordered oldest to newest. Only results within the past year are used; unused boxes remain blank on the left. WTA history is paginated and sorted, and current-week draw results replace history from the same tournament to avoid duplicates. Click a box to cycle blank -> win (green V) -> loss (red lowercase d). Each manually edited box stays as you set it, including when an automatic request finishes or data refreshes. This pre-fill also applies to player cards inside Draw layouts. Local previews fetch through the local server; GitHub Pages uses the shared WTA Worker. If loading fails, existing results remain editable. DERNIER TITRE displays the latest recorded title as category, tournament city/name, and season year, using the existing tournament-name overrides. Players with no recorded title show W/O. This field is automatic and is included in the saved card PNG. Desktop cards are capped at 600px wide. Manual form results are separate for each player and survive player/card-type changes in the same tab; reloading the page resets them. Selecting a title layout previews its design without asserting that the player won a tournament.
+Rank, age, and country come from the shared player snapshot. Rank 1 uses `top_1`, ranks 2-10 use `top_10`,
+ranks 11-20 use `top_20`, ranks 21-100 use `top_100`, ranks 101-200 use `top_200`, ranks 201-300 use `top_300`,
+ranks 301-400 use `top_400`, ranks 401-500 use `top_500`, and ranks 501-600 use `top_600`. Ranks above 600 use
+the existing `top_300` fallback. The `top_400`, `top_500`, and `top_600` tiers all use `top_200_details.png`.
+Players aged 19 or younger outside the top 10 use `prospect_card.png` and `prospect_details.png` instead of their
+rank tier. Ranks 1-10 retain their existing artwork at any age. Age is calculated on the ranking snapshot date,
+matching the age printed on the card. These tiers apply to all three card types. The `top_300` tier temporarily
+uses the beige `top_200_details.png` overlay; adding `assets/details/top_300_details.png` and rebuilding switches
+to that file automatically.
+
+Title cards search eligible tournaments in the current calendar year/season using the shared calendar.
+Search matches city, tournament name, category, country, or start date. All matches appear in a scrollable list,
+with keyboard navigation and dates to distinguish repeat events in the same city. WTA 125 Title Cards list only
+WTA 125 events. WTA Tour Title Cards list WTA 250, 500, 1000, WTA Finals, and Grand Slams; BJKC and junior events
+are excluded. The WTA Tour Title Card displays each player's recorded WTA Tour singles title count, including
+Grand Slams and historical Tour categories, while excluding WTA 125 titles. Changing card type clears an
+incompatible tournament selection. Selecting a result updates the tournament city, category, and heading color.
+Selecting a title layout previews its design without asserting that the player won a tournament.
+
+The Form card's DERNIER TITRE comes from shared title records, matching the player's WTA ID and preferring
+the latest WTA Tour, Grand Slam, or United Cup title over WTA 125; when there is no higher-level title, it uses
+the latest WTA 125 title. It displays category, tournament city/name, and season year with the existing
+tournament-name overrides. Players with no recorded title show W/O. This automatic field is included in PNG export.
+
+Form cards pre-fill ten results from shared WTA singles history and completed matches in this week's draws
+(including qualifying), ordered oldest to newest. Only results within the past year are used; unused boxes
+remain blank on the left. The Worker paginates and sorts history, replacing matches from the same current-week
+tournament to avoid duplicates. Click a box to cycle blank -> win (green V) -> loss (red lowercase d).
+Each edited box stays as you set it, including when a request finishes or data refreshes. The same pre-fill and
+per-player manual draft apply inside Draw layouts. Local previews use the local backend; hosted pages use the
+shared Worker. Failed requests leave existing results editable. Manual form results survive player/card-type
+changes in the same tab; reloading resets them. Desktop player cards are capped at 600px wide.
 
 Portraits are supplied for Leylah Fernandez, Elsa Jacquemot, and Diana Shnaider. Alina Charaeva's portrait is cropped from the provided form-card reference. Other players show initials.
 
@@ -188,18 +216,20 @@ stack on smaller screens.
 
 The supplied TT Bluescreens font is a trial font. Keep this site local/private for evaluation unless you obtain the appropriate license.
 
-Champions history, the accumulated calendar, recent results, and current draws are stored in `data/`. Career-best ranks
-use all four shared ranking CSVs (1983 onward). The caption year is the most recent year the player held that exact
-career-best position, including later returns to the same rank. The old ranking CSV copies and `data/career_bests.json`
-in Haute Cadence are no longer used by the build. The generated site remains static; only builds and the local server
-read the other project's files.
+The shared database stores champion history, calendar, player profiles, and current feeds. The initial import derives
+career-best ranks from all four historical ranking CSVs (1983 onward), then ranking refreshes preserve known bests.
+The caption year is the most recent year the player held that exact career-best position, including later returns
+to the same rank. Newly discovered players can have an unknown career best; their current rank is not invented
+as a historical best. The CSV-based builder and `data/` archives remain migration inputs, rather than runtime
+data sources. The shared-data site build copies only the editor assets.
 
 The initial calendar archive preserves the previously saved 2026 season, including October 26 and November 2.
-Subsequent builds overlay `tenis-fem-arg` calendar data. BJKC, Grand Slams, Finals, WTA 1000/500/250/125, and Grand Slam
+Shared WTA collection overlays current and following seasons while preserving other calendar records.
+BJKC, Grand Slams, Finals, WTA 1000/500/250/125, and Grand Slam
 Juniors use their specified heading colors. City headings use the bundled Bebas Neue font from
 https://github.com/google/fonts/tree/main/ofl/bebasneue, with its OFL license included.
 
-Form cards use locally bundled circular country flags, with the CSV's three-letter country code followed by a dot beside the flag. Flag SVGs are from https://github.com/lipis/flag-icons; their MIT license is included in `assets/flags/LICENSE`. The current ranking countries are covered, including IOC-code aliases. The browser makes no external flag requests. Tournament cities use Bebas Neue; categories use the locally bundled [Chunk Five from The League of Moveable Type](https://github.com/theleagueof/chunk), with its OFL license included in `assets/fonts/Chunk_Five/`. The career-best number has a black outline, a separated ordinal, and a smaller TT Bluescreens year caption.
+Form cards use locally bundled circular country flags, with the player's three-letter country code followed by a dot beside the flag. Flag SVGs are from https://github.com/lipis/flag-icons; their MIT license is included in `assets/flags/LICENSE`. The current ranking countries are covered, including IOC-code aliases. The browser makes no external flag requests. Tournament cities use Bebas Neue; categories use the locally bundled [Chunk Five from The League of Moveable Type](https://github.com/theleagueof/chunk), with its OFL license included in `assets/fonts/Chunk_Five/`. The career-best number has a black outline, a separated ordinal, and a smaller TT Bluescreens year caption.
 
 The 2026 calendar was completed from the official WTA tournaments API for January 1 through December 31 (both API pages), with cancelled tournaments excluded. Search uses each event's season year, so December warm-up events for the following season do not appear in the wrong year. Qualifying rows are not listed as separate title events.
 
@@ -209,12 +239,12 @@ Tournament display-name overrides apply to search results and card headings, inc
 
 GitHub Pages must publish the generated `dist/` directory. The repository-root HTML is the source template and refers to files that exist only in the build output.
 
-The `Deploy GitHub Pages` workflow runs `python build_site.py` and deploys `dist/` after pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is **GitHub Actions**.
-It checks out only the required rankings, calendar, and player-name files from `tomistgg/tenis-fem-arg`'s validated
-`data-state` branch and keeps the
-existing 30-minute WTA results/draw refresh. The generated calendar archive and champion history are retained on a
-separate `card-data` branch, so later deployments preserve past tournaments and newly won titles. This requires the
-workflow's contents-write permission. No workflow or data in `tenis-fem-arg` is changed.
+The prepared `Deploy GitHub Pages` workflow runs `python build_site.py --shared-data` and deploys `dist/` after
+pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is
+**GitHub Actions**. It only builds website assets: there is no scheduled collection, WTARG checkout, saved-feed
+restoration, or `card-data` branch write. Repository contents permission is read-only; Pages deployment permissions
+remain. Data updates belong to the shared Worker and D1. This workflow change is local until explicitly published;
+no live schedule or deployment has been changed during review.
 
 Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. All cards export at twice their design width and height for sharper text, outlines, and flags. Player/title exports are 2880 x 3600, Non-Tour results 2880 x 3200, and Tour results 3200 x 1800. Layout and font proportions stay the same. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime. Photo detail still depends on the resolution and quality of the uploaded source.
 
@@ -230,18 +260,17 @@ Career-best caption frames, gradients, dimensions, and overlap come directly fro
 
 ## WTA singles champions
 
-`data/wta_champions.json` stores available singles champions from 2000 through the update date, oldest first by tournament end date. It includes WTA Tour events, historical Tour categories, WTA 125 events, and Grand Slams. Each entry contains the tournament ID, season, dates, category, location, champion's WTA ID/name/country, and official source URLs. Team titles, Olympic medals, and doubles are excluded.
+`wta_titles` retains available singles champions imported from the saved history, including WTA Tour events,
+historical Tour categories, WTA 125 events, and Grand Slams. Records include tournament ID, season, dates, category,
+location, champion ID/name/country, and official source URLs. Team titles, Olympic medals, and doubles are excluded.
+Coverage notes and unresolved editions are preserved; unavailable winners are never guessed. Ordering uses published
+tournament end dates, which may differ from the actual final match date.
 
-Refresh it locally with:
+The shared match collector records confirmed main-draw singles finals and upserts by tournament ID plus season.
+Refreshing an edition twice does not duplicate a title, and corrected winners update the saved edition. Player
+responses derive title totals and DERNIER TITRE from these authoritative records, without rebuilding the website.
+WTA 125 titles do not increase the Tour count and supply DERNIER TITRE only when the player has no higher-level title.
 
-```powershell
-python update_wta_champions.py
-```
-
-The updater uses the same official WTA calendar and completed-matches endpoints as `tenis-fem-arg`. It also checks WTA's singles player-record endpoint to recover original categories for older Tour editions incorrectly labelled ITF in the calendar. Explicitly ITF-labelled tournament names are excluded from this historical verification. The file describes source coverage and lists unresolved events in `missing_champions`; unavailable winners are never guessed. Dates used for ordering are the published tournament end dates, which may differ from the actual final match date. A failed update preserves the previous file.
-
-Use `--through YYYY-MM-DD` for a fixed cutoff or `--start-year YYYY` to change the starting year. After refreshing the champions file, run `python build_site.py` to update the automatic DERNIER TITRE values. The builder includes each ranked player's latest matching title, Tour title count, and recorded Tour tournament IDs in `dist/data/players.json`.
-
-While Form, Title, or Draw cards are open, the browser also checks this week's draws for completed main-draw singles finals. New Tour champions immediately gain one title and an updated DERNIER TITRE without waiting for a rebuild. Tournament ID plus season prevents double-counting when the saved champions JSON catches up. WTA 125 titles update the last-title field only when the player has no Tour title; they never increase the Tour count. Checks share the Form draw cache and refresh every five minutes or on focus when stale. Failed requests retain the saved counts and the last successful live results.
-
-Both Title Card types also have a Refresh button beside Background. It bypasses the automatic refresh delay and shared draw cache, shows the update time, and uses the same two-minute manual cooldown as the other Refresh controls. Failed updates leave the current title data intact and can be retried immediately.
+Both Title Card types have a Refresh button beside Background. It shares the saved match job and two-minute cooldown
+with Results and Draw, displays progress, and leaves the current title data intact if the update fails.
+The old champions JSON and Python updater remain historical import tools; normal website updates use D1.

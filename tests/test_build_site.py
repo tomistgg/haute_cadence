@@ -18,7 +18,7 @@ class SiteBuildTest(unittest.TestCase):
             data_dir.mkdir()
             for name in (
                 "index.html", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js",
-                "schedule-card.js",
+                "schedule-card.js", "shared-data.js",
             ):
                 (root / name).write_text("", encoding="utf-8")
             calendar = data_dir / "calendar_snapshot.json"
@@ -94,7 +94,29 @@ class SiteBuildTest(unittest.TestCase):
             self.assertEqual(players["1"]["tour_title_ids"], ["100:2026", "101:2025"])
             self.assertEqual(players["2"]["tour_title_ids"], [])
 
-
+    def test_shared_build_needs_no_saved_feeds_and_removes_obsolete_generated_data(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            dist = root / "dist"
+            (dist / "data").mkdir(parents=True)
+            scripts = (
+                "shared-data.js", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js",
+                "schedule-card.js",
+            )
+            for name in ("index.html", *scripts):
+                (root / name).write_text('"shared-data.js"', encoding="utf-8")
+            for name in ("players.json", "calendar_snapshot.json", "recent_results.json", "current_draws.json"):
+                (dist / "data" / name).write_text('{"old":true}', encoding="utf-8")
+            (dist / "wta-live.mjs").write_text("old collector", encoding="utf-8")
+            with (
+                patch.multiple(build_site, ROOT=root, DIST=dist, ASSETS={}, SURFACES=[]),
+                patch.object(build_site, "build_player_payload", side_effect=AssertionError("Shared source was read")),
+                patch.object(build_site, "merged_calendar", side_effect=AssertionError("Calendar source was read")),
+            ):
+                build_site.main(shared_data=True)
+            self.assertEqual(sorted(path.name for path in (dist / "data").iterdir()), ["surfaces.json"])
+            self.assertFalse((dist / "wta-live.mjs").exists())
+            self.assertIn('"shared-data.js?v=', (dist / "index.html").read_text(encoding="utf-8"))
 
 if __name__ == "__main__":
     unittest.main()
