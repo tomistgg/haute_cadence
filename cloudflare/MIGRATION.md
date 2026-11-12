@@ -1,11 +1,11 @@
 # Shared Cloudflare data migration
 
-Status: steps 1 through 5 are complete. Step 6 was approved on 2026-11-12. The production schema,
-baseline import, and Worker deployment are verified; the dependent website release is in progress.
+Status: all six steps were completed and published on 2026-11-12. The production schema, baseline,
+Worker, website, and replacement workflow are deployed and verified on both live websites.
 
-Haute Cadence and WTA Tracker will use the existing `tennis-wta-api` Worker and the existing
+Haute Cadence and WTA Tracker use the existing `tennis-wta-api` Worker and the existing
 `wta-entry-lists` D1 database. The resource's current name does not limit its contents. Both sites
-will read common WTA data from shared tables, with app-specific display formats built from those records.
+read common WTA data from shared tables, with app-specific display formats built from those records.
 
 The shared backend currently lives in the sibling `wta-tracker/cloudflare` directory. Its new additive
 `shared-schema.sql` is the single schema source for these tables; Haute Cadence does not create a
@@ -77,7 +77,7 @@ Title counts and latest titles also match independent SQL queries. Existing titl
 and unresolved champion records remain intact. The report is
 `wta-tracker/.wrangler/shared-import/verification-report.json`; the parameterized plan sits beside it.
 The rehearsal leaves existing entry-list data unchanged and refuses to replace different shared
-data or run with existing shared refresh state. The step 2 code remains local for review.
+data or run with existing shared refresh state. The production import used this verified baseline.
 
 The baseline preserves ranking dates, NR players, historical bests, the full name index, existing title
 coverage notes, and the mixed WTA/ITF calendar, including existing cancellation labels and custom rows.
@@ -187,6 +187,16 @@ All imported records and title statistics round-trip correctly. Shared Worker ve
 `9f96cd79-e5e7-4727-8b6b-2ee653f980df` is deployed with the existing D1 binding, photo secrets,
 and one-minute trigger. Live calendar, results, and player-form refreshes saved successfully;
 saved player/champion feeds, all four active entry lists, and the 126-photo index were checked.
+
+Haute Cadence's [Pages release](https://github.com/tomistgg/haute_cadence/actions/runs/43276302196)
+completed successfully. Live browser checks covered search, form editing, Tour/125 title selectors,
+Drive photos, shared API CORS, PNG exports, and an actual Results Refresh followed by a full page reload.
+The saved timestamp and two-minute cooldown persisted. No legacy data-file requests occurred.
+WTA Tracker's live Refresh also saved a newer snapshot, retained Changes history, and preserved the
+same data and cooldown after reload. The retired Python schedule is absent from the published workflow.
+
+Live sites: [Haute Cadence](https://tomistgg.github.io/haute_cadence/) and
+[WTA Tracker](https://tomistgg.github.io/wta-entry-lists/). No dashboard setup remains.
 
 No Cloudflare dashboard action is needed for step 1. The focused schema check runs locally from the
 `wta-tracker` directory with `node --test cloudflare/shared-schema.test.mjs` and uses a temporary D1
