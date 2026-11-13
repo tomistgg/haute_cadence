@@ -1,17 +1,25 @@
 "use strict";
 
 const cardSaveImage = document.getElementById("card-save-image");
+const exportStatus = document.getElementById("export-status");
+const exportStatusText = document.getElementById("export-status-text");
+const retryExport = document.getElementById("retry-export");
 let exportVersion = 0;
-let savedExportVersion = -1;
 let exportTimer;
 let exportRunning = false;
-const exportFontsReady = Promise.all([...document.fonts].map(font => font.load()));
-exportFontsReady.then(() => { fitLastTitleText(); fitCardPlayerNames(); fitTournamentHeadings(); });
+const exportFontsReady = Promise.all([...document.fonts].map(font => font.load()))
+  .then(() => { fitLastTitleText(); fitCardPlayerNames(); fitTournamentHeadings(); return null; })
+  .catch(error => error);
 let exportFontCSS;
 let exportFontType;
 
 function scheduleCardExport() {
   exportVersion += 1;
+  cardSaveImage.hidden = true;
+  cardSaveImage.removeAttribute("src");
+  exportStatus.hidden = card.hidden;
+  exportStatusText.textContent = "Preparing image…";
+  retryExport.hidden = true;
   clearTimeout(exportTimer);
   exportTimer = setTimeout(renderCardExport, 150);
 }
@@ -28,7 +36,11 @@ async function renderCardExport() {
   const version = exportVersion;
   let copy;
   try {
-    await exportFontsReady;
+    if (await exportFontsReady) {
+      exportStatusText.textContent = "A card font could not be loaded. Reload the page to prepare the image.";
+      retryExport.hidden = true;
+      return;
+    }
     await document.fonts.ready;
     await Promise.all([...card.querySelectorAll("img")]
       .filter(image => image !== cardSaveImage && image.getAttribute("src") && image.getClientRects().length)
@@ -71,13 +83,18 @@ async function renderCardExport() {
     if (version === exportVersion) {
       cardSaveImage.src = png;
       await cardSaveImage.decode();
-      cardSaveImage.hidden = false;
-      savedExportVersion = version;
+      if (version === exportVersion) {
+        cardSaveImage.hidden = false;
+        exportStatusText.textContent = "Image ready to save.";
+      }
     }
   } catch (error) {
     if (version === exportVersion) {
       console.error("Could not prepare the complete card image", error);
-      status.textContent = "The complete card image could not be prepared. Please reload and try again.";
+      cardSaveImage.hidden = true;
+      cardSaveImage.removeAttribute("src");
+      exportStatusText.textContent = "The image could not be prepared. Your edits are still here.";
+      retryExport.hidden = false;
     }
   } finally {
     if (copy) copy.remove();
@@ -91,9 +108,8 @@ new MutationObserver(changes => {
       !change.target.parentElement?.closest("#card-save-image, .suggestions") &&
       !change.attributeName?.startsWith("aria-"))) scheduleCardExport();
 }).observe(card, { subtree: true, childList: true, characterData: true, attributes: true });
-new ResizeObserver(scheduleCardExport).observe(card);
-card.addEventListener("click", scheduleCardExport);
 card.addEventListener("input", event => {
   if (event.target === tourTitleNumber) scheduleCardExport();
 });
+retryExport.addEventListener("click", scheduleCardExport);
 scheduleCardExport();

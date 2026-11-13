@@ -3,6 +3,9 @@
 const searchInput = document.getElementById("player-search");
 const options = document.getElementById("player-options");
 const status = document.getElementById("search-status");
+const playerLoadState = document.getElementById("player-load-state");
+const playerLoadMessage = document.getElementById("player-load-message");
+const retryPlayers = document.getElementById("retry-players");
 const card = document.getElementById("player-card");
 const cardDesign = document.getElementById("card-design");
 
@@ -10,7 +13,9 @@ function scaleCardDesign() {
   const width = card.getBoundingClientRect().width;
   if (!width) return;
   const scale = String(width / cardDesign.offsetWidth);
-  if (card.style.getPropertyValue("--card-scale") !== scale) card.style.setProperty("--card-scale", scale);
+  // Preview scaling must stay outside the card's export observer.
+  const previewStyle = card.parentElement.style;
+  if (previewStyle.getPropertyValue("--card-scale") !== scale) previewStyle.setProperty("--card-scale", scale);
 }
 
 new ResizeObserver(scaleCardDesign).observe(card);
@@ -101,6 +106,10 @@ let calendarFailed = false;
 let tournaments = [];
 let selectedPlayer = null;
 let players = [];
+let playersReady = false;
+let playersLoading = false;
+let playerDirectoryError = "";
+let nextPlayersRefresh = 0;
 let playerNameIndex = { by_wta_id: {}, by_name: {} };
 let snapshotDate = "";
 let activeIndex = -1;
@@ -650,6 +659,14 @@ function updateTournamentSearch() {
 }
 
 function showOptions(query) {
+  if (!playersReady) {
+    visiblePlayers = [];
+    options.replaceChildren();
+    options.classList.remove("open");
+    searchInput.setAttribute("aria-expanded", "false");
+    status.textContent = playerDirectoryError || "Player list is loading.";
+    return;
+  }
   const needle = normalize(query.trim());
   activeIndex = -1;
   const matches = needle
@@ -835,18 +852,62 @@ document.addEventListener("click", event => {
   if (!event.target.closest("#player-search-wrap")) { options.classList.remove("open"); searchInput.setAttribute("aria-expanded", "false"); }
 });
 
-loadSharedFeed("players")
-  .then(data => {
+async function loadPlayerDirectory({ quiet = false } = {}) {
+  if (playersLoading || quiet && Date.now() < nextPlayersRefresh) return;
+  playersLoading = true;
+  playerDirectoryError = "";
+  if (!quiet || !playersReady) {
+    playerLoadState.hidden = false;
+    playerLoadMessage.textContent = "Loading players…";
+    retryPlayers.hidden = true;
+  }
+  retryPlayers.disabled = true;
+  try {
+    const data = await loadSharedFeed("players");
     if (!Array.isArray(data.players) || typeof data.snapshot_date !== "string") throw new Error("Invalid saved player directory.");
+    const names = data.player_names || { by_wta_id: {}, by_name: {} };
+    const changed = !playersReady || snapshotDate !== data.snapshot_date ||
+      JSON.stringify(players) !== JSON.stringify(data.players) || JSON.stringify(playerNameIndex) !== JSON.stringify(names);
     players = data.players;
-    playerNameIndex = data.player_names || { by_wta_id: {}, by_name: {} };
+    playersReady = true;
+    playerNameIndex = names;
     snapshotDate = data.snapshot_date;
-    status.textContent = data.refresh_error || "Player list loaded.";
-    if (!card.hidden) renderCard(selectedPlayer);
-  })
-  .catch(error => {
-    status.textContent = error.message;
+    nextPlayersRefresh = Date.now() + (data.refresh_error ? 60000 : 300000);
+    playerLoadMessage.textContent = data.refresh_error || "";
+    playerLoadState.hidden = !data.refresh_error;
+    retryPlayers.hidden = !data.refresh_error;
+    if (!quiet) status.textContent = data.refresh_error || "Player list loaded.";
+    if (selectedPlayer) selectedPlayer = players.find(player => player.id === selectedPlayer.id) || selectedPlayer;
+    if (changed && !card.hidden) renderCard(selectedPlayer);
+  } catch {
+    nextPlayersRefresh = Date.now() + 60000;
+    playerDirectoryError = playersReady ? "Player list could not be refreshed. Showing saved players. Please try again."
+      : "Player list could not be loaded. Please try again.";
+    playerLoadState.hidden = false;
+    playerLoadMessage.textContent = playerDirectoryError;
+    if (!quiet) status.textContent = playerDirectoryError;
+    retryPlayers.hidden = false;
+  } finally {
+    playersLoading = false;
+    retryPlayers.disabled = false;
+    if (document.activeElement === searchInput) showOptions(searchInput.value);
+  }
+}
+
+retryPlayers.addEventListener("click", loadPlayerDirectory);
+loadPlayerDirectory();
+
+function refreshVisiblePlayerData() {
+  loadPlayerDirectory({ quiet: true });
+  if (selectedPlayer && cardType.value === "form") loadPlayerForm(selectedPlayer);
+  if (isDrawCard()) document.querySelectorAll(".draw-player-card").forEach(root => {
+    const player = players.find(person => person.id === root.dataset.playerId);
+    if (player) loadPlayerForm(player);
   });
+}
+
+window.addEventListener("focus", refreshVisiblePlayerData);
+setInterval(refreshVisiblePlayerData, 300000);
 
 function refreshCalendar() {
   return loadSharedFeed("calendar")

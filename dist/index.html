@@ -54,7 +54,7 @@
   </style>
   <link rel="preload" href="assets/fonts/chunk-five-regular.otf" as="font" type="font/otf" crossorigin>
   <link rel="preload" href="assets/fonts/bebas-neue-regular.ttf" as="font" type="font/ttf" crossorigin>
-  <link rel="stylesheet" href="cards.css?v=7b94156fcb95">
+  <link rel="stylesheet" href="cards.css?v=48a368f4e6af">
 </head>
 <body>
   <main class="page">
@@ -82,6 +82,10 @@
         </select>
       </div>
     </header>
+    <div id="player-load-state" class="load-state" role="status" aria-live="polite">
+      <span id="player-load-message">Loading players…</span>
+      <button id="retry-players" type="button" hidden>Retry players</button>
+    </div>
     <section class="card-stage" aria-label="Selected player card">
       <div class="preview-controls" id="preview-controls" hidden>
         <div class="preview-toolbar">
@@ -136,6 +140,10 @@
             <label class="tour-set-controls" id="tour-set-controls" hidden>Sets <select id="tour-set-count"><option value="2">2 sets</option><option value="3">3 sets</option></select></label>
           </div>
         </div>
+      </div>
+      <div id="export-status" class="load-state" hidden>
+        <span id="export-status-text" role="status" aria-live="polite"></span>
+        <button id="retry-export" type="button" hidden>Retry image</button>
       </div>
       <div class="player-card" id="player-card" role="group" aria-labelledby="svg-title svg-description" data-type="form" hidden>
         <img id="card-save-image" alt="Complete player card: right-click or touch and hold to save" hidden>
@@ -300,10 +308,10 @@
   </dialog>
   <script src="assets/vendor/html-to-image-1.11.13.js" defer></script>
   <script src="shared-data.js?v=c78740ef7c83" defer></script>
-  <script src="app.js?v=53d6b56637ec" defer></script>
+  <script src="app.js?v=fcf1751ae8c0" defer></script>
   <script src="result-card.js?v=61cc48239197" defer></script>
   <script src="draw-card.js?v=616aae96c5d2" defer></script>
   <script src="schedule-card.js?v=d900321412da" defer></script>
-  <script src="export-card.js?v=0e1087362869" defer></script>
+  <script src="export-card.js?v=090784530690" defer></script>
 </body>
 </html>

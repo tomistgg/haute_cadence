@@ -5,15 +5,29 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
 import build_site
 from shared_data import SHARED_FILES, merged_calendar, source_directory
-from update_wta_champions import save_history
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = ROOT / "cloudflare" / ".local" / "import-bundle.json"
+
+
+def save_history(path: Path, payload: dict) -> None:
+    temporary = None
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=path.parent, delete=False) as handle:
+            temporary = Path(handle.name)
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
+            handle.write("\n")
+        temporary.replace(path)
+    finally:
+        if temporary and temporary.exists():
+            temporary.unlink()
 
 
 def fingerprints(sources: list[tuple[str, Path]]) -> list[dict]:

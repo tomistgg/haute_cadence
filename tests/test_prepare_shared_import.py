@@ -137,6 +137,14 @@ class PrepareSharedImportTest(unittest.TestCase):
         self.assertEqual(self.output.read_text(encoding="utf-8"), "Keep existing prepared output")
         self.assertEqual(self.source_bytes(), original)
 
+    def test_write_failure_keeps_existing_bundle_and_removes_temporary_file(self):
+        self.output.parent.mkdir()
+        self.output.write_text('{"previous":true}', encoding="utf-8")
+        with patch.object(json, "dump", side_effect=OSError("disk full")), self.assertRaises(OSError):
+            prepare_import.save_history(self.output, {"new": True})
+        self.assertEqual(self.output.read_text(encoding="utf-8"), '{"previous":true}')
+        self.assertEqual(list(self.output.parent.iterdir()), [self.output])
+
 
 if __name__ == "__main__":
     unittest.main()
