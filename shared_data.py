@@ -28,13 +28,6 @@ def ranking_sources():
     return [source_directory() / name for name in RANKING_FILES]
 
 
-def source_signature():
-    directory = source_directory()
-    files = [directory / name for name in SHARED_FILES]
-    files.append(ROOT / "data" / "wta_champions.json")
-    return tuple((str(path), path.stat().st_mtime_ns, path.stat().st_size) for path in files)
-
-
 def normalized_player_name(name):
     return "".join(char for char in unicodedata.normalize("NFD", name)
                    if not "\u0300" <= char <= "\u036f").lower()
@@ -94,12 +87,6 @@ def cancelled(item):
     group = item.get("tournamentGroup") or {}
     seasons = str((group.get("metadata") or {}).get("cancelledSeasons") or "")
     return str(item["year"]) in re.findall(r"\b\d{4}\b", seasons)
-
-
-def calendar_tournaments(start, through):
-    """Select overlapping events for the live WTA draw/result readers."""
-    return [item for item in read_calendar()["items"] if not cancelled(item)
-            and item["startDate"][:10] <= through and item["endDate"][:10] >= start]
 
 
 def calendar_rows(payload):

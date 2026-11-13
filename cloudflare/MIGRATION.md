@@ -126,12 +126,12 @@ The existing Google Drive photo relay and manual portrait uploads are unchanged.
 
 ### Open the actual website locally
 
-The local rehearsal uses a temporary D1 database, seeded with the step 2 import plan. The prepared
-review-only launcher is ignored by Git and requires that import plan plus the step 3 Worker build.
+The local rehearsal uses a temporary D1 database, seeded with the step 2 import plan. The tracked
+preview launcher requires that import plan and builds the current Worker automatically.
 For this prepared checkout, start it from the `wta-tracker` directory in one terminal:
 
 ```powershell
-node .wrangler/review-shared-backend.mjs
+npm.cmd run preview:backend
 ```
 
 If that backend is already running, leave it running. Its diagnostics are at
@@ -166,7 +166,8 @@ refresh and simulated network failure. Form edits, Tour/125 title selectors, Dri
 missing player metadata were checked. Form/Schedule PNGs exported at 2880 by 3600, Tour Result at
 3200 by 1800, and quarterfinal Draw at 6400 by 3600. Backend checks also cover expiry and title deduplication.
 
-The prepared Pages workflow now runs only `python build_site.py --shared-data` and deploys `dist`.
+The Pages workflow checks Python, JavaScript and the assets-only build before deploying `dist`.
+Pull requests run these checks without publishing; failed checks stop a deployment.
 It retains push-to-`master` and manual Pages deployment with the existing pinned actions. The local
 workflow no longer schedules Python collection, checks out WTARG data, restores saved calendar/title
 files, or writes the `card-data` branch. Contents permission is now read-only. Shared collection belongs
@@ -201,6 +202,20 @@ Live sites: [Haute Cadence](https://tomistgg.github.io/haute_cadence/) and
 No Cloudflare dashboard action is needed for step 1. The focused schema check runs locally from the
 `wta-tracker` directory with `node --test cloudflare/shared-schema.test.mjs` and uses a temporary D1
 database to prove repeatability, valid identities, and preservation of existing entry-list data.
-The import builder derives career bests from historical ranking CSVs; `data/career_bests.json` is not
-its source and is not substituted for those statistics during preparation. The assets-only website
-build does not recompute those statistics.
+The import builder derives career bests from historical ranking CSVs in `../tenis-fem-arg/data/`.
+The assets-only website build does not recompute those statistics.
+
+## Local cleanup after migration
+
+The redundant ranking CSV copies, unused career-best JSON, and retired results/draw snapshots were
+removed from this project. All website builds now prepare assets only, including a plain
+`python build_site.py`; `--shared-data` remains accepted for existing workflow commands. The old
+Python collectors, unused browser collector, and their obsolete tests were retired together.
+
+Keep `data/calendar_snapshot.json` and `data/wta_champions.json` as small offline recovery archives.
+Baseline preparation still reads the shared ranking/name sources from the sibling project.
+The prepared `.local/import-bundle.json`, staged `.local/source/` archives, WTA Tracker's
+`.wrangler/shared-import/` preview seed, and `.wrangler/release/` backups remain available.
+Review screenshots and disposable Python/lint caches are not needed for website operation.
+
+This cleanup is local and has not been pushed or deployed. Production D1 data is unchanged.

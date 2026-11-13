@@ -9,20 +9,11 @@ import build_site
 
 
 class SiteBuildTest(unittest.TestCase):
-    def test_builds_latest_rankings_with_last_career_best_year_and_latest_titles(self):
+    def test_import_payload_preserves_rankings_career_bests_and_latest_titles(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            dist = root / "dist"
-            dist.mkdir()
             data_dir = root / "data"
             data_dir.mkdir()
-            for name in (
-                "index.html", "app.js", "cards.css", "export-card.js", "result-card.js", "draw-card.js",
-                "schedule-card.js", "shared-data.js",
-            ):
-                (root / name).write_text("", encoding="utf-8")
-            calendar = data_dir / "calendar_snapshot.json"
-            calendar.write_text("{}", encoding="utf-8")
             titles = [
                 {"champion": {"id": 1, "name": "Different spelling"}, "end_date": "2026-10-25",
                  "start_date": "2026-10-19", "tournament_id": "100", "year": 2026,
@@ -60,18 +51,11 @@ class SiteBuildTest(unittest.TestCase):
                         writer.writerow((week, player_id, rank, 100, f"Player {player_id}", "ARM", "2000-01-01"))
                 sources.append(source)
             with (
-                patch.multiple(build_site, ROOT=root, DIST=dist, CALENDAR=calendar, CHAMPIONS=champions, ASSETS={}),
+                patch.object(build_site, "CHAMPIONS", champions),
                 patch.object(build_site, "ranking_sources", return_value=sources),
                 patch.object(build_site, "load_player_names", return_value=({}, {})),
-                patch.object(build_site, "merged_calendar", return_value={}),
             ):
-                with (
-                    patch.object(build_site, "ASSETS", {"missing.png": root / "missing.png"}),
-                    self.assertRaisesRegex(FileNotFoundError, "Missing site asset"),
-                ):
-                    build_site.main()
-                build_site.main()
-            data = json.loads((dist / "data" / "players.json").read_text(encoding="utf-8"))
+                data = build_site.build_player_payload()
             players = {player["id"]: player for player in data["players"]}
             self.assertEqual(data["snapshot_date"], "2026-11-02")
             self.assertEqual({key: (row["best_rank"], row["best_rank_year"]) for key, row in players.items()}, {
@@ -94,7 +78,7 @@ class SiteBuildTest(unittest.TestCase):
             self.assertEqual(players["1"]["tour_title_ids"], ["100:2026", "101:2025"])
             self.assertEqual(players["2"]["tour_title_ids"], [])
 
-    def test_shared_build_needs_no_saved_feeds_and_removes_obsolete_generated_data(self):
+    def test_default_build_needs_no_saved_feeds_and_removes_obsolete_generated_data(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             dist = root / "dist"
@@ -111,12 +95,17 @@ class SiteBuildTest(unittest.TestCase):
             with (
                 patch.multiple(build_site, ROOT=root, DIST=dist, ASSETS={}, SURFACES=[]),
                 patch.object(build_site, "build_player_payload", side_effect=AssertionError("Shared source was read")),
-                patch.object(build_site, "merged_calendar", side_effect=AssertionError("Calendar source was read")),
             ):
-                build_site.main(shared_data=True)
+                with (
+                    patch.object(build_site, "ASSETS", {"missing.png": root / "missing.png"}),
+                    self.assertRaisesRegex(FileNotFoundError, "Missing site asset"),
+                ):
+                    build_site.main()
+                build_site.main()
             self.assertEqual(sorted(path.name for path in (dist / "data").iterdir()), ["surfaces.json"])
             self.assertFalse((dist / "wta-live.mjs").exists())
             self.assertIn('"shared-data.js?v=', (dist / "index.html").read_text(encoding="utf-8"))
+
 
 if __name__ == "__main__":
     unittest.main()

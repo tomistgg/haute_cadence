@@ -8,8 +8,7 @@ import shutil
 from datetime import date
 from pathlib import Path
 
-from shared_data import load_player_names, merged_calendar, ranking_sources
-from update_wta_champions import save_history
+from shared_data import load_player_names, ranking_sources
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
@@ -241,38 +240,18 @@ def build_assets() -> None:
     ]), encoding="utf-8")
 
 
-def main(*, shared_data: bool = False) -> None:
-    if shared_data:
-        build_assets()
-        for name in ("players.json", "calendar_snapshot.json", "recent_results.json", "current_draws.json"):
-            (DIST / "data" / name).unlink(missing_ok=True)
-        (DIST / "wta-live.mjs").unlink(missing_ok=True)
-        print(f"Prepared the shared-data card editor in {DIST}")
-        return
-    payload = build_player_payload()
-    calendar = merged_calendar(CALENDAR)
+def main() -> None:
     build_assets()
-    data_dir = DIST / "data"
-    if not CALENDAR.is_file() or json.loads(CALENDAR.read_text(encoding="utf-8")) != calendar:
-        save_history(CALENDAR, calendar)
-    save_history(data_dir / "calendar_snapshot.json", calendar)
-    results = ROOT / "data" / "recent_results.json"
-    if results.is_file():
-        shutil.copy2(results, data_dir / "recent_results.json")
-    else:
-        (data_dir / "recent_results.json").write_text('{"updated_at":null,"matches":[]}', encoding="utf-8")
-    draws = ROOT / "data" / "current_draws.json"
-    if draws.is_file():
-        shutil.copy2(draws, data_dir / "current_draws.json")
-    else:
-        (data_dir / "current_draws.json").write_text('{"updated_at":null,"tournaments":[]}', encoding="utf-8")
-    save_history(data_dir / "players.json", payload)
-    print(f"Prepared {len(payload['players']):,} WTA singles players from {payload['snapshot_date']} in {DIST}")
+    for name in ("players.json", "calendar_snapshot.json", "recent_results.json", "current_draws.json"):
+        (DIST / "data" / name).unlink(missing_ok=True)
+    (DIST / "wta-live.mjs").unlink(missing_ok=True)
+    print(f"Prepared the shared-data card editor in {DIST}")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Build the Haute Cadence card editor.")
     parser.add_argument(
-        "--shared-data", action="store_true", help="Build assets only; data comes from the shared Worker.",
+        "--shared-data", action="store_true", help="Compatibility flag; builds always use the shared Worker.",
     )
-    main(shared_data=parser.parse_args().shared_data)
+    parser.parse_args()
+    main()

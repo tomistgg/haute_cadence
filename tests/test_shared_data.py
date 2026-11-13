@@ -84,19 +84,6 @@ class SharedDataTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     shared_data.load_player_names()
 
-    def test_alias_file_changes_invalidate_the_local_server_data_signature(self):
-        before = shared_data.source_signature()
-        self.save(shared_data.PLAYER_NAMES_FILE, [{"wta_id": "1", "display_name": "Changed"}])
-        self.assertNotEqual(shared_data.source_signature(), before)
-
-    def test_live_discovery_includes_whole_overlapping_tournament_not_just_its_start_day(self):
-        cancelled = event(2, tournamentGroup={"id": 2, "metadata": {"cancelledSeasons": "2026"}})
-        self.save("wta_full_calendar_cache.json", {"items": [
-            event(), cancelled, event(3, start="2026-11-09", end="2026-11-15"),
-        ]})
-        self.assertEqual([row["tournamentGroup"]["id"] for row in
-                          shared_data.calendar_tournaments("2026-11-04", "2026-11-05")], [1])
-
     def test_calendar_keeps_past_entries_but_replaces_reschedules_removes_cancelled_and_adds_future(self):
         past = event(5, start="2026-01-01", end="2026-01-08")
         removed = event(6)
@@ -159,7 +146,7 @@ class SharedDataTest(unittest.TestCase):
                     shared_data.merged_calendar(archive)
                 self.assertEqual(archive.read_bytes(), original)
 
-    def test_build_uses_all_four_shared_ranking_files_for_current_former_and_career_best(self):
+    def test_import_uses_all_four_shared_ranking_files_for_current_former_and_career_best(self):
         self.save(shared_data.PLAYER_NAMES_FILE, [
             {"wta_id": "1", "display_name": "Short Player", "itf_name": "ITF Example Fullname"},
             {"wta_id": "99", "display_name": "Unranked Display", "wta_name": "Unranked Fullname"},
@@ -175,13 +162,7 @@ class SharedDataTest(unittest.TestCase):
             with (self.directory / filename).open("a", encoding="utf-8", newline="") as handle:
                 csv.writer(handle).writerows(rows)
         history = self.save("champions.json", {"champions": []})
-        archive = self.directory / "archive.json"
-        output = self.directory / "site"
-        output.mkdir()
-        with patch.object(build_site, "DIST", output), patch.object(build_site, "CALENDAR", archive), \
-                patch.object(build_site, "CHAMPIONS", history), patch.object(build_site, "ASSETS", {}):
-            build_site.main()
-        payload = json.loads((output / "data" / "players.json").read_text(encoding="utf-8"))
+        payload = build_site.build_player_payload(history)
         self.assertEqual(payload["snapshot_date"], "2026-11-02")
         ranked, former = payload["players"]
         self.assertEqual(ranked["name"], "Example Player")

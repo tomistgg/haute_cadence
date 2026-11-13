@@ -146,7 +146,7 @@ def main():
         backend = local_backend(args.shared_backend)
     except ValueError as error:
         parser.error(str(error))
-    build_site(shared_data=True)
+    build_site()
     handler = partial(CardHandler, directory=str(ROOT / "dist"), shared_backend=backend)
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"Card editor: http://127.0.0.1:{args.port}/", flush=True)

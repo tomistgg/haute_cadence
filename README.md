@@ -41,7 +41,8 @@ backend can be selected with `--shared-backend http://127.0.0.1:8787`. See
 [the migration guide](cloudflare/MIGRATION.md) for the baseline and backend preparation.
 The existing photo library still uses the Worker's read-only photo relay.
 
-For an assets-only build, run `python build_site.py --shared-data`. This build needs no ranking CSVs or saved
+For an assets-only build, run `python build_site.py`. The existing `--shared-data` flag is also accepted.
+This build needs no ranking CSVs or saved
 results/draws JSON. Hosted pages read the shared Worker directly; local previews use the proxy above.
 Opening the root HTML or serving `dist` without this proxy does not provide the local shared backend.
 
@@ -217,11 +218,12 @@ stack on smaller screens.
 The supplied TT Bluescreens font is a trial font. Keep this site local/private for evaluation unless you obtain the appropriate license.
 
 The shared database stores champion history, calendar, player profiles, and current feeds. The initial import derives
-career-best ranks from all four historical ranking CSVs (1983 onward), then ranking refreshes preserve known bests.
+career-best ranks from the four historical ranking CSVs in `../tenis-fem-arg/data/` (1983 onward), then ranking
+refreshes preserve known bests. Redundant ranking CSV copies are no longer stored in this project.
 The caption year is the most recent year the player held that exact career-best position, including later returns
 to the same rank. Newly discovered players can have an unknown career best; their current rank is not invented
-as a historical best. The CSV-based builder and `data/` archives remain migration inputs, rather than runtime
-data sources. The shared-data site build copies only the editor assets.
+as a historical best. The offline import helper and the calendar/champion archives in `data/` remain recovery
+inputs. Website builds copy only the editor assets and cannot regenerate the retired data feeds.
 
 The initial calendar archive preserves the previously saved 2026 season, including October 26 and November 2.
 Shared WTA collection overlays current and following seasons while preserving other calendar records.
@@ -243,10 +245,25 @@ The prepared `Deploy GitHub Pages` workflow runs `python build_site.py --shared-
 pushes to `master`, or when run manually from Actions. In repository Settings > Pages, the publishing source is
 **GitHub Actions**. It only builds website assets: there is no scheduled collection, WTARG checkout, saved-feed
 restoration, or `card-data` branch write. Repository contents permission is read-only; Pages deployment permissions
-remain. Data updates belong to the shared Worker and D1. This workflow change is local until explicitly published;
-no live schedule or deployment has been changed during review.
+remain. Data updates belong to the shared Worker and D1. The shared-data workflow is already published;
+subsequent local cleanup does not deploy changes automatically.
 
-Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. All cards export at twice their design width and height for sharper text, outlines, and flags. Player/title exports are 2880 x 3600, Non-Tour results 2880 x 3200, and Tour results 3200 x 1800. Layout and font proportions stay the same. The combined image refreshes automatically after edits; wait briefly for it to finish before saving. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime. Photo detail still depends on the resolution and quality of the uploaded source.
+Right-click the card photo on desktop and choose **Save image as** to save the complete PNG, including all artwork, text and manual edits. All cards export at twice their design width and height for sharper text, outlines, and flags. Player/title exports are 2880 x 3600, Non-Tour results 2880 x 3200, and Tour results 3200 x 1800. Layout and font proportions stay the same. The combined image refreshes automatically after edits; wait for **Image ready to save** before saving. Each edit clears the preceding downloadable image. If preparation fails, **Retry image** tries again while preserving the edits. Export uses the locally bundled MIT-licensed html-to-image 1.11.13 library in `assets/vendor/`, with no CDN requests at runtime. Photo detail still depends on the resolution and quality of the uploaded source.
+
+The player directory displays its loading state and offers **Retry players** if it cannot be loaded.
+Retrying restores search without reloading the editor or discarding the current card draft.
+Open tabs recheck saved player profiles and visible form data on focus and every five minutes,
+preserving manual form edits and current selections. Unchanged profiles do not rebuild the PNG.
+Font-loading failures show reload guidance instead of offering a retry that cannot recover the font.
+
+Pull requests and Pages releases run Python lint, Python tests, JavaScript checks and an assets-only
+build. A failed check stops publication. To run the checks locally with Python 3.11+ and Node 24:
+
+```powershell
+python -B -m unittest discover -s tests -p 'test_*.py'
+node --test tests/test_*.js
+python -B build_site.py --shared-data
+```
 
 On a phone, touch and hold the player photo and choose the browser's Save Image / Save to Photos action to save the complete PNG. The saveable image permits native touch callouts; the editing controls remain interactive. Wait briefly after making edits for the combined PNG to refresh.
 
@@ -273,4 +290,5 @@ WTA 125 titles do not increase the Tour count and supply DERNIER TITRE only when
 
 Both Title Card types have a Refresh button beside Background. It shares the saved match job and two-minute cooldown
 with Results and Draw, displays progress, and leaves the current title data intact if the update fails.
-The old champions JSON and Python updater remain historical import tools; normal website updates use D1.
+The saved champions JSON remains an offline recovery archive for `cloudflare/prepare_import.py`;
+the retired Python collectors and browser collector have been removed. Normal website updates use D1.

@@ -82,6 +82,10 @@
         </select>
       </div>
     </header>
+    <div id="player-load-state" class="load-state" role="status" aria-live="polite">
+      <span id="player-load-message">Loading players…</span>
+      <button id="retry-players" type="button" hidden>Retry players</button>
+    </div>
     <section class="card-stage" aria-label="Selected player card">
       <div class="preview-controls" id="preview-controls" hidden>
         <div class="preview-toolbar">
@@ -136,6 +140,10 @@
             <label class="tour-set-controls" id="tour-set-controls" hidden>Sets <select id="tour-set-count"><option value="2">2 sets</option><option value="3">3 sets</option></select></label>
           </div>
         </div>
+      </div>
+      <div id="export-status" class="load-state" hidden>
+        <span id="export-status-text" role="status" aria-live="polite"></span>
+        <button id="retry-export" type="button" hidden>Retry image</button>
       </div>
       <div class="player-card" id="player-card" role="group" aria-labelledby="svg-title svg-description" data-type="form" hidden>
         <img id="card-save-image" alt="Complete player card: right-click or touch and hold to save" hidden>
